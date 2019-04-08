@@ -1,6 +1,9 @@
 # kyripay_tr
 KyriPay microservices training project
 
+## Breaf description
+KyriPay is a platform with the goal to manage user payments. It allows users to create payments with or without using saved payment templates and forward it to the bank where user owns an account. Before payment creation user should setup his accounts and recipients he want to use in future payment. Each destination bank may has different payment format, so KyriPay handle payment convertion to the target format. Also multiple protocols can be used to transfer data to the banks. Payment format and protocol for the bank that KyriPay supports are both set up by managers of KyriPay. For payment status update KyriPay recieves Acknowledgement files that are also should be converted.
+
 ## Business requirements:
 
 ### As a *Customer*:
