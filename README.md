@@ -27,4 +27,4 @@ I would like to place and send a new payment. After new payment is placed it sta
 
 ## Microservices decomposition:
 
-![ms](https://user-images.githubusercontent.com/475392/55722175-2c40d880-5a0e-11e9-8288-84d4f5f0be33.png)
+![ms](https://user-images.githubusercontent.com/475392/55724635-82b11580-5a14-11e9-9ead-1febd2970e82.png)
