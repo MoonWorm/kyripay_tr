@@ -24,3 +24,7 @@ I would like to place and send a new payment. After new payment is placed it sta
 ## Logical with with bounded contexts:
 
 ![kyripay_contexts](https://user-images.githubusercontent.com/475392/55721330-c05d7080-5a0b-11e9-8716-576a9b319123.png)
+
+## Microservices decomposition:
+
+![ms](https://user-images.githubusercontent.com/475392/55722175-2c40d880-5a0e-11e9-8288-84d4f5f0be33.png)
