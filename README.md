@@ -20,3 +20,7 @@ I would like to place and send a new payment. After new payment is placed it sta
 ## Logical view:
 
 ![kyripay](https://user-images.githubusercontent.com/475392/55720241-082ec880-5a09-11e9-8200-a3b490e132a3.png)
+
+## Logical with with bounded contexts:
+
+![kyripay_contexts](https://user-images.githubusercontent.com/475392/55721330-c05d7080-5a0b-11e9-8716-576a9b319123.png)
