@@ -19,3 +19,4 @@ I would like to place and send a new payment. After new payment is placed it sta
 
 ## Logical view:
 
+![kyripay](https://user-images.githubusercontent.com/475392/55720241-082ec880-5a09-11e9-8200-a3b490e132a3.png)
