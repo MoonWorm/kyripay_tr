@@ -16,3 +16,6 @@ I would like to place and send a new payment. After new payment is placed it sta
 1. Given some registered set of customers. I would like to disable and enable some of them. Disabled used can't perform any action in the system as soon as it was disabled.
 2. Given a have a set of customers with some payments. I would like to apply some custom search filters to gather some required information that might be helpfull for some statistics or analysis purposes. Personal and some part of payment information should be restricted and manager must not be able to see it.
 3. I'd like to add a new bank into the system. Along with bank details, bank format and transport line should be also configured.
+
+## Logical view:
+
