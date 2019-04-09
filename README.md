@@ -31,3 +31,14 @@ I would like to _place_ and send a new **payment**. After new payment is placed 
 ## Microservices decomposition:
 
 ![ms](https://user-images.githubusercontent.com/475392/55724635-82b11580-5a14-11e9-9ead-1febd2970e82.png)
+
+### Microservices responsibilities:
+1. **User microservice** - register new users, manage user banks, manage user recipients, manage bank accounts, get user contact info, get user payment info
+2. **Bank microservice** - manage system banks, get system banks
+3. **Payment microservice** - create a new payment, get payment info
+4. **Payment Flow microservice** - manages payment flow and guarantees that accepted by **Payment microservice** payment will be processed through all required steps (conversion, transportation, ...) sooner or later
+5. **Converter microservice** - converts a payment into required format
+6. **Connection microservice** - sends payments into 3rd party banks using requered transport protocol and connection info
+7. **Acknowledgement microservice** - received payment acknowledgements from 3rd party banks and forwards them into Payment Flow microservice
+8. **Trace microservice** - stores all meta information of payments all associated payment events, provide search API for statistics and other purposes
+9. **Notification microservice** - notifies (sms, email etc.) customers about sensetive changes in payment statuses etc.
