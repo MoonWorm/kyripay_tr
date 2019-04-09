@@ -30,7 +30,7 @@ I would like to _place_ and send a new **payment**. After new payment is placed 
 
 ## Microservices decomposition:
 
-![ms](https://user-images.githubusercontent.com/475392/55724635-82b11580-5a14-11e9-9ead-1febd2970e82.png)
+![ms2](https://user-images.githubusercontent.com/475392/55794873-22cb7500-5acf-11e9-9d1f-72616e7f727d.png)
 
 ### Microservices responsibilities:
 1. **User microservice** - register new users, manage user banks, manage user recipients, manage bank accounts, get user contact info, get user payment info
