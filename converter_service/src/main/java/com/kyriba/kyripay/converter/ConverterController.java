@@ -1,7 +1,5 @@
 package com.kyriba.kyripay.converter;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,7 +28,7 @@ public class ConverterController
 
     @GetMapping("/v1/documents/{id}")
     ConvertedDocument getDocument(@PathVariable String id){
-        return new ConvertedDocument(UUID.randomUUID().toString());
+        return new ConvertedDocument(id);
     }
 
 
