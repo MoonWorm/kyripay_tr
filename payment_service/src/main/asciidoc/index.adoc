@@ -1,0 +1,165 @@
+= Payment Service
+Alexey Talyuk;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+
+Payment Service that is responsible for managing user payments and payment templates.
+
+== Manage Payments
+
+This service contains set of useful API calls that allows to manage payments:
+
+=== Create a new payment:
+
+Request sample using cURL:
+
+include::{snippets}/payment/create-success/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/payment/create-success/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/payment/create-success/http-response.adoc[]
+
+=== Read an existing payment by id:
+
+Path parameters should looks like:
+
+include::{snippets}/payment/read-by-id-success/path-parameters.adoc[]
+
+Request sample using cURL:
+
+include::{snippets}/payment/read-by-id-success/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/payment/read-by-id-success/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/payment/read-by-id-success/http-response.adoc[]
+
+=== Get an existing payment status:
+
+Path parameters should looks like:
+
+include::{snippets}/payment/get-status-success/path-parameters.adoc[]
+
+Request sample using cURL:
+
+include::{snippets}/payment/get-status-success/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/payment/get-status-success/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/payment/get-status-success/http-response.adoc[]
+
+=== Update an existing payment status:
+
+Path parameters should looks like:
+
+include::{snippets}/payment/update-status-success/path-parameters.adoc[]
+
+Request sample using cURL:
+
+include::{snippets}/payment/update-status-success/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/payment/update-status-success/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/payment/update-status-success/http-response.adoc[]
+
+== Manage Payment Templates
+
+This service contains set of useful API calls that allows to manage payment templates:
+
+=== Create a new payment template:
+
+Request sample using cURL:
+
+include::{snippets}/payment-template/create-success/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/payment-template/create-success/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/payment-template/create-success/http-response.adoc[]
+
+=== Read all the existing payment templates:
+
+Request sample using cURL:
+
+include::{snippets}/payment-template/read-all-success/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/payment-template/read-all-success/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/payment-template/read-all-success/http-response.adoc[]
+
+=== Read an existing payment template by id:
+
+Path parameters should looks like:
+
+include::{snippets}/payment-template/read-by-id-success/path-parameters.adoc[]
+
+Request sample using cURL:
+
+include::{snippets}/payment-template/read-by-id-success/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/payment-template/read-by-id-success/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/payment-template/read-by-id-success/http-response.adoc[]
+
+=== Update an existing payment template by id:
+
+Path parameters should looks like:
+
+include::{snippets}/payment-template/update-success/path-parameters.adoc[]
+
+Request sample using cURL:
+
+include::{snippets}/payment-template/update-success/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/payment-template/update-success/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/payment-template/update-success/http-response.adoc[]
+
+=== Delete an existing payment template by id:
+
+Path parameters should looks like:
+
+include::{snippets}/payment-template/delete-success/path-parameters.adoc[]
+
+Request sample using cURL:
+
+include::{snippets}/payment-template/delete-success/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/payment-template/delete-success/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/payment-template/delete-success/http-response.adoc[]

@@ -1,0 +1,24 @@
+{
+  "userId": 123,
+  "name": "Payment Template 1",
+  "currency": "USD",
+  "amount": 50,
+  "bank": "Super Bank Inc.",
+  "accountNumber": "12345AN",
+  "paymentFormat": "ISO_123",
+  "recipientInfo": {
+    "firstName": "Vasia",
+    "lastName": "Pupkin",
+    "bankName": "Cool Bank and Partners",
+    "bankAddress": "Paris, Main str., 1-2",
+    "accountNumber": "54321TTU"
+  },
+  "connectionLine": {
+    "protocol": "http",
+    "host": "payment-service.com",
+    "port": 54,
+    "path": "/pay",
+    "login": "foo",
+    "password": "bar"
+  }
+}
