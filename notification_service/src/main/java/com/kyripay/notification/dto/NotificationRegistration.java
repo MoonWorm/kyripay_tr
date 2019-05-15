@@ -5,6 +5,7 @@
  *******************************************************************************/
 package com.kyripay.notification.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Value;
 
 
@@ -14,5 +15,6 @@ import lombok.Value;
 @Value
 public class NotificationRegistration
 {
+  @ApiModelProperty(value = "Unique id that can be used to track notification message status", example = "12345")
   private final String id;
 }

@@ -5,16 +5,23 @@
  *******************************************************************************/
 package com.kyripay.notification.api;
 
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.http.ContentType;
+import io.restassured.specification.RequestSpecification;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
 
 /**
@@ -25,11 +32,26 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 public class NotificationServiceApiTest
 {
 
+  @Rule
+  public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("target/generated-snippets");
+
+  private RequestSpecification documentationSpec;
+
+
+  @Before
+  public void setUp()
+  {
+    this.documentationSpec = new RequestSpecBuilder()
+        .addFilter(documentationConfiguration(restDocumentation)).build();
+  }
+
+
   @Test
   public void notify_success()
   {
-    String id = given()
-        .contentType(APPLICATION_JSON_UTF8_VALUE)
+    String id = given(this.documentationSpec)
+        .filter(document("notify_success"))
+        .contentType(ContentType.JSON)
         .body("{\n" +
             "  \"userId\": \"123\",\n" +
             "  \"sender\": \"CUSTOMER_SERVICE\",\n" +
@@ -42,12 +64,12 @@ public class NotificationServiceApiTest
             "  \"type\": \"EMAIL\"\n" +
             "}")
         .when()
-          .post("/api/v1/notification")
+        .post("/api/v1/notification")
         .then()
-          .statusCode(SC_OK)
-          .contentType(APPLICATION_JSON_UTF8_VALUE)
-          .extract()
-            .jsonPath().get("id");
+        .assertThat().statusCode(SC_OK)
+        .contentType(ContentType.JSON)
+        .extract()
+        .jsonPath().get("id");
     assertNotNull(id);
   }
 

@@ -1,0 +1,22 @@
+= Notification Service
+Alexey Talyuk;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+
+Notification Service that is responsible for sending notification messages of different types to customers.
+
+This service contains only a single API method `notification` that does the exact purpose of this service - sends
+notification messages.
+
+Request sample using cURL:
+
+include::{snippets}/notify_success/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/notify_success/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/notify_success/http-response.adoc[]
