@@ -16,6 +16,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.junit.Assert.assertNotNull;
@@ -47,30 +55,28 @@ public class NotificationServiceApiTest
 
 
   @Test
-  public void notify_success()
+  public void createSuccess() throws IOException, URISyntaxException
   {
     String id = given(this.documentationSpec)
-        .filter(document("notify_success"))
+        .filter(document("{method-name}"))
         .contentType(ContentType.JSON)
-        .body("{\n" +
-            "  \"userId\": \"123\",\n" +
-            "  \"sender\": \"CUSTOMER_SERVICE\",\n" +
-            "  \"titleTemplateId\": \"payment_completed_title.twig\",\n" +
-            "  \"bodyTemplateId\": \"payment_completed_body.twig\",\n" +
-            "  \"parameters\": {\n" +
-            "     \"firstName\": \"Vasia\",\n" +
-            "     \"lastName\": \"Pupkin\"\n" +
-            "  },\n" +
-            "  \"type\": \"EMAIL\"\n" +
-            "}")
+        .body(readTestResource("/com/kyripay/notification/api/notification.json"))
         .when()
-        .post("/api/v1/notification")
+        .post("/api/v1/notifications")
         .then()
         .assertThat().statusCode(SC_OK)
         .contentType(ContentType.JSON)
         .extract()
         .jsonPath().get("id");
     assertNotNull(id);
+  }
+
+  private String readTestResource(String relativePath) throws URISyntaxException, IOException
+  {
+    URI uri = NotificationServiceApiTest.class.getResource(relativePath).toURI();
+    Path path = Paths.get(uri);
+    String resourceStr = new String(Files.readAllBytes(path), StandardCharsets.UTF_8.name());
+    return resourceStr;
   }
 
 }

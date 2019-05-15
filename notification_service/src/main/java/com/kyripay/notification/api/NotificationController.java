@@ -24,8 +24,8 @@ public class NotificationController
 {
 
   @ApiOperation("Sends notification message of the selected type to a user")
-  @PostMapping("/api/v1/notification")
-  NotificationRegistration notify(@RequestBody Notification notification)
+  @PostMapping("/api/v1/notifications")
+  NotificationRegistration create(@RequestBody Notification notification)
   {
     return new NotificationRegistration(notification.getUserId() + "abc123");
   }
