@@ -17,7 +17,7 @@ public class User {
     @ApiModelProperty(value = "Last name", example = "Ivanov")
     private String lastName;
     @ApiModelProperty(value = "Address", example = "Kalvariuskaia 42, Minsk")
-    private String adress;
+    private String address;
     @ApiModelProperty(value = "Email", example = "kyriba@gmail.com")
     private String email;
     @ApiModelProperty(value = "Phone number", example = "7788")

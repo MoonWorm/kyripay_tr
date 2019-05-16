@@ -29,7 +29,7 @@ public class UsersApi
     }
 
     @ApiOperation("Get a user")
-    @GetMapping("/v1/users/{userId}")
+    @GetMapping("/v1/users/{id}")
     User getUser(@PathVariable String id) {
         User user = getDummyUser();
         user.setId(UUID.fromString(id));
@@ -38,24 +38,25 @@ public class UsersApi
 
     @ApiOperation("Create a user")
     @PostMapping("/v1/users")
+    @ResponseStatus(HttpStatus.CREATED)
     User createUser(@RequestBody User user) {
         user.setId(UUID.randomUUID());
         return user;
     }
 
     @ApiOperation("Activate a user")
-    @PostMapping("/v1/users/{userId}/activation")
-    @ResponseStatus(code = HttpStatus.CREATED)
-    void activateUser(@PathVariable String userId) { }
+    @PostMapping("/v1/users/{id}/activation")
+    @ResponseStatus(HttpStatus.CREATED)
+    void activateUser(@PathVariable String id) { }
 
     @ApiOperation("Deactivate a user")
-    @PostMapping("/v1/users/{userId}/deactivation")
-    @ResponseStatus(code = HttpStatus.CREATED)
-    void deativateUser(@PathVariable String userId) { }
+    @PostMapping("/v1/users/{id}/deactivation")
+    @ResponseStatus(HttpStatus.CREATED)
+    void deativateUser(@PathVariable String id) { }
 
     @ApiOperation("Activate a user")
-    @PatchMapping("/v1/users/{userId}")
-    User updateUser(@PathVariable String userId, @RequestBody User user) {
+    @PatchMapping("/v1/users/{id}")
+    User updateUser(@PathVariable String id, @RequestBody User user) {
         return getDummyUser();
     }
 
@@ -77,6 +78,7 @@ public class UsersApi
 
     @ApiOperation("Create new account for a user")
     @PostMapping("/v1/users/{userId}/accounts")
+    @ResponseStatus(HttpStatus.CREATED)
     Account createAccount(@PathVariable String userId, @RequestBody Account account) {
         return getDummyAccount();
     }
@@ -110,6 +112,7 @@ public class UsersApi
 
     @ApiOperation("Create a recipient for a user")
     @PostMapping("/v1/users/{id}/recipients")
+    @ResponseStatus(HttpStatus.CREATED)
     Recipient createUserRecipient(@PathVariable String id, @RequestBody Recipient recipient) {
         return getDummyRecipient();
     }

@@ -24,7 +24,7 @@ public class Dummies {
         user.setId(UUID.randomUUID());
         user.setAccounts(accounts);
         user.setRecipients(recipients);
-        user.setAdress("Kalvariuskaia 42, Minsk");
+        user.setAddress("Kalvariuskaia 42, Minsk");
         user.setEmail("kyriba@gmail.com");
         user.setFirstName("Kyriba");
         user.setLastName("Kyriba");
