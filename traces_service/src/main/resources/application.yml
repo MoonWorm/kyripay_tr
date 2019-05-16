@@ -10,6 +10,7 @@ spring:
     hibernate:
       # Consider using "create-drop" for "test" profile
       ddl-auto: create
+    show-sql: true
   h2:
     console:
       enabled: true
@@ -30,3 +31,4 @@ logging:
     org.springframework.web: DEBUG
     org.springframework.data: TRACE
     kyripay.traces: TRACE
+    org.hibernate: DEBUG
