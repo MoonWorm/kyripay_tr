@@ -1,0 +1,13 @@
+= Acknowledgement service
+
+API for parsing of acknowledgements and updating correspondent payments with the actual status
+
+== Request acknowledgement conversion
+
+Accepts an acknowledgement, parse it using format defined in the request and update payments then
+
+.request
+include::{snippets}/acknowledgement/http-request.adoc[]
+
+.response
+include::{snippets}/acknowledgement/http-response.adoc[]
