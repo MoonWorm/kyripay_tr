@@ -66,3 +66,7 @@ Configuring additional message converters
 
 [DAMN! Springfox-data-rest doesn't support Spring boot 2](https://github.com/springfox/springfox/issues/2298)
 ...and this will be fixed in 3.X. The latest version is 2.9.2. 3.0 is not released yet. 3.0.0-SNAPSHOT doesn't work as well...
+
+[asciidoc shortcuts](https://docs.spring.io/spring-restdocs/docs/current/reference/html5/#working-with-asciidoctor-including-snippets-operation)
+operation::index[snippets='curl-request,http-request,http-response']
+

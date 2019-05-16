@@ -41,4 +41,10 @@ public class TracesService
     trace.setUpdated(LocalDateTime.now());
     repo.save(trace);
   }
+
+
+  public void deleteAllTraces()
+  {
+    repo.deleteAll();
+  }
 }

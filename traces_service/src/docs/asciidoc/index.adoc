@@ -1,0 +1,23 @@
+= Traces service
+
+API for conversion of payments to the bank specific formats
+
+== Trace creation
+
+Creates a Trace with given *paymentId*
+
+.request
+include::{snippets}/traces/create/http-request.adoc[]
+
+.response
+include::{snippets}/traces/create/http-response.adoc[]
+
+== Trace list
+
+Lists all traces
+
+.request
+include::{snippets}/traces/list/http-request.adoc[]
+
+.response
+include::{snippets}/traces/list/http-response.adoc[]
