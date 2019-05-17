@@ -54,7 +54,7 @@ public class UsersApi
     @ResponseStatus(HttpStatus.CREATED)
     void deativateUser(@PathVariable String id) { }
 
-    @ApiOperation("Activate a user")
+    @ApiOperation("Update a user")
     @PatchMapping("/v1/users/{id}")
     User updateUser(@PathVariable String id, @RequestBody User user) {
         return getDummyUser();

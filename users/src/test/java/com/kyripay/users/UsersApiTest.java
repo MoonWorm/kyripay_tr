@@ -18,6 +18,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
@@ -48,7 +50,7 @@ public class UsersApiTest
 
     @Test
     public void userCreated() {
-        RestDocumentationFilter document = document("userCreate",
+        RestDocumentationFilter document = document("createUser",
                 requestPreprocessor,
                 requestFields(
                         fieldWithPath("firstName").description("First name"),
@@ -95,6 +97,8 @@ public class UsersApiTest
     public void getUser() {
         RestDocumentationFilter document = document("getUser",
                 requestPreprocessor,
+                pathParameters(
+                        parameterWithName("id").description("User id")),
                 responseFields(
                         fieldWithPath("id").description("Id of created user"),
                         fieldWithPath("firstName").description("First name"),
@@ -123,7 +127,7 @@ public class UsersApiTest
                         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                         .filter(document)
                 .when()
-                    .get("/v1/users/8822e1f8-8053-40ee-8b73-bc7e6785a371")
+                    .get("/v1/users/{id}", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
                 .then()
                     .statusCode(HttpStatus.SC_OK)
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -154,28 +158,61 @@ public class UsersApiTest
     }
 
     @Test
-    public void activatUser() {
-        RestDocumentationFilter document = document("activateUser", requestPreprocessor);
+    public void activateUser() {
+        RestDocumentationFilter document = document("activateUser", requestPreprocessor,
+                pathParameters(
+                        parameterWithName("id").description("User id"))
+                );
 
          given(this.documentationSpec)
             .filter(document)
         .when()
-            .post("/v1/users/8822e1f8-8053-40ee-8b73-bc7e6785a371/activation")
+            .post("/v1/users/{id}/activation", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
         .then()
             .statusCode(HttpStatus.SC_CREATED);
     }
 
     @Test
-    public void deactivatUser() {
-        RestDocumentationFilter document = document("deactivateUser", requestPreprocessor);
+    public void deactivateUser() {
+        RestDocumentationFilter document = document("deactivateUser", requestPreprocessor,
+                pathParameters(
+                        parameterWithName("id").description("User id"))
+        );
 
         given(this.documentationSpec)
             .filter(document)
         .when()
-            .post("/v1/users/8822e1f8-8053-40ee-8b73-bc7e6785a371/deactivation")
+            .post("/v1/users/{id}/deactivation", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
         .then()
             .statusCode(HttpStatus.SC_CREATED);
     }
+
+    @Test
+    public void updateUser() {
+        RestDocumentationFilter document = document("updateUser", requestPreprocessor,
+                pathParameters(
+                        parameterWithName("id").description("User id"))
+        );
+
+        User user = given(this.documentationSpec)
+                .filter(document)
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .body(userSample())
+            .when()
+                .patch("/v1/users/{id}", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
+            .then()
+                .statusCode(HttpStatus.SC_OK)
+                .extract()
+                .body()
+                .as(User.class);
+
+        assertNotNull(user);
+
+    }
+
+    // todo add Accounts
+    // todo add Recipients
+
 
 
     private String userSample() {

@@ -1,0 +1,76 @@
+= Users service
+
+API for users
+
+== Create a new user
+
+Accepts user's data
+
+.Request
+include::{snippets}/createUser/http-request.adoc[]
+
+.Request fields
+include::{snippets}/createUser/request-fields.adoc[]
+
+.Response
+include::{snippets}/createUser/http-response.adoc[]
+
+.Response fields
+include::{snippets}/createUser/response-fields.adoc[]
+
+== Get a list of all users
+
+.Request
+include::{snippets}/getUsers/http-request.adoc[]
+
+.Response
+include::{snippets}/getUsers/http-response.adoc[]
+
+== Get a user
+
+.Path parameters
+include::{snippets}/getUser/path-parameters.adoc[]
+
+.Request
+include::{snippets}/getUser/http-request.adoc[]
+
+.Response
+include::{snippets}/getUser/http-response.adoc[]
+
+.Response fields
+include::{snippets}/getUser/response-fields.adoc[]
+
+== Activate a user
+
+.Path parameters
+include::{snippets}/activateUser/path-parameters.adoc[]
+
+.Request
+include::{snippets}/activateUser/http-request.adoc[]
+
+.Response
+include::{snippets}/activateUser/http-response.adoc[]
+
+== Deactivate a user
+
+.Path parameters
+include::{snippets}/deactivateUser/path-parameters.adoc[]
+
+.Request
+include::{snippets}/deactivateUser/http-request.adoc[]
+
+.Response
+include::{snippets}/deactivateUser/http-response.adoc[]
+
+== Update a user
+
+.Path parameters
+include::{snippets}/updateUser/path-parameters.adoc[]
+
+.Request
+include::{snippets}/updateUser/http-request.adoc[]
+
+.Response
+include::{snippets}/updateUser/http-response.adoc[]
+
+
