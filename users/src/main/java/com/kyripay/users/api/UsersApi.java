@@ -17,6 +17,7 @@ import static com.kyripay.users.api.Dummies.*;
 
 
 @RestController
+@RequestMapping("/api")
 public class UsersApi
 {
     @ApiOperation("Get all users")

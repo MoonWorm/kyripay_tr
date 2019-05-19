@@ -85,7 +85,7 @@ public class UsersApiTest
                 .body(userSample())
             .filter(document)
             .when()
-                .post("/v1/users")
+                .post("/api/v1/users")
             .then()
                 .statusCode(HttpStatus.SC_CREATED)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -131,7 +131,7 @@ public class UsersApiTest
                         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                         .filter(document)
                 .when()
-                    .get("/v1/users/{id}", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
+                    .get("/api/v1/users/{id}", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
                 .then()
                     .statusCode(HttpStatus.SC_OK)
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -150,7 +150,7 @@ public class UsersApiTest
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .filter(document)
                 .when()
-                    .get("/v1/users")
+                    .get("/api/v1/users")
                 .then()
                     .statusCode(HttpStatus.SC_OK)
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -171,7 +171,7 @@ public class UsersApiTest
          given(this.documentationSpec)
             .filter(document)
         .when()
-            .post("/v1/users/{id}/activation", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
+            .post("/api/v1/users/{id}/activation", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
         .then()
             .statusCode(HttpStatus.SC_CREATED);
     }
@@ -185,7 +185,7 @@ public class UsersApiTest
         given(this.documentationSpec)
             .filter(document)
         .when()
-            .post("/v1/users/{id}/deactivation", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
+            .post("/api/v1/users/{id}/deactivation", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
         .then()
             .statusCode(HttpStatus.SC_CREATED);
     }
@@ -201,7 +201,7 @@ public class UsersApiTest
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .body(userSample())
             .when()
-                .patch("/v1/users/{id}", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
+                .patch("/api/v1/users/{id}", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
             .then()
                 .statusCode(HttpStatus.SC_OK)
                 .extract()
@@ -235,7 +235,7 @@ public class UsersApiTest
                     .body(accountSample())
                     .filter(document)
                 .when()
-                    .post("/v1/users/{id}/accounts", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
+                    .post("/api/v1/users/{id}/accounts", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
                 .then()
                     .statusCode(HttpStatus.SC_CREATED)
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -262,7 +262,7 @@ public class UsersApiTest
         Account[] accounts = given(this.documentationSpec)
                     .filter(document)
                 .when()
-                .get("/v1/users/{id}/accounts", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
+                .get("/api/v1/users/{id}/accounts", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
                 .then()
                     .statusCode(HttpStatus.SC_OK)
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -292,7 +292,7 @@ public class UsersApiTest
         Account accounts = given(this.documentationSpec)
                     .filter(document)
                 .when()
-                    .get("/v1/users/{userId}/accounts/{accountId}",
+                    .get("/api/v1/users/{userId}/accounts/{accountId}",
                         "8822e1f8-8053-40ee-8b73-bc7e6785a371", "1822e1f8-8053-40ee-8b73-bc7e6785a370")
                 .then()
                     .statusCode(HttpStatus.SC_OK)
@@ -336,7 +336,7 @@ public class UsersApiTest
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .body(updatedAccount)
                 .when()
-                    .put("/v1/users/{userId}/accounts/{accountId}",
+                    .put("/api/v1/users/{userId}/accounts/{accountId}",
                             "8822e1f8-8053-40ee-8b73-bc7e6785a371", "1822e1f8-8053-40ee-8b73-bc7e6785a370")
                 .then()
                     .statusCode(HttpStatus.SC_OK)
@@ -360,7 +360,7 @@ public class UsersApiTest
         given(this.documentationSpec)
             .filter(documentationFilter)
         .when()
-            .delete("/v1/users/{userId}/accounts/{accountId}",
+            .delete("/api/v1/users/{userId}/accounts/{accountId}",
                 "8822e1f8-8053-40ee-8b73-bc7e6785a371", "1822e1f8-8053-40ee-8b73-bc7e6785a370")
         .then()
             .statusCode(HttpStatus.SC_OK);
@@ -396,7 +396,7 @@ public class UsersApiTest
                     .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .body(recipientSample())
                 .when()
-                    .post("/v1/users/{userId}/recipients", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
+                    .post("/api/v1/users/{userId}/recipients", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
                 .then()
                     .statusCode(HttpStatus.SC_CREATED)
                     .extract()
@@ -426,7 +426,7 @@ public class UsersApiTest
                     .filter(documentationFilter)
                     .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .when()
-                    .get("/v1/users/{userId}/recipients/{recipientId}",
+                    .get("/api/v1/users/{userId}/recipients/{recipientId}",
                         "8822e1f8-8053-40ee-8b73-bc7e6785a370", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
                 .then()
                     .statusCode(HttpStatus.SC_OK)
@@ -457,7 +457,7 @@ public class UsersApiTest
                     .filter(documentationFilter)
                     .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .when()
-                    .get("/v1/users/{userId}/recipients","8822e1f8-8053-40ee-8b73-bc7e6785a370")
+                    .get("/api/v1/users/{userId}/recipients","8822e1f8-8053-40ee-8b73-bc7e6785a370")
                 .then()
                     .statusCode(HttpStatus.SC_OK)
                     .extract()
@@ -505,7 +505,7 @@ public class UsersApiTest
                     .filter(documentationFilter)
                     .body(newRecipient)
                 .when()
-                    .put("/v1/users/{userId}/recipients/{recipientId}",
+                    .put("/api/v1/users/{userId}/recipients/{recipientId}",
                         "8822e1f8-8053-40ee-8b73-bc7e6785a370", "5822e1f8-8053-40ee-8b73-bc7e6785a370")
                 .then()
                     .statusCode(HttpStatus.SC_OK)
@@ -528,7 +528,7 @@ public class UsersApiTest
         given(this.documentationSpec)
                 .filter(documentationFilter)
                 .when()
-                .delete("/v1/users/{userId}/accounts/{recipientId}",
+                .delete("/api/v1/users/{userId}/accounts/{recipientId}",
                         "8822e1f8-8053-40ee-8b73-bc7e6785a371", "1822e1f8-8053-40ee-8b73-bc7e6785a370")
                 .then()
                 .statusCode(HttpStatus.SC_OK);

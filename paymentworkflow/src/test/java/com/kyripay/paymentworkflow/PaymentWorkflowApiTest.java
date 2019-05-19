@@ -42,7 +42,7 @@ public class PaymentWorkflowApiTest {
 
     private final OperationRequestPreprocessor requestPreprocessor = preprocessRequest(modifyUris()
             .scheme("http")
-            .host("userservice")
+            .host("payment-workflow")
             .removePort());
 
     @Before
@@ -104,7 +104,7 @@ public class PaymentWorkflowApiTest {
             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
             .body(paymentTransfer)
         .when()
-            .post("/v1/payment-transfers")
+            .post("/api/v1/payment-transfers")
         .then()
             .statusCode(SC_CREATED);
     }
