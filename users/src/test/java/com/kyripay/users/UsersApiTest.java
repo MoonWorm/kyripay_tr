@@ -1,5 +1,7 @@
 package com.kyripay.users;
 
+import com.kyripay.users.dto.Account;
+import com.kyripay.users.dto.Recipient;
 import com.kyripay.users.dto.User;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -12,20 +14,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor;
+import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.restdocs.restassured3.RestDocumentationFilter;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
-
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertNotNull;
+
+import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -49,7 +52,7 @@ public class UsersApiTest
     }
 
     @Test
-    public void userCreated() {
+    public void createUser() {
         RestDocumentationFilter document = document("createUser",
                 requestPreprocessor,
                 requestFields(
@@ -110,7 +113,7 @@ public class UsersApiTest
                         fieldWithPath("group").description("Group of the use CUSTOMER|PRODUCT"),
                         fieldWithPath("active").description("Is user active"),
                         fieldWithPath("recipients[]").description("The list of recipients associated with the user"),
-                        fieldWithPath("recipients[].id").description("Recipient Id"),
+                        fieldWithPath("recipients[].id").description("Recipient id"),
                         fieldWithPath("recipients[].firstName").description("Recipient firstName"),
                         fieldWithPath("recipients[].lastName").description("Recipient LastName"),
                         fieldWithPath("recipients[].bankName").description("Recipient bankName"),
@@ -175,8 +178,7 @@ public class UsersApiTest
     @Test
     public void deactivateUser() {
         RestDocumentationFilter document = document("deactivateUser", requestPreprocessor,
-                pathParameters(
-                        parameterWithName("id").description("User id"))
+                pathParameters(parameterWithName("id").description("User id"))
         );
 
         given(this.documentationSpec)
@@ -190,8 +192,7 @@ public class UsersApiTest
     @Test
     public void updateUser() {
         RestDocumentationFilter document = document("updateUser", requestPreprocessor,
-                pathParameters(
-                        parameterWithName("id").description("User id"))
+                pathParameters(parameterWithName("id").description("User id"))
         );
 
         User user = given(this.documentationSpec)
@@ -210,9 +211,321 @@ public class UsersApiTest
 
     }
 
-    // todo add Accounts
-    // todo add Recipients
+    @Test
+    public void createUserAccount() {
+        RestDocumentationFilter document = document("createUserAccount",
+                requestPreprocessor,
+                pathParameters(parameterWithName("id").description("User id")),
+                requestFields(
+                        fieldWithPath("number").description("Account number"),
+                        fieldWithPath("currency").description("Account currency")
+                ),
+                responseFields(
+                        fieldWithPath("id").description("Id of the created account"),
+                        fieldWithPath("number").description("Account number"),
+                        fieldWithPath("currency").description("Account currency")
+                )
+        );
 
+        Account account = given(this.documentationSpec)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .body(accountSample())
+                    .filter(document)
+                .when()
+                    .post("/v1/users/{id}/accounts", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
+                .then()
+                    .statusCode(HttpStatus.SC_CREATED)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .extract()
+                    .body()
+                    .as(Account.class);
+
+        assertNotNull(account);
+    }
+
+    @Test
+    public void getUserAccounts() {
+        RestDocumentationFilter document = document("getUserAccounts",
+                requestPreprocessor,
+                pathParameters(parameterWithName("id").description("User id")),
+                responseFields(
+                        fieldWithPath("[].id").description("Id of the created account"),
+                        fieldWithPath("[].number").description("Account number"),
+                        fieldWithPath("[].currency").description("Account currency")
+                )
+        );
+
+        Account[] accounts = given(this.documentationSpec)
+                    .filter(document)
+                .when()
+                .get("/v1/users/{id}/accounts", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
+                .then()
+                    .statusCode(HttpStatus.SC_OK)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .extract()
+                    .body()
+                    .as(Account[].class);
+
+        assertNotNull(accounts);
+    }
+
+    @Test
+    public void getUserAccount() {
+        RestDocumentationFilter document = document("getUserAccount",
+                requestPreprocessor,
+                pathParameters(
+                            parameterWithName("userId").description("User id"),
+                            parameterWithName("accountId").description("Account id")
+                        ),
+                responseFields(
+                        fieldWithPath("id").description("Id of the created account"),
+                        fieldWithPath("number").description("Account number"),
+                        fieldWithPath("currency").description("Account currency")
+                )
+        );
+
+        Account accounts = given(this.documentationSpec)
+                    .filter(document)
+                .when()
+                    .get("/v1/users/{userId}/accounts/{accountId}",
+                        "8822e1f8-8053-40ee-8b73-bc7e6785a371", "1822e1f8-8053-40ee-8b73-bc7e6785a370")
+                .then()
+                    .statusCode(HttpStatus.SC_OK)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .extract()
+                    .body()
+                    .as(Account.class);
+
+        assertNotNull(accounts);
+    }
+
+    @Test
+    public void updateUserAccount() {
+        RestDocumentationFilter document = document("updateUserAccount",
+                requestPreprocessor,
+                pathParameters(
+                        parameterWithName("userId").description("User id"),
+                        parameterWithName("accountId").description("Account id")
+                ),
+                requestFields(
+                        fieldWithPath("id").description("Id of the created account"),
+                        fieldWithPath("number").description("Account number"),
+                        fieldWithPath("currency").description("Account currency")
+                ),
+                responseFields(
+                        fieldWithPath("id").description("Id of the created account"),
+                        fieldWithPath("number").description("Account number"),
+                        fieldWithPath("currency").description("Account currency")
+                )
+        );
+
+        Account updatedAccount = new Account();
+        updatedAccount.setId(UUID.randomUUID());
+        updatedAccount.setCurrency("USD");
+        updatedAccount.setNumber("123");
+
+        Account account = given(this.documentationSpec)
+                    .filter(document)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .body(updatedAccount)
+                .when()
+                    .put("/v1/users/{userId}/accounts/{accountId}",
+                            "8822e1f8-8053-40ee-8b73-bc7e6785a371", "1822e1f8-8053-40ee-8b73-bc7e6785a370")
+                .then()
+                    .statusCode(HttpStatus.SC_OK)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .extract()
+                    .body()
+                    .as(Account.class);
+
+        assertNotNull(account);
+    }
+
+    @Test
+    public void deleteUserAccount() {
+        RestDocumentationFilter documentationFilter = document("deleteUserAccount",
+                requestPreprocessor,
+                pathParameters(
+                        parameterWithName("userId").description("User id"),
+                        parameterWithName("accountId").description("Account id")
+                ));
+
+        given(this.documentationSpec)
+            .filter(documentationFilter)
+        .when()
+            .delete("/v1/users/{userId}/accounts/{accountId}",
+                "8822e1f8-8053-40ee-8b73-bc7e6785a371", "1822e1f8-8053-40ee-8b73-bc7e6785a370")
+        .then()
+            .statusCode(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void createRecipient() {
+        RestDocumentationFilter documentationFilter = document("createRecipient",
+                requestPreprocessor,
+                pathParameters(
+                        parameterWithName("userId").description("User id")
+                ),
+                requestFields(
+                        fieldWithPath("firstName").description("First name"),
+                        fieldWithPath("lastName").description("Last name"),
+                        fieldWithPath("bankName").description("Bank name"),
+                        fieldWithPath("bankAddress").description("Address of the bank"),
+                        fieldWithPath("accountNumber").description("Account number")
+                ),
+                responseFields(
+                        fieldWithPath("id").description("Recipient id"),
+                        fieldWithPath("firstName").description("First name"),
+                        fieldWithPath("lastName").description("Last name"),
+                        fieldWithPath("bankName").description("Bank name"),
+                        fieldWithPath("bankAddress").description("Address of the bank"),
+                        fieldWithPath("accountNumber").description("Account number")
+                )
+        );
+
+        Recipient recipient = given(this.documentationSpec)
+                    .filter(documentationFilter)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .body(recipientSample())
+                .when()
+                    .post("/v1/users/{userId}/recipients", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
+                .then()
+                    .statusCode(HttpStatus.SC_CREATED)
+                    .extract()
+                    .body()
+                    .as(Recipient.class);
+        assertNotNull(recipient);
+    }
+
+    @Test
+    public void getUserRecipient() {
+        RestDocumentationFilter documentationFilter = document("getUserRecipient",
+                    requestPreprocessor,
+                pathParameters(
+                        parameterWithName("userId").description("User id"),
+                        parameterWithName("recipientId").description("Recipient id")
+                ),
+                responseFields(
+                        fieldWithPath("id").description("Recipient id"),
+                        fieldWithPath("firstName").description("First name"),
+                        fieldWithPath("lastName").description("Last name"),
+                        fieldWithPath("bankName").description("Bank name"),
+                        fieldWithPath("bankAddress").description("Address of the bank"),
+                        fieldWithPath("accountNumber").description("Account number")
+                ));
+
+        Recipient recipient = given(this.documentationSpec)
+                    .filter(documentationFilter)
+                    .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .when()
+                    .get("/v1/users/{userId}/recipients/{recipientId}",
+                        "8822e1f8-8053-40ee-8b73-bc7e6785a370", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
+                .then()
+                    .statusCode(HttpStatus.SC_OK)
+                    .extract()
+                    .body()
+                    .as(Recipient.class);
+
+        assertNotNull(recipient);
+    }
+
+    @Test
+    public void getUserRecipients() {
+        RestDocumentationFilter documentationFilter = document("getUserRecipients",
+                requestPreprocessor,
+                pathParameters(
+                        parameterWithName("userId").description("User id")
+                ),
+                responseFields(
+                        fieldWithPath("[].id").description("Recipient id"),
+                        fieldWithPath("[].firstName").description("First name"),
+                        fieldWithPath("[].lastName").description("Last name"),
+                        fieldWithPath("[].bankName").description("Bank name"),
+                        fieldWithPath("[].bankAddress").description("Address of the bank"),
+                        fieldWithPath("[].accountNumber").description("Account number")
+                ));
+
+        Recipient[] recipients = given(this.documentationSpec)
+                    .filter(documentationFilter)
+                    .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .when()
+                    .get("/v1/users/{userId}/recipients","8822e1f8-8053-40ee-8b73-bc7e6785a370")
+                .then()
+                    .statusCode(HttpStatus.SC_OK)
+                    .extract()
+                    .body()
+                    .as(Recipient[].class);
+
+        assertNotNull(recipients);
+    }
+
+    @Test
+    public void updateUserRecipient() {
+        RestDocumentationFilter documentationFilter = document("updateUserRecipient",
+                requestPreprocessor,
+                pathParameters(
+                        parameterWithName("userId").description("User id"),
+                        parameterWithName("recipientId").description("Recipient id")
+                ),
+                requestFields(
+                        fieldWithPath("id").description("Recipient id"),
+                        fieldWithPath("firstName").description("First name"),
+                        fieldWithPath("lastName").description("Last name"),
+                        fieldWithPath("bankName").description("Bank name"),
+                        fieldWithPath("bankAddress").description("Address of the bank"),
+                        fieldWithPath("accountNumber").description("Account number")
+                ),
+                responseFields(
+                        fieldWithPath("id").description("Recipient id"),
+                        fieldWithPath("firstName").description("First name"),
+                        fieldWithPath("lastName").description("Last name"),
+                        fieldWithPath("bankName").description("Bank name"),
+                        fieldWithPath("bankAddress").description("Address of the bank"),
+                        fieldWithPath("accountNumber").description("Account number")
+                ));
+        Recipient newRecipient = new Recipient();
+        newRecipient.setId(UUID.randomUUID());
+        newRecipient.setAccountNumber("123");
+        newRecipient.setBankAddress("sd");
+        newRecipient.setBankName("bn");
+        newRecipient.setFirstName("Ivan");
+        newRecipient.setLastName("Ivanov");
+
+        Recipient recipient = given(this.documentationSpec)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .filter(documentationFilter)
+                    .body(newRecipient)
+                .when()
+                    .put("/v1/users/{userId}/recipients/{recipientId}",
+                        "8822e1f8-8053-40ee-8b73-bc7e6785a370", "5822e1f8-8053-40ee-8b73-bc7e6785a370")
+                .then()
+                    .statusCode(HttpStatus.SC_OK)
+                    .extract()
+                    .body()
+                    .as(Recipient.class);
+
+        assertNotNull(recipient);
+    }
+
+    @Test
+    public void deleteUserRecipient() {
+        RestDocumentationFilter documentationFilter = document("deleteUserRecipient",
+                requestPreprocessor,
+                pathParameters(
+                        parameterWithName("userId").description("User id"),
+                        parameterWithName("recipientId").description("Recipient id")
+                ));
+
+        given(this.documentationSpec)
+                .filter(documentationFilter)
+                .when()
+                .delete("/v1/users/{userId}/accounts/{recipientId}",
+                        "8822e1f8-8053-40ee-8b73-bc7e6785a371", "1822e1f8-8053-40ee-8b73-bc7e6785a370")
+                .then()
+                .statusCode(HttpStatus.SC_OK);
+    }
 
 
     private String userSample() {

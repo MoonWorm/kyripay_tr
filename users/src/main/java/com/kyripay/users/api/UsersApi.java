@@ -56,12 +56,11 @@ public class UsersApi
 
     @ApiOperation("Update a user")
     @PatchMapping("/v1/users/{id}")
-    User updateUser(@PathVariable String id, @RequestBody User user) {
+    User updateUser(@PathVariable String id,
+                    @RequestBody User user) {
         return getDummyUser();
     }
 
-
-    //=====  accounts
     @ApiOperation("Get accounts list for a user")
     @GetMapping("/v1/users/{id}/accounts")
     List<Account> getUserAccounts(@PathVariable String id) {
@@ -72,30 +71,32 @@ public class UsersApi
 
     @ApiOperation("Get user's account")
     @GetMapping("v1/users/{userId}/accounts/{accountId}")
-    Optional<Account> getAccount(@PathVariable String userId, @PathVariable String accountId) {
+    Optional<Account> getAccount(@PathVariable String userId,
+                                 @PathVariable String accountId) {
         return Optional.of(getDummyAccount());
     }
 
     @ApiOperation("Create new account for a user")
     @PostMapping("/v1/users/{userId}/accounts")
     @ResponseStatus(HttpStatus.CREATED)
-    Account createAccount(@PathVariable String userId, @RequestBody Account account) {
+    Account createAccount(@PathVariable String userId,
+                          @RequestBody Account account) {
         return getDummyAccount();
     }
 
     @ApiOperation("Update an account for the user")
     @PutMapping("/v1/users/{userId}/accounts/{accountId}")
-    Account updateAccount(@PathVariable String userId, @PathVariable String accountId) {
+    Account updateAccount(@PathVariable String userId,
+                          @PathVariable String accountId,
+                          @RequestBody Account newAccount) {
         return getDummyAccount();
     }
 
     @ApiOperation("Delete an account from user")
-    @DeleteMapping("v1/users/{usrId}/accounts/{accountId}")
-    void deleteAccount(@PathVariable String userId, @PathVariable String accountId) {    }
+    @DeleteMapping("v1/users/{userId}/accounts/{accountId}")
+    void deleteAccount(@PathVariable String userId,
+                       @PathVariable String accountId) { }
 
-
-    //==== Recipients
-    // maybe move Recipients to separate Data Rest Repo with the link to User as userId?
     @ApiOperation("Get all user's recipients")
     @GetMapping("/v1/users/{id}/recipients")
     List<Recipient> getUserRecipients(@PathVariable String id) {
@@ -106,24 +107,29 @@ public class UsersApi
 
     @ApiOperation("Get a recipient for a user")
     @GetMapping("/v1/users/{userId}/recipients/{recipientId}")
-    Optional<Recipient> getUserRecipient(@PathVariable String id, @PathVariable String recipientId) {
+    Optional<Recipient> getUserRecipient(@PathVariable String userId,
+                                         @PathVariable String recipientId) {
         return Optional.of(getDummyRecipient());
     }
 
     @ApiOperation("Create a recipient for a user")
     @PostMapping("/v1/users/{id}/recipients")
     @ResponseStatus(HttpStatus.CREATED)
-    Recipient createUserRecipient(@PathVariable String id, @RequestBody Recipient recipient) {
+    Recipient createUserRecipient(@PathVariable String id,
+                                  @RequestBody Recipient recipient) {
         return getDummyRecipient();
     }
 
     @ApiOperation("Update a recipient")
     @PutMapping("/v1/users/{userId}/recipients/{recipientId}")
-    Recipient updateRecipient(@PathVariable String id, @RequestBody Recipient recipient) {
+    Recipient updateRecipient(@PathVariable String userId,
+                              @PathVariable String recipientId,
+                              @RequestBody Recipient recipient) {
         return recipient;
     }
 
     @ApiOperation("Delete a recipient for a user")
     @DeleteMapping("/v1/users/{userId}/recipients/{recipientId}")
-    void deleteUserRecipient(@PathVariable String userId, @PathVariable String recipientId) {    }
+    void deleteUserRecipient(@PathVariable String userId,
+                             @PathVariable String recipientId) {    }
 }
