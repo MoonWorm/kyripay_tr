@@ -120,7 +120,8 @@ public class UsersApiTest
                         fieldWithPath("recipients[].bankAddress").description("Recipient bankAddress"),
                         fieldWithPath("recipients[].accountNumber").description("Recipient accountNumber"),
                         fieldWithPath("accounts[]").description("The list of accounts associated with the user"),
-                        fieldWithPath("accounts[].id").description("Account ID"),
+                        fieldWithPath("accounts[].id").description("Account id"),
+                        fieldWithPath("accounts[].bankId").description("Bank id"),
                         fieldWithPath("accounts[].number").description("Account number"),
                         fieldWithPath("accounts[].currency").description("Account currency")
                 )
@@ -217,11 +218,13 @@ public class UsersApiTest
                 requestPreprocessor,
                 pathParameters(parameterWithName("id").description("User id")),
                 requestFields(
+                        fieldWithPath("bankId").description("Bank id"),
                         fieldWithPath("number").description("Account number"),
                         fieldWithPath("currency").description("Account currency")
                 ),
                 responseFields(
                         fieldWithPath("id").description("Id of the created account"),
+                        fieldWithPath("bankId").description("Bank id"),
                         fieldWithPath("number").description("Account number"),
                         fieldWithPath("currency").description("Account currency")
                 )
@@ -250,6 +253,7 @@ public class UsersApiTest
                 pathParameters(parameterWithName("id").description("User id")),
                 responseFields(
                         fieldWithPath("[].id").description("Id of the created account"),
+                        fieldWithPath("[].bankId").description("Bank id"),
                         fieldWithPath("[].number").description("Account number"),
                         fieldWithPath("[].currency").description("Account currency")
                 )
@@ -279,6 +283,7 @@ public class UsersApiTest
                         ),
                 responseFields(
                         fieldWithPath("id").description("Id of the created account"),
+                        fieldWithPath("bankId").description("Bank id"),
                         fieldWithPath("number").description("Account number"),
                         fieldWithPath("currency").description("Account currency")
                 )
@@ -309,11 +314,13 @@ public class UsersApiTest
                 ),
                 requestFields(
                         fieldWithPath("id").description("Id of the created account"),
+                        fieldWithPath("bankId").description("Bank id"),
                         fieldWithPath("number").description("Account number"),
                         fieldWithPath("currency").description("Account currency")
                 ),
                 responseFields(
                         fieldWithPath("id").description("Id of the created account"),
+                        fieldWithPath("bankId").description("Bank id"),
                         fieldWithPath("number").description("Account number"),
                         fieldWithPath("currency").description("Account currency")
                 )
@@ -553,6 +560,7 @@ public class UsersApiTest
 
     private String accountSample() {
         return "{\n" +
+                "                \"bankId\": \"8822e1f8-8053-40ee-8b73-bc7e6785a371\",\n" +
                 "                \"number\": \"11122\",\n" +
                 "                \"currency\": \"EUR\"\n" +
                 "            }";

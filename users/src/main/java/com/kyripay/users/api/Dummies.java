@@ -49,6 +49,7 @@ public class Dummies {
     static Account getDummyAccount() {
         Account account = new Account();
         account.setId(UUID.randomUUID());
+        account.setBankId(UUID.randomUUID());
         account.setCurrency("EUR");
         account.setNumber("11122");
         return account;
