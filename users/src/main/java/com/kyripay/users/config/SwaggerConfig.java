@@ -29,7 +29,7 @@ public class SwaggerConfig {
         return new ApiInfo(
                 "User service API",
                 "",
-                "0.1",
+                "0.0.1",
                 "Terms of service",
                 new Contact("Dmitry Poplavsky", "", "poplavskyDN@gmail.com"),
                 "License of API", "API license URL", Collections.emptyList());

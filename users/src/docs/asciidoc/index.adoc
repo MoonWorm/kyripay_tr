@@ -1,6 +1,6 @@
 = Users service
 
-API for users
+Api for users
 
 == Create a new user
 
