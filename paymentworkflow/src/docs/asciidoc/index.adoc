@@ -1,0 +1,14 @@
+= Payment workflow service
+
+Api for payment workflow service
+
+== Process a payment
+
+.Request
+include::{snippets}/paymentTransfer/http-request.adoc[]
+
+.Request fields
+include::{snippets}/paymentTransfer/request-fields.adoc[]
+
+.Response
+include::{snippets}/paymentTransfer/http-response.adoc[]
