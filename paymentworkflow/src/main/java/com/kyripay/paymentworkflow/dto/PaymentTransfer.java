@@ -12,8 +12,6 @@ import java.util.UUID;
 public class PaymentTransfer {
     @ApiModelProperty(value = "Unique paymentTransfer id (UUID)", example = "88acc585-dcf6-49ad-ae95-3422a5cdba46")
     private UUID id;
-    @ApiModelProperty(value = "Payment sender account", dataType = "com.kyripay.paymentworkflow.dto.Account")
-    private Account account;
-    @ApiModelProperty(value = "The list of transactions", dataType = "[Lcom.kyripay.paymentworkflow.dto.Transaction")
-    private List<Transaction> transactions;
+    @ApiModelProperty(value = "Payment that should be send to the bank")
+    private Payment payment;
 }

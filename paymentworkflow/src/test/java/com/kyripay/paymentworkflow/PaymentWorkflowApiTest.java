@@ -1,9 +1,6 @@
 package com.kyripay.paymentworkflow;
 
-import com.kyripay.paymentworkflow.dto.Account;
-import com.kyripay.paymentworkflow.dto.PaymentTransfer;
-import com.kyripay.paymentworkflow.dto.Recipient;
-import com.kyripay.paymentworkflow.dto.Transaction;
+import com.kyripay.paymentworkflow.dto.*;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Before;
@@ -58,21 +55,23 @@ public class PaymentWorkflowApiTest {
                 requestPreprocessor,
                 requestFields(
                         fieldWithPath("id").description("Unique payment transfer id (UUID)"),
-                        fieldWithPath("account").description("Sender account"),
-                        fieldWithPath("account.id").description("Account id"),
-                        fieldWithPath("account.bankId").description("Bank id of the account"),
-                        fieldWithPath("account.number").description("Account number"),
-                        fieldWithPath("account.currency").description("Account currency"),
-                        fieldWithPath("transactions[]").description("The list of payment transactions"),
-                        fieldWithPath("transactions[].currency").description("Transaction currency"),
-                        fieldWithPath("transactions[].amount").description("Amount"),
-                        fieldWithPath("transactions[].recipient").description("Recipient"),
-                        fieldWithPath("transactions[].recipient.id").description("Recipient unique id (UUID)"),
-                        fieldWithPath("transactions[].recipient.firstName").description("Recipient's first name"),
-                        fieldWithPath("transactions[].recipient.lastName").description("Recipient's last name"),
-                        fieldWithPath("transactions[].recipient.bankName").description("Recipient's bank name"),
-                        fieldWithPath("transactions[].recipient.bankAddress").description("Recipient's bank address"),
-                        fieldWithPath("transactions[].recipient.accountNumber").description("Recipient's account number")
+                        fieldWithPath("payment").description("Payment that should be send to the bank"),
+                        fieldWithPath("payment.id").description("Payment id"),
+                        fieldWithPath("payment.account").description("Sender account"),
+                        fieldWithPath("payment.account.id").description("Account id"),
+                        fieldWithPath("payment.account.bankId").description("Bank id of the account"),
+                        fieldWithPath("payment.account.number").description("Account number"),
+                        fieldWithPath("payment.account.currency").description("Account currency"),
+                        fieldWithPath("payment.transactions[]").description("The list of payment transactions"),
+                        fieldWithPath("payment.transactions[].currency").description("Transaction currency"),
+                        fieldWithPath("payment.transactions[].amount").description("Amount"),
+                        fieldWithPath("payment.transactions[].recipient").description("Recipient"),
+                        fieldWithPath("payment.transactions[].recipient.id").description("Recipient unique id (UUID)"),
+                        fieldWithPath("payment.transactions[].recipient.firstName").description("Recipient's first name"),
+                        fieldWithPath("payment.transactions[].recipient.lastName").description("Recipient's last name"),
+                        fieldWithPath("payment.transactions[].recipient.bankName").description("Recipient's bank name"),
+                        fieldWithPath("payment.transactions[].recipient.bankAddress").description("Recipient's bank address"),
+                        fieldWithPath("payment.transactions[].recipient.accountNumber").description("Recipient's account number")
                 )
         );
 
@@ -94,10 +93,13 @@ public class PaymentWorkflowApiTest {
         transaction.setRecipient(recipient);
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(transaction);
+        Payment payment = new Payment();
+        payment.setId(UUID.randomUUID());
+        payment.setAccount(account);
+        payment.setTransactions(transactions);
 
         PaymentTransfer paymentTransfer = new PaymentTransfer();
-        paymentTransfer.setAccount(account);
-        paymentTransfer.setTransactions(transactions);
+        paymentTransfer.setPayment(payment);
 
         given(this.documentationSpec)
             .filter(documentationFilter)
