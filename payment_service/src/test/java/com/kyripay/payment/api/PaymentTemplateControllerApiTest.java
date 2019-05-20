@@ -3,7 +3,7 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be *
  * reproduced, distributed, altered or used in any form, in whole or in part.   *
  *******************************************************************************/
-package com.kyripay.notification.api;
+package com.kyripay.payment.api;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
@@ -25,10 +25,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
 import static org.apache.http.HttpStatus.SC_OK;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -41,7 +46,7 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = DEFINED_PORT)
-public class PaymentControllerApiTest
+public class PaymentTemplateControllerApiTest
 {
 
   @Rule
@@ -62,11 +67,11 @@ public class PaymentControllerApiTest
   public void createSuccess() throws URISyntaxException, IOException
   {
     ExtractableResponse<Response> response = given(this.documentationSpec)
-        .filter(document("payment/{method-name}"))
+        .filter(document("payment-template/{method-name}"))
         .contentType(ContentType.JSON)
-        .body(readTestResource("/com/kyripay/notification/api/payment_details.json"))
+        .body(readTestResource("/com/kyripay/payment/api/payment_details.json"))
         .when()
-        .post("/api/v1/payments")
+        .post("/api/v1/paymenttemplates")
         .then()
         .assertThat().statusCode(SC_OK)
         .contentType(ContentType.JSON)
@@ -77,50 +82,102 @@ public class PaymentControllerApiTest
 
 
   @Test
+  public void createInvalid() throws IOException, URISyntaxException
+  {
+    Response response = given()
+        .contentType(ContentType.JSON)
+        .body(readTestResource("/com/kyripay/payment/api/payment_details_invalid.json"))
+        .when()
+        .post("/api/v1/paymenttemplates")
+        .then()
+        .assertThat().statusCode(SC_BAD_REQUEST)
+        .contentType(ContentType.JSON)
+        .extract()
+        .response();
+    CustomGlobalExceptionHandler.ErrorsInfo responseModel = response.as(CustomGlobalExceptionHandler.ErrorsInfo.class);
+
+    assertThat(responseModel.getStatus(), is(400));
+    assertThat(responseModel.getErrors().size(), is(12));
+  }
+
+
+  @Test
+  public void readAllSuccess()
+  {
+    ExtractableResponse<Response> extractableResponse = given(this.documentationSpec)
+        .filter(document("payment-template/{method-name}"))
+        .contentType(ContentType.JSON)
+        .when()
+        .get("/api/v1/paymenttemplates")
+        .then()
+        .assertThat().statusCode(SC_OK)
+        .contentType(ContentType.JSON)
+        .extract();
+    List response = extractableResponse.body().as(List.class);
+    assertNotNull(response);
+    assertTrue(response.size() > 0);
+  }
+
+
+  @Test
   public void readByIdSuccess()
   {
-    ExtractableResponse<Response> response = given(this.documentationSpec)
-        .filter(document("payment/{method-name}",
-            pathParameters(parameterWithName("id").description("Payment unique identifier"))))
+    given(this.documentationSpec)
+        .filter(document("payment-template/{method-name}",
+            pathParameters(parameterWithName("id").description("Payment template unique identifier"))))
         .contentType(ContentType.JSON)
         .when()
-        .get("/api/v1/payments/{id}", 1)
+        .get("/api/v1/paymenttemplates/{id}", 1)
         .then()
         .assertThat().statusCode(SC_OK)
-        .contentType(ContentType.JSON)
-        .extract();
-    assertNotNull(response.jsonPath().get("paymentDetails"));
-    assertNotNull(response.jsonPath().get("status"));
+        .contentType(ContentType.JSON);
   }
 
 
   @Test
-  public void getStatusSuccess()
-  {
-    ExtractableResponse<Response> response = given(this.documentationSpec)
-        .filter(document("payment/{method-name}",
-            pathParameters(parameterWithName("id").description("Payment unique identifier"))))
-        .contentType(ContentType.JSON)
-        .when()
-        .get("/api/v1/payments/{id}/status", 1)
-        .then()
-        .assertThat().statusCode(SC_OK)
-        .contentType(ContentType.JSON)
-        .extract();
-    assertNotNull(response.jsonPath().get("status"));
-  }
-
-
-  @Test
-  public void updateStatusSuccess() throws URISyntaxException, IOException
+  public void updateSuccess() throws URISyntaxException, IOException
   {
     given(this.documentationSpec)
-        .filter(document("payment/{method-name}",
-            pathParameters(parameterWithName("id").description("Payment unique identifier"))))
+        .filter(document("payment-template/{method-name}",
+            pathParameters(parameterWithName("id").description("Payment template unique identifier"))))
         .contentType(ContentType.JSON)
-        .body(readTestResource("/com/kyripay/notification/api/payment_status.json"))
+        .body(readTestResource("/com/kyripay/payment/api/payment_details.json"))
         .when()
-        .put("/api/v1/payments/{id}/status", 1)
+        .put("/api/v1/paymenttemplates/{id}", 1)
+        .then()
+        .assertThat().statusCode(SC_OK)
+        .contentType(ContentType.JSON);
+  }
+
+
+  @Test
+  public void updateInvalid() throws IOException, URISyntaxException
+  {
+    Response response = given()
+        .contentType(ContentType.JSON)
+        .body(readTestResource("/com/kyripay/payment/api/payment_details_invalid.json"))
+        .when()
+        .put("/api/v1/paymenttemplates/{id}", 1)
+        .then()
+        .assertThat().statusCode(SC_BAD_REQUEST)
+        .contentType(ContentType.JSON)
+        .extract()
+        .response();
+    CustomGlobalExceptionHandler.ErrorsInfo responseModel = response.as(CustomGlobalExceptionHandler.ErrorsInfo.class);
+
+    assertThat(responseModel.getStatus(), is(400));
+    assertThat(responseModel.getErrors().size(), is(12));
+  }
+
+  @Test
+  public void deleteSuccess()
+  {
+    given(this.documentationSpec)
+        .filter(document("payment-template/{method-name}",
+            pathParameters(parameterWithName("id").description("Payment template unique identifier"))))
+        .contentType(ContentType.JSON)
+        .when()
+        .delete("/api/v1/paymenttemplates/{id}", 1)
         .then()
         .assertThat().statusCode(SC_OK);
   }
@@ -128,7 +185,7 @@ public class PaymentControllerApiTest
 
   private String readTestResource(String relativePath) throws URISyntaxException, IOException
   {
-    URI uri = PaymentControllerApiTest.class.getResource(relativePath).toURI();
+    URI uri = PaymentTemplateControllerApiTest.class.getResource(relativePath).toURI();
     Path path = Paths.get(uri);
     String resourceStr = new String(Files.readAllBytes(path), StandardCharsets.UTF_8.name());
     return resourceStr;

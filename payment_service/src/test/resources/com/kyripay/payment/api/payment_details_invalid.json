@@ -1,0 +1,16 @@
+{
+  "userId": null,
+  "name": "",
+  "currency": null,
+  "amount": null,
+  "bankId": null,
+  "accountNumber": "",
+  "paymentFormat": "",
+  "recipientInfo": {
+    "firstName": "",
+    "lastName": null,
+    "bankName": "",
+    "bankAddress": null,
+    "accountNumber": ""
+  }
+}

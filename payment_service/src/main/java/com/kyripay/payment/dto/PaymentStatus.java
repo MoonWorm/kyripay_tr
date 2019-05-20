@@ -3,13 +3,25 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be *
  * reproduced, distributed, altered or used in any form, in whole or in part.   *
  *******************************************************************************/
-package com.kyripay.notification.api;
+package com.kyripay.payment.dto;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotNull;
+
 
 /**
- * Marker interface for some logical classes group within some package
- *
  * @author M-ATA
  */
-public interface ComponentsRoot
+@Data
+@NoArgsConstructor
+public class PaymentStatus
 {
+
+  @NotNull(message = "Payment status must be specified")
+  @ApiModelProperty(value = "Payment status", example = "COMPLETED")
+  private Status status;
+
 }

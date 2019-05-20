@@ -3,7 +3,7 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be *
  * reproduced, distributed, altered or used in any form, in whole or in part.   *
  *******************************************************************************/
-package com.kyripay.notification.config;
+package com.kyripay.payment.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +31,7 @@ public class SwaggerConfiguration
   {
     return new Docket(DocumentationType.SWAGGER_2)
         .select()
-        .apis(basePackage(com.kyripay.notification.api.ComponentsRoot.class.getPackageName()))
+        .apis(basePackage(com.kyripay.payment.api.ComponentsRoot.class.getPackageName()))
         .paths(regex("/api.*"))
         .build()
         .apiInfo(getApiInfo());

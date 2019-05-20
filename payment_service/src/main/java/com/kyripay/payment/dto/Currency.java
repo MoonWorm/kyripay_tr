@@ -3,24 +3,12 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be *
  * reproduced, distributed, altered or used in any form, in whole or in part.   *
  *******************************************************************************/
-package com.kyripay.notification.dto;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
+package com.kyripay.payment.dto;
 
 /**
  * @author M-ATA
  */
-@Data
-@AllArgsConstructor
-public class Payment
+public enum Currency
 {
-
-  private PaymentDetails paymentDetails;
-
-  @ApiModelProperty(value = "Payment status", example = "COMPLETED")
-  private Status status;
-
+  USD, EURO, BYN, RUR
 }

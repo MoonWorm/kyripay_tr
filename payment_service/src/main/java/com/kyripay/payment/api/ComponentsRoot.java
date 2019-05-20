@@ -3,12 +3,13 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be *
  * reproduced, distributed, altered or used in any form, in whole or in part.   *
  *******************************************************************************/
-package com.kyripay.notification.dto;
+package com.kyripay.payment.api;
 
 /**
+ * Marker interface for some logical classes group within some package
+ *
  * @author M-ATA
  */
-public enum Status
+public interface ComponentsRoot
 {
-  CREATED, PROCESSING, COMPLETED
 }

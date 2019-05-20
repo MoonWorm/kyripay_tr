@@ -3,11 +3,13 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be *
  * reproduced, distributed, altered or used in any form, in whole or in part.   *
  *******************************************************************************/
-package com.kyripay.notification.dto;
+package com.kyripay.payment.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
 
 
 /**
@@ -17,15 +19,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RecipientInfo
 {
+
+  @NotBlank(message = "First name must be specified")
   @ApiModelProperty(value = "Recipient first name", example = "Vasia")
   private String firstName;
+
+  @NotBlank(message = "Last name must be specified")
   @ApiModelProperty(value = "Recipient last name", example = "Pupkin")
   private String lastName;
+
+  @NotBlank(message = "Recipient bank name must be specified")
   @ApiModelProperty(value = "Recipient bank name", example = "Foo&Bar and Co Bank")
   private String bankName;
+
+  @NotBlank(message = "Recipient bank address must be specified")
   @ApiModelProperty(value = "Recipient bank address", example = "Italy, Milan, Main str., 1-2")
   private String bankAddress;
-  @ApiModelProperty(value = "Recipient first name", example = "1234567")
+
+  @NotBlank(message = "Recipient account number must be specified")
+  @ApiModelProperty(value = "Recipient account number", example = "1234567")
   private String accountNumber;
 
 
