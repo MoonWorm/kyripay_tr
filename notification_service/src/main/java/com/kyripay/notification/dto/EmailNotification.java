@@ -6,17 +6,23 @@
 package com.kyripay.notification.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.UUID;
+import javax.validation.constraints.NotBlank;
 
 
 /**
  * @author M-ATA
  */
-@Value
-public class NotificationRegistration
+@Data
+@NoArgsConstructor
+public class EmailNotification extends GenericNotification
 {
-  @ApiModelProperty(value = "Unique id that can be used to track notification message status", example = "12345")
-  private final UUID id;
+
+  @NotBlank(message = "Template id for an email title must not be blank")
+  @ApiModelProperty(value = "Template identifier that will be used for title composing. " +
+      "All passed parameters can be applied as a placeholders.", example = "payment_completed_title.twig")
+  private String titleTemplateId;
+
 }

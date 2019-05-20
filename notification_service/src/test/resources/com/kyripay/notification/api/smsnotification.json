@@ -1,0 +1,9 @@
+{
+  "userId": 123,
+  "sender": "CUSTOMER_SERVICE",
+  "bodyTemplateId": "payment_completed_body.twig",
+  "parameters": {
+     "firstName": "Vasia",
+     "lastName": "Pupkin"
+  }
+}

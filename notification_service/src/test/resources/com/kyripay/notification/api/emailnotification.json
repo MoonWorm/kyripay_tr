@@ -1,11 +1,10 @@
 {
-  "userId": "123",
+  "userId": 123,
   "sender": "CUSTOMER_SERVICE",
   "titleTemplateId": "payment_completed_title.twig",
   "bodyTemplateId": "payment_completed_body.twig",
   "parameters": {
      "firstName": "Vasia",
      "lastName": "Pupkin"
-  },
-  "type": "EMAIL"
+  }
 }

@@ -5,13 +5,16 @@
  *******************************************************************************/
 package com.kyripay.notification.api;
 
-import com.kyripay.notification.dto.Notification;
-import com.kyripay.notification.dto.NotificationRegistration;
+import com.kyripay.notification.dto.EmailNotification;
+import com.kyripay.notification.dto.SmsNotification;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 
 /**
@@ -23,11 +26,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class NotificationController
 {
 
-  @ApiOperation("Sends notification message of the selected type to a user")
-  @PostMapping("/api/v1/notifications")
-  NotificationRegistration create(@RequestBody Notification notification)
+  @ApiOperation("Sends an email to a user")
+  @PostMapping("/api/v1/emailnotifications")
+  void createEmailNotification(@Valid @RequestBody EmailNotification notification)
   {
-    return new NotificationRegistration(notification.getUserId() + "abc123");
+
+  }
+
+
+  @ApiOperation("Sends SMS text message to a user")
+  @PostMapping("/api/v1/smsnotifications")
+  void createSmsNotification(@Valid @RequestBody SmsNotification notification)
+  {
+
   }
 
 }

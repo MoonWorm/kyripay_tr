@@ -7,6 +7,7 @@ package com.kyripay.notification.api;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,8 +26,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static io.restassured.RestAssured.given;
+import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
 import static org.apache.http.HttpStatus.SC_OK;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
@@ -55,20 +58,67 @@ public class NotificationServiceApiTest
 
 
   @Test
-  public void createSuccess() throws IOException, URISyntaxException
+  public void createEmailNotificationSuccess() throws IOException, URISyntaxException
   {
-    String id = given(this.documentationSpec)
+    given(this.documentationSpec)
         .filter(document("{method-name}"))
         .contentType(ContentType.JSON)
-        .body(readTestResource("/com/kyripay/notification/api/notification.json"))
+        .body(readTestResource("/com/kyripay/notification/api/emailnotification.json"))
         .when()
-        .post("/api/v1/notifications")
+        .post("/api/v1/emailnotifications")
         .then()
-        .assertThat().statusCode(SC_OK)
+        .assertThat().statusCode(SC_OK);
+  }
+
+  @Test
+  public void createEmailNotificationInvalid() throws IOException, URISyntaxException
+  {
+    Response response = given(this.documentationSpec)
+        .contentType(ContentType.JSON)
+        .body(readTestResource("/com/kyripay/notification/api/emailnotification_invalid.json"))
+        .when()
+        .post("/api/v1/emailnotifications")
+        .then()
+        .assertThat().statusCode(SC_BAD_REQUEST)
         .contentType(ContentType.JSON)
         .extract()
-        .jsonPath().get("id");
-    assertNotNull(id);
+        .response();
+    CustomGlobalExceptionHandler.ErrorsInfo responseModel = response.as(CustomGlobalExceptionHandler.ErrorsInfo.class);
+
+    assertThat(responseModel.getStatus(), is(400));
+    assertThat(responseModel.getErrors().size(), is(4));
+  }
+
+  @Test
+  public void createSmsNotificationSuccess() throws IOException, URISyntaxException
+  {
+    given(this.documentationSpec)
+        .filter(document("{method-name}"))
+        .contentType(ContentType.JSON)
+        .body(readTestResource("/com/kyripay/notification/api/smsnotification.json"))
+        .when()
+        .post("/api/v1/smsnotifications")
+        .then()
+        .assertThat().statusCode(SC_OK);
+  }
+
+  @Test
+  public void createSmsNotificationInvalid() throws IOException, URISyntaxException
+  {
+    Response response = given(this.documentationSpec)
+        .contentType(ContentType.JSON)
+        .body(readTestResource("/com/kyripay/notification/api/smsnotification_invalid.json"))
+        .when()
+        .post("/api/v1/smsnotifications")
+        .then()
+        .assertThat().statusCode(SC_BAD_REQUEST)
+        .contentType(ContentType.JSON)
+        .extract()
+        .response();
+    CustomGlobalExceptionHandler.ErrorsInfo responseModel = response.as(CustomGlobalExceptionHandler.ErrorsInfo.class);
+
+    assertThat(responseModel.getStatus(), is(400));
+    assertThat(responseModel.getErrors().size(), is(3));
   }
 
   private String readTestResource(String relativePath) throws URISyntaxException, IOException

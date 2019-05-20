@@ -9,6 +9,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 
@@ -17,30 +20,23 @@ import java.util.Map;
  */
 @Data
 @NoArgsConstructor
-public class Notification
+abstract class GenericNotification
 {
+  @NotNull(message = "User id must be specified")
   @ApiModelProperty(value = "Unique user id of the recipient", example = "123")
-  private String userId;
+  private Long userId;
+
+  @NotNull(message = "User id must be specified")
   @ApiModelProperty(value = "System sender type of the notification that keep responsibility of the sending message. " +
       "Can be used for setting a proper system sender for a message, e.g. email or sender name.")
   private Sender sender;
-  @ApiModelProperty(value = "Template identifier that will be used for title composing. " +
-      "All passed parameters can be applied as a placeholders.", example = "payment_completed_title.twig")
-  private String titleTemplateId;
+
+  @NotBlank(message = "Template id for notification content must not be blank")
   @ApiModelProperty(value = "Template identifier that will be used for message body composing. " +
       "All passed parameters can be applied as a placeholders.", example = "payment_completed_body.twig")
   private String bodyTemplateId;
+
   @ApiModelProperty(value = "Map of key-value pairs that can be used in title and body templates as a placeholders")
   private Map<String, Object> parameters;
-  @ApiModelProperty(value = "Transportation channel type, e.g. EMAIL, SMS ...")
-  private Type type;
 
-  enum Sender {
-    CUSTOMER_SERVICE, TECHNICAL_SUPPORT
-  }
-
-  enum  Type
-  {
-    EMAIL, SMS
-  }
 }

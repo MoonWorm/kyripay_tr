@@ -5,18 +5,10 @@
  *******************************************************************************/
 package com.kyripay.notification.dto;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Value;
-
-import java.util.UUID;
-
-
 /**
  * @author M-ATA
  */
-@Value
-public class NotificationRegistration
+enum Sender
 {
-  @ApiModelProperty(value = "Unique id that can be used to track notification message status", example = "12345")
-  private final UUID id;
+  CUSTOMER_SERVICE, TECHNICAL_SUPPORT
 }
