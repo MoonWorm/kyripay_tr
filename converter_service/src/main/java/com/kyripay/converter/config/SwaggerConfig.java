@@ -22,8 +22,7 @@ public class SwaggerConfig
   {
     return new Docket(DocumentationType.SWAGGER_2)
         .select()
-        .apis(RequestHandlerSelectors.any())
-        .paths(regex("/v1.*"))
+        .apis(RequestHandlerSelectors.basePackage("com.kyripay.converter.api"))
         .build()
         .apiInfo(apiInfo());
   }

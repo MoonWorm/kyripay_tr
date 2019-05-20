@@ -43,13 +43,35 @@ public class ConverterTest
     @Test
     public void convertDocument(){
         String id = given(this.spec)
-                .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE)
-                .body("test data".getBytes())
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .body("{\n" +
+                    "  \"account\": {\n" +
+                    "    \"bankId\": \"Bank 1\",\n" +
+                    "    \"currency\": \"USD\",\n" +
+                    "    \"id\": \"123\",\n" +
+                    "    \"number\": \"ACC123\"\n" +
+                    "  },\n" +
+                    "  \"id\": \"payment 1\",\n" +
+                    "  \"transactions\": [\n" +
+                    "    {\n" +
+                    "      \"amount\": 999,\n" +
+                    "      \"currency\": \"USD\",\n" +
+                    "      \"recipient\": {\n" +
+                    "        \"accountNumber\": \"ACC321\",\n" +
+                    "        \"bankAddress\": \"some address\",\n" +
+                    "        \"bankName\": \"Bank 2\",\n" +
+                    "        \"firstName\": \"John\",\n" +
+                    "        \"id\": \"321\",\n" +
+                    "        \"lastName\": \"Doe\"\n" +
+                    "      }\n" +
+                    "    }\n" +
+                    "  ]\n" +
+                    "}")
                 .filter(document("convert", pathParameters(
                     parameterWithName("formatId").description("Target format id")
                 )))
                 .when()
-                .post("/v1/converters/{formatId}/documents", "FORMAT_1")
+                .post("/api/v1/converters/{formatId}/conversion-requests", "FORMAT_1")
                 .then()
                 .statusCode(HttpStatus.SC_OK)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -65,7 +87,7 @@ public class ConverterTest
         String body = given(this.spec)
             .filter(document("getFormats"))
             .when()
-            .get("/v1/converters")
+            .get("/api/v1/converters")
             .then()
             .statusCode(HttpStatus.SC_OK)
             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -82,7 +104,7 @@ public class ConverterTest
                 parameterWithName("id").description("Converted document id")
             )))
             .when()
-            .get("/v1/documents/{id}", "1")
+            .get("/api/v1/documents/{id}", "1")
             .then()
             .statusCode(HttpStatus.SC_OK)
             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
