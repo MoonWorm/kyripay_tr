@@ -73,7 +73,7 @@ public class NotificationServiceApiTest
   @Test
   public void createEmailNotificationInvalid() throws IOException, URISyntaxException
   {
-    Response response = given(this.documentationSpec)
+    Response response = given()
         .contentType(ContentType.JSON)
         .body(readTestResource("/com/kyripay/notification/api/emailnotification_invalid.json"))
         .when()
@@ -105,7 +105,7 @@ public class NotificationServiceApiTest
   @Test
   public void createSmsNotificationInvalid() throws IOException, URISyntaxException
   {
-    Response response = given(this.documentationSpec)
+    Response response = given()
         .contentType(ContentType.JSON)
         .body(readTestResource("/com/kyripay/notification/api/smsnotification_invalid.json"))
         .when()
