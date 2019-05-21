@@ -1,8 +1,10 @@
 {
   "userId": 123,
   "name": "Payment Template 1",
-  "currency": "USD",
-  "amount": 50,
+  "amount": {
+    "amount": 50,
+    "currency": "USD"
+  },
   "bankId": 123,
   "accountNumber": "12345AN",
   "paymentFormat": "ISO_123",

@@ -6,6 +6,8 @@
 package com.kyripay.payment.dto;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +19,8 @@ import javax.validation.constraints.NotBlank;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class RecipientInfo
 {
 
@@ -39,60 +43,5 @@ public class RecipientInfo
   @NotBlank(message = "Recipient account number must be specified")
   @ApiModelProperty(value = "Recipient account number", example = "1234567")
   private String accountNumber;
-
-
-  public static RecipientInfoBuilder recipientInfoBuilder()
-  {
-    return new RecipientInfoBuilder();
-  }
-
-
-  public static class RecipientInfoBuilder
-  {
-
-    private RecipientInfo instance = new RecipientInfo();
-
-
-    public RecipientInfoBuilder firstName(String firstName)
-    {
-      instance.setFirstName(firstName);
-      return this;
-    }
-
-
-    public RecipientInfoBuilder lastName(String lastName)
-    {
-      instance.setLastName(lastName);
-      return this;
-    }
-
-
-    public RecipientInfoBuilder bankName(String bankName)
-    {
-      instance.setBankName(bankName);
-      return this;
-    }
-
-
-    public RecipientInfoBuilder bankAddress(String bankAddress)
-    {
-      instance.setBankAddress(bankAddress);
-      return this;
-    }
-
-
-    public RecipientInfoBuilder accountNumber(String accountNumber)
-    {
-      instance.setAccountNumber(accountNumber);
-      return this;
-    }
-
-
-    public RecipientInfo build()
-    {
-      return instance;
-    }
-
-  }
 
 }

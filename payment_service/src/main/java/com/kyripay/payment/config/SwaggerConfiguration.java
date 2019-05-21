@@ -31,7 +31,7 @@ public class SwaggerConfiguration
   {
     return new Docket(DocumentationType.SWAGGER_2)
         .select()
-        .apis(basePackage(com.kyripay.payment.api.ComponentsRoot.class.getPackageName()))
+        .apis(basePackage("com.kyripay.payment.api"))
         .paths(regex("/api.*"))
         .build()
         .apiInfo(getApiInfo());

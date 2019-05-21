@@ -6,6 +6,7 @@
 package com.kyripay.payment.dto;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,12 +17,16 @@ import javax.validation.constraints.NotNull;
  * @author M-ATA
  */
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
-public class PaymentStatus
+public class Amount
 {
+  @NotNull(message = "Amount must be specified")
+  @ApiModelProperty(value = "Payment amount in selected currency", example = "50")
+  private Long amount;
 
-  @NotNull(message = "Payment status must be specified")
-  @ApiModelProperty(value = "Payment status", example = "COMPLETED")
-  private Status status;
+  @NotNull(message = "Currency must be specified")
+  @ApiModelProperty(value = "Payment currency", example = "USD")
+  private Currency currency;
 
 }

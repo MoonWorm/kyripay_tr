@@ -6,6 +6,8 @@
 package com.kyripay.payment.dto;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +21,8 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PaymentDetails
 {
 
@@ -30,13 +34,9 @@ public class PaymentDetails
   @ApiModelProperty(value = "Template name", example = "My payment for the apartment rental")
   private String name;
 
-  @NotNull(message = "Currency must be specified")
-  @ApiModelProperty(value = "Payment currency", example = "USD")
-  private Currency currency;
-
-  @NotNull(message = "Amount must be specified")
-  @ApiModelProperty(value = "Payment amount in selected currency", example = "50")
-  private Long amount;
+  @Valid
+  @NotNull(message = "Payment amount must be specified")
+  private Amount amount;
 
   @NotNull(message = "Customer bank must be specified")
   @ApiModelProperty(value = "Bank name that will be used for the payment", example = "General Bank Inc.")
@@ -53,81 +53,5 @@ public class PaymentDetails
   @Valid
   @NotNull(message = "Recipient info must be specified")
   private RecipientInfo recipientInfo;
-
-
-  public static PaymentTemplateBuilder paymentDetailsBuilder()
-  {
-    return new PaymentTemplateBuilder();
-  }
-
-
-  public static class PaymentTemplateBuilder
-  {
-
-    private PaymentDetails instance = new PaymentDetails();
-
-
-    public PaymentTemplateBuilder userId(Long userId)
-    {
-      instance.setUserId(userId);
-      return this;
-    }
-
-
-    public PaymentTemplateBuilder name(String name)
-    {
-      instance.setName(name);
-      return this;
-    }
-
-
-    public PaymentTemplateBuilder currency(Currency currency)
-    {
-      instance.setCurrency(currency);
-      return this;
-    }
-
-
-    public PaymentTemplateBuilder amount(Long amount)
-    {
-      instance.setAmount(amount);
-      return this;
-    }
-
-
-    public PaymentTemplateBuilder accountNumber(String accountNumber)
-    {
-      instance.setAccountNumber(accountNumber);
-      return this;
-    }
-
-
-    public PaymentTemplateBuilder bankId(Long bankId)
-    {
-      instance.setBankId(bankId);
-      return this;
-    }
-
-
-    public PaymentTemplateBuilder paymentFormat(String paymentFormat)
-    {
-      instance.setPaymentFormat(paymentFormat);
-      return this;
-    }
-
-
-    public PaymentTemplateBuilder recipientInfo(RecipientInfo recipientInfo)
-    {
-      instance.setRecipientInfo(recipientInfo);
-      return this;
-    }
-
-
-    public PaymentDetails build()
-    {
-      return instance;
-    }
-
-  }
 
 }

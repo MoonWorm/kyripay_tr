@@ -1,8 +1,10 @@
 {
   "userId": null,
   "name": "",
-  "currency": null,
-  "amount": null,
+  "amount": {
+    "amount": null,
+    "currency": null
+  },
   "bankId": null,
   "accountNumber": "",
   "paymentFormat": "",

@@ -5,9 +5,11 @@
  *******************************************************************************/
 package com.kyripay.payment.api;
 
+import com.kyripay.payment.dto.Amount;
 import com.kyripay.payment.dto.Currency;
 import com.kyripay.payment.dto.IdentifiablePaymentDetails;
 import com.kyripay.payment.dto.PaymentDetails;
+import com.kyripay.payment.dto.RecipientInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,9 +24,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.List;
-
-import static com.kyripay.payment.dto.PaymentDetails.paymentDetailsBuilder;
-import static com.kyripay.payment.dto.RecipientInfo.recipientInfoBuilder;
 
 
 /**
@@ -51,29 +50,27 @@ public class PaymentTemplateController extends GenericController
     return Arrays.asList(
         new IdentifiablePaymentDetails(
             1L,
-            paymentDetailsBuilder()
+            PaymentDetails.builder()
                 .userId(2L)
                 .name("Template 1")
-                .currency(Currency.BYN)
-                .amount(20L)
+                .amount(new Amount(20L, Currency.BYN))
                 .bankId(123L)
                 .accountNumber("12345")
                 .paymentFormat("ISO_123")
-                .recipientInfo(recipientInfoBuilder().firstName("Vasia").lastName("Pupkin").bankName("Bar Bank")
+                .recipientInfo(RecipientInfo.builder().firstName("Vasia").lastName("Pupkin").bankName("Bar Bank")
                     .bankAddress("Main Street 1-1").accountNumber("54321").build())
                 .build()
         ),
         new IdentifiablePaymentDetails(
             2L,
-            paymentDetailsBuilder()
+            PaymentDetails.builder()
                 .userId(3L)
                 .name("Template 2")
-                .currency(Currency.USD)
-                .amount(50L)
+                .amount(new Amount(50L, Currency.USD))
                 .bankId(321L)
                 .accountNumber("56789")
                 .paymentFormat("ISO_321")
-                .recipientInfo(recipientInfoBuilder().firstName("Ivan").lastName("Ivanov").bankName("Bar Bank 2")
+                .recipientInfo(RecipientInfo.builder().firstName("Ivan").lastName("Ivanov").bankName("Bar Bank 2")
                     .bankAddress("Secondary Street 1-1").accountNumber("56789").build())
                 .build()
         )
@@ -85,15 +82,14 @@ public class PaymentTemplateController extends GenericController
   @GetMapping("/paymenttemplates/{id}")
   PaymentDetails readById(@NotNull(message = "Payment template id must be specified") @PathVariable Long id)
   {
-    return paymentDetailsBuilder()
+    return PaymentDetails.builder()
         .userId(2L)
         .name("Template 1")
-        .currency(Currency.BYN)
-        .amount(20L)
+        .amount(new Amount(20L, Currency.BYN))
         .bankId(123L)
         .accountNumber("12345")
         .paymentFormat("ISO_123")
-        .recipientInfo(recipientInfoBuilder().firstName("Vasia").lastName("Pupkin").bankName("Bar Bank")
+        .recipientInfo(RecipientInfo.builder().firstName("Vasia").lastName("Pupkin").bankName("Bar Bank")
             .bankAddress("Main Street 1-1").accountNumber("54321").build())
         .build();
   }
@@ -101,7 +97,8 @@ public class PaymentTemplateController extends GenericController
 
   @ApiOperation("Updates passed payment template")
   @PutMapping("/paymenttemplates/{id}")
-  PaymentDetails update(@NotNull(message = "Payment template id must be specified") @PathVariable Long id, @RequestBody @Valid PaymentDetails paymentTemplate)
+  PaymentDetails update(@NotNull(message = "Payment template id must be specified") @PathVariable Long id,
+                        @RequestBody @Valid PaymentDetails paymentTemplate)
   {
     return paymentTemplate;
   }
