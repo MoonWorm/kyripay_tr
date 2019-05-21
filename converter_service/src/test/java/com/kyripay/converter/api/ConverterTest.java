@@ -14,6 +14,7 @@ import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -79,6 +80,43 @@ public class ConverterTest
                 .jsonPath().get("documentId");
 
         assertNotNull(id);
+    }
+
+    @Test
+    public void convertDocumentWithoutAccountId(){
+        String errorMessage = (String) given(this.spec)
+            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+            .body("{\n" +
+                "  \"account\": {\n" +
+                "    \"bankId\": \"Bank 1\",\n" +
+                "    \"currency\": \"USD\",\n" +
+                "    \"number\": \"ACC123\"\n" +
+                "  },\n" +
+                "  \"id\": \"payment 1\",\n" +
+                "  \"transactions\": [\n" +
+                "    {\n" +
+                "      \"amount\": 999,\n" +
+                "      \"currency\": \"USD\",\n" +
+                "      \"recipient\": {\n" +
+                "        \"accountNumber\": \"ACC321\",\n" +
+                "        \"bankAddress\": \"some address\",\n" +
+                "        \"bankName\": \"Bank 2\",\n" +
+                "        \"firstName\": \"John\",\n" +
+                "        \"id\": \"321\",\n" +
+                "        \"lastName\": \"Doe\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}")
+            .when()
+            .post("/api/v1/converters/{formatId}/conversion-requests", "FORMAT_1")
+            .then()
+            .statusCode(HttpStatus.SC_BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+            .extract()
+            .jsonPath().getList("errors.defaultMessage").get(0);
+
+        assertEquals("Account id can't be empty", errorMessage);
     }
 
 
