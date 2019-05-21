@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor;
-import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.restdocs.restassured3.RestDocumentationFilter;
 import org.springframework.test.context.junit4.SpringRunner;
 

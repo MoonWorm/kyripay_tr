@@ -17,11 +17,11 @@ import static com.kyripay.users.api.Dummies.*;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1")
 public class UsersApi
 {
     @ApiOperation("Get all users")
-    @GetMapping("/v1/users")
+    @GetMapping("/users")
     List<User> getUsers()
     {
         List<User> users = new ArrayList<>();
@@ -30,7 +30,7 @@ public class UsersApi
     }
 
     @ApiOperation("Get a user")
-    @GetMapping("/v1/users/{id}")
+    @GetMapping("/users/{id}")
     User getUser(@PathVariable String id) {
         User user = getDummyUser();
         user.setId(UUID.fromString(id));
@@ -38,7 +38,7 @@ public class UsersApi
     }
 
     @ApiOperation("Create a user")
-    @PostMapping("/v1/users")
+    @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     User createUser(@RequestBody User user) {
         user.setId(UUID.randomUUID());
@@ -46,24 +46,24 @@ public class UsersApi
     }
 
     @ApiOperation("Activate a user")
-    @PostMapping("/v1/users/{id}/activation")
+    @PostMapping("/users/{id}/activation")
     @ResponseStatus(HttpStatus.CREATED)
     void activateUser(@PathVariable String id) { }
 
     @ApiOperation("Deactivate a user")
-    @PostMapping("/v1/users/{id}/deactivation")
+    @PostMapping("/users/{id}/deactivation")
     @ResponseStatus(HttpStatus.CREATED)
     void deativateUser(@PathVariable String id) { }
 
     @ApiOperation("Update a user")
-    @PatchMapping("/v1/users/{id}")
+    @PatchMapping("/users/{id}")
     User updateUser(@PathVariable String id,
                     @RequestBody User user) {
         return getDummyUser();
     }
 
     @ApiOperation("Get accounts list for a user")
-    @GetMapping("/v1/users/{id}/accounts")
+    @GetMapping("/users/{id}/accounts")
     List<Account> getUserAccounts(@PathVariable String id) {
         List<Account> accounts = new ArrayList<>();
         accounts.add(getDummyAccount());
@@ -71,14 +71,14 @@ public class UsersApi
     }
 
     @ApiOperation("Get user's account")
-    @GetMapping("v1/users/{userId}/accounts/{accountId}")
+    @GetMapping("/users/{userId}/accounts/{accountId}")
     Optional<Account> getAccount(@PathVariable String userId,
                                  @PathVariable String accountId) {
         return Optional.of(getDummyAccount());
     }
 
     @ApiOperation("Create new account for a user")
-    @PostMapping("/v1/users/{userId}/accounts")
+    @PostMapping("/users/{userId}/accounts")
     @ResponseStatus(HttpStatus.CREATED)
     Account createAccount(@PathVariable String userId,
                           @RequestBody Account account) {
@@ -86,7 +86,7 @@ public class UsersApi
     }
 
     @ApiOperation("Update an account for the user")
-    @PutMapping("/v1/users/{userId}/accounts/{accountId}")
+    @PutMapping("/users/{userId}/accounts/{accountId}")
     Account updateAccount(@PathVariable String userId,
                           @PathVariable String accountId,
                           @RequestBody Account newAccount) {
@@ -94,12 +94,12 @@ public class UsersApi
     }
 
     @ApiOperation("Delete an account from user")
-    @DeleteMapping("v1/users/{userId}/accounts/{accountId}")
+    @DeleteMapping("/users/{userId}/accounts/{accountId}")
     void deleteAccount(@PathVariable String userId,
                        @PathVariable String accountId) { }
 
     @ApiOperation("Get all user's recipients")
-    @GetMapping("/v1/users/{id}/recipients")
+    @GetMapping("/users/{id}/recipients")
     List<Recipient> getUserRecipients(@PathVariable String id) {
         List<Recipient> recipients = new ArrayList<>();
         recipients.add(getDummyRecipient());
@@ -107,14 +107,14 @@ public class UsersApi
     }
 
     @ApiOperation("Get a recipient for a user")
-    @GetMapping("/v1/users/{userId}/recipients/{recipientId}")
+    @GetMapping("/users/{userId}/recipients/{recipientId}")
     Optional<Recipient> getUserRecipient(@PathVariable String userId,
                                          @PathVariable String recipientId) {
         return Optional.of(getDummyRecipient());
     }
 
     @ApiOperation("Create a recipient for a user")
-    @PostMapping("/v1/users/{id}/recipients")
+    @PostMapping("/users/{id}/recipients")
     @ResponseStatus(HttpStatus.CREATED)
     Recipient createUserRecipient(@PathVariable String id,
                                   @RequestBody Recipient recipient) {
@@ -122,7 +122,7 @@ public class UsersApi
     }
 
     @ApiOperation("Update a recipient")
-    @PutMapping("/v1/users/{userId}/recipients/{recipientId}")
+    @PutMapping("/users/{userId}/recipients/{recipientId}")
     Recipient updateRecipient(@PathVariable String userId,
                               @PathVariable String recipientId,
                               @RequestBody Recipient recipient) {
@@ -130,7 +130,7 @@ public class UsersApi
     }
 
     @ApiOperation("Delete a recipient for a user")
-    @DeleteMapping("/v1/users/{userId}/recipients/{recipientId}")
+    @DeleteMapping("/users/{userId}/recipients/{recipientId}")
     void deleteUserRecipient(@PathVariable String userId,
                              @PathVariable String recipientId) {    }
 }
