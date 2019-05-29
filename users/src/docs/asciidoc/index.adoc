@@ -1,0 +1,226 @@
+= Users service
+
+Api for users
+
+== Create a new user
+
+Accepts user's data
+
+.Request
+include::{snippets}/createUser/http-request.adoc[]
+
+.Request fields
+include::{snippets}/createUser/request-fields.adoc[]
+
+.Response
+include::{snippets}/createUser/http-response.adoc[]
+
+.Response fields
+include::{snippets}/createUser/response-fields.adoc[]
+
+== Get a list of all users
+
+.Request
+include::{snippets}/getUsers/http-request.adoc[]
+
+.Response
+include::{snippets}/getUsers/http-response.adoc[]
+
+== Get a user
+
+.Path parameters
+include::{snippets}/getUser/path-parameters.adoc[]
+
+.Request
+include::{snippets}/getUser/http-request.adoc[]
+
+.Response
+include::{snippets}/getUser/http-response.adoc[]
+
+.Response fields
+include::{snippets}/getUser/response-fields.adoc[]
+
+== Activate a user
+
+.Path parameters
+include::{snippets}/activateUser/path-parameters.adoc[]
+
+.Request
+include::{snippets}/activateUser/http-request.adoc[]
+
+.Response
+include::{snippets}/activateUser/http-response.adoc[]
+
+== Deactivate a user
+
+.Path parameters
+include::{snippets}/deactivateUser/path-parameters.adoc[]
+
+.Request
+include::{snippets}/deactivateUser/http-request.adoc[]
+
+.Response
+include::{snippets}/deactivateUser/http-response.adoc[]
+
+== Update a user
+
+.Path parameters
+include::{snippets}/updateUser/path-parameters.adoc[]
+
+.Request
+include::{snippets}/updateUser/http-request.adoc[]
+
+.Request fields
+include::{snippets}/updateUser/request-fields.adoc[]
+
+.Response
+include::{snippets}/updateUser/http-response.adoc[]
+
+.Response fields
+include::{snippets}/updateUser/response-fields.adoc[]
+
+== Create a user account
+
+.Path parameters
+include::{snippets}/createUserAccount/path-parameters.adoc[]
+
+.Request
+include::{snippets}/createUserAccount/http-request.adoc[]
+
+.Request fields
+include::{snippets}/createUserAccount/request-fields.adoc[]
+
+.Response
+include::{snippets}/createUserAccount/http-response.adoc[]
+
+.Response fields
+include::{snippets}/createUserAccount/response-fields.adoc[]
+
+== Get user account
+
+.Path parameters
+include::{snippets}/getUserAccount/path-parameters.adoc[]
+
+.Request
+include::{snippets}/getUserAccount/http-request.adoc[]
+
+.Response
+include::{snippets}/getUserAccount/http-response.adoc[]
+
+.Response fields
+include::{snippets}/getUserAccount/response-fields.adoc[]
+
+== Get all user accounts
+
+.Path parameters
+include::{snippets}/getUserAccounts/path-parameters.adoc[]
+
+.Request
+include::{snippets}/getUserAccounts/http-request.adoc[]
+
+.Response
+include::{snippets}/getUserAccounts/http-response.adoc[]
+
+.Response fields
+include::{snippets}/getUserAccounts/response-fields.adoc[]
+
+== Update a user account
+
+.Path parameters
+include::{snippets}/updateUserAccount/path-parameters.adoc[]
+
+.Request
+include::{snippets}/updateUserAccount/http-request.adoc[]
+
+.Request fields
+include::{snippets}/updateUserAccount/request-fields.adoc[]
+
+.Response
+include::{snippets}/updateUserAccount/http-response.adoc[]
+
+.Response fields
+include::{snippets}/updateUserAccount/response-fields.adoc[]
+
+== Delete a user account
+
+.Path parameters
+include::{snippets}/deleteUserAccount/path-parameters.adoc[]
+
+.Request
+include::{snippets}/deleteUserAccount/http-request.adoc[]
+
+.Response
+include::{snippets}/deleteUserAccount/http-response.adoc[]
+
+== Create a user recipient
+
+.Path parameters
+include::{snippets}/createUserRecipient/path-parameters.adoc[]
+
+.Request
+include::{snippets}/createUserRecipient/http-request.adoc[]
+
+.Request fields
+include::{snippets}/createUserRecipient/request-fields.adoc[]
+
+.Response
+include::{snippets}/createUserRecipient/http-response.adoc[]
+
+.Response fields
+include::{snippets}/createUserRecipient/response-fields.adoc[]
+
+== Get user recipient
+
+.Path parameters
+include::{snippets}/getUserRecipient/path-parameters.adoc[]
+
+.Request
+include::{snippets}/getUserRecipient/http-request.adoc[]
+
+.Response
+include::{snippets}/getUserRecipient/http-response.adoc[]
+
+.Response fields
+include::{snippets}/getUserRecipient/response-fields.adoc[]
+
+== Get all user recipients
+
+.Path parameters
+include::{snippets}/getUserRecipients/path-parameters.adoc[]
+
+.Request
+include::{snippets}/getUserRecipients/http-request.adoc[]
+
+.Response
+include::{snippets}/getUserRecipients/http-response.adoc[]
+
+.Response fields
+include::{snippets}/getUserRecipients/response-fields.adoc[]
+
+== Update a user recipient
+
+.Path parameters
+include::{snippets}/updateUserRecipient/path-parameters.adoc[]
+
+.Request
+include::{snippets}/updateUserRecipient/http-request.adoc[]
+
+.Request fields
+include::{snippets}/updateUserRecipient/request-fields.adoc[]
+
+.Response
+include::{snippets}/updateUserRecipient/http-response.adoc[]
+
+.Response fields
+include::{snippets}/updateUserRecipient/response-fields.adoc[]
+
+== Delete a user recipient
+
+.Path parameters
+include::{snippets}/deleteUserRecipient/path-parameters.adoc[]
+
+.Request
+include::{snippets}/deleteUserRecipient/http-request.adoc[]
+
+.Response
+include::{snippets}/deleteUserRecipient/http-response.adoc[]
