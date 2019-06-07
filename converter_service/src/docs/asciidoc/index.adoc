@@ -1,0 +1,37 @@
+= Converter service
+
+API for conversion of payments to the bank specific formats
+
+== Request document conversion
+
+Accepts the payment object and delegate it to the specific converter defined by formatId.
+
+.path parameters
+include::{snippets}/convert/path-parameters.adoc[]
+
+.request
+include::{snippets}/convert/http-request.adoc[]
+
+.response
+include::{snippets}/convert/http-response.adoc[]
+
+Converted document can be received via `/api/v1/documents/{id}` method
+
+== Get list of available target formats
+
+.request
+include::{snippets}/getFormats/http-request.adoc[]
+
+.response
+include::{snippets}/getFormats/http-response.adoc[]
+
+== Get converted document
+
+.path parameters
+include::{snippets}/getDocument/path-parameters.adoc[]
+
+.request
+include::{snippets}/getDocument/http-request.adoc[]
+
+.response
+include::{snippets}/getDocument/http-response.adoc[]
