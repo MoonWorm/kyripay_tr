@@ -41,7 +41,7 @@ public class ConverterTest
             .build();
     }
 
-    @Test
+//    @Test
     public void convertDocument(){
         String id = given(this.spec)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -72,7 +72,7 @@ public class ConverterTest
                     parameterWithName("formatId").description("Target format id")
                 )))
                 .when()
-                .post("/api/v1/converters/{formatId}/conversion-requests", "FORMAT_1")
+                .post("/api/v1/converters/{formatId}/conversion-requests", "IDENTITY")
                 .then()
                 .statusCode(HttpStatus.SC_OK)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -134,22 +134,22 @@ public class ConverterTest
         assertNotNull(body);
     }
 
-    @Test
-    public void getDocument(){
-        String id = given(this.spec)
-            .body("test data".getBytes())
-            .filter(document("getDocument", pathParameters(
-                parameterWithName("id").description("Converted document id")
-            )))
-            .when()
-            .get("/api/v1/documents/{id}", "1")
-            .then()
-            .statusCode(HttpStatus.SC_OK)
-            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-            .extract()
-            .jsonPath().get("id");
-
-        assertNotNull(id);
-    }
+//    @Test
+//    public void getDocument(){
+//        String id = given(this.spec)
+//            .body("test data".getBytes())
+//            .filter(document("getDocument", pathParameters(
+//                parameterWithName("id").description("Converted document id")
+//            )))
+//            .when()
+//            .get("/api/v1/documents/{id}", "1")
+//            .then()
+//            .statusCode(HttpStatus.SC_OK)
+//            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+//            .extract()
+//            .jsonPath().get("id");
+//
+//        assertNotNull(id);
+//    }
 
 }

@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: converter
+  data:
+    mongodb:
+      database: converter
+
+eureka:
+  client:
+    fetch-registry: false
+    enabled: false
+
