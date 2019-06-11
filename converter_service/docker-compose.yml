@@ -3,6 +3,7 @@ services:
   converter:
     build:
       context: .
+    container_name: converter
   mongodb:
     image: mongo:3.6
     container_name: converter-mongodb

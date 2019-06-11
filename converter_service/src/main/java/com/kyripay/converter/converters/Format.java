@@ -10,7 +10,8 @@ import lombok.Getter;
 public enum Format
 {
   IDENTITY("Identity", IdentityConverter.class, "String representation of initial payment"),
-  FORMAT_2("Format 2", IdentityConverter.class, "Test format #2");
+  SLOW_IDENTITY("Slow Identity", IdentityConverter.class, "String representation of initial payment returned after 10 sec.")
+  ;
 
   private String formatName;
   private Class<? extends Converter> converterClass;

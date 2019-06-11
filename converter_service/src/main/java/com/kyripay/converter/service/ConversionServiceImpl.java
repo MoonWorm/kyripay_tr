@@ -6,6 +6,7 @@ import com.kyripay.converter.domain.PaymentDocument;
 import com.kyripay.converter.dto.Document;
 import com.kyripay.converter.dto.DocumentStatus;
 import com.kyripay.converter.dto.Payment;
+import com.kyripay.converter.exceptions.WrongFormatException;
 import com.kyripay.converter.repository.DocumentRepostiory;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +37,8 @@ public class ConversionServiceImpl implements ConversionService
 
     try {
       callConverter(format.getConverterClass().getDeclaredConstructor().newInstance(), payment, document);
-    } catch (ReflectiveOperationException e){ // FIXME: Use better exception handling
-      throw new RuntimeException(e);
+    } catch (ReflectiveOperationException e){
+      throw new WrongFormatException(String.format("Unable to get converter for the %s format", format.getFormatName()), e);
     }
 
     return id;

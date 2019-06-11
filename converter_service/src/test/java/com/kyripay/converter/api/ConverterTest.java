@@ -1,5 +1,9 @@
 package com.kyripay.converter.api;
 
+import com.kyripay.converter.converters.Format;
+import com.kyripay.converter.domain.PaymentDocument;
+import com.kyripay.converter.dto.DocumentStatus;
+import com.kyripay.converter.repository.DocumentRepostiory;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpStatus;
@@ -9,13 +13,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Base64;
+import java.util.Optional;
+
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
@@ -41,7 +50,10 @@ public class ConverterTest
             .build();
     }
 
-//    @Test
+    @MockBean
+    private DocumentRepostiory mockedDocumentRepository;
+
+    @Test
     public void convertDocument(){
         String id = given(this.spec)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -74,7 +86,7 @@ public class ConverterTest
                 .when()
                 .post("/api/v1/converters/{formatId}/conversion-requests", "IDENTITY")
                 .then()
-                .statusCode(HttpStatus.SC_OK)
+                .statusCode(HttpStatus.SC_ACCEPTED)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .extract()
                 .jsonPath().get("documentId");
@@ -134,22 +146,26 @@ public class ConverterTest
         assertNotNull(body);
     }
 
-//    @Test
-//    public void getDocument(){
-//        String id = given(this.spec)
-//            .body("test data".getBytes())
-//            .filter(document("getDocument", pathParameters(
-//                parameterWithName("id").description("Converted document id")
-//            )))
-//            .when()
-//            .get("/api/v1/documents/{id}", "1")
-//            .then()
-//            .statusCode(HttpStatus.SC_OK)
-//            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-//            .extract()
-//            .jsonPath().get("id");
-//
-//        assertNotNull(id);
-//    }
+    @Test
+    public void getDocument(){
+        when(mockedDocumentRepository.findById("1")).thenReturn(
+            Optional.of(new PaymentDocument("1", Format.IDENTITY, DocumentStatus.READY ,"test".getBytes()))
+        );
+
+        String data = given(this.spec)
+            .body("test data".getBytes())
+            .filter(document("getDocument", pathParameters(
+                parameterWithName("id").description("Converted document id")
+            )))
+            .when()
+            .get("/api/v1/documents/{id}", "1")
+            .then()
+            .statusCode(HttpStatus.SC_OK)
+            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+            .extract()
+            .jsonPath().get("data");
+
+        assertEquals(new String(Base64.getDecoder().decode(data)), "test");
+    }
 
 }
