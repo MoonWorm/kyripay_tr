@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.*;
 public class PaymentWorkflowApi {
     @ApiOperation("Transfer payment to a bank")
     @PostMapping("/payment-transfers")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     void transferPayment(@RequestBody PaymentTransfer paymentTransfer) { }
 }

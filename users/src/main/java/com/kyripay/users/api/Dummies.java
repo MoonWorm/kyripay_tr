@@ -41,6 +41,7 @@ class Dummies {
         recipient.setAccountNumber("12345");
         recipient.setBankAddress("kiev");
         recipient.setBankName("prior bank");
+        recipient.setBankUrn("0000/00222/0XXXX");
         recipient.setFirstName("Mikalai");
         recipient.setLastName("Ivanov");
         return recipient;

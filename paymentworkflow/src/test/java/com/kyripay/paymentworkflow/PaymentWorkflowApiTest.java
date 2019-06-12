@@ -8,6 +8,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor;
 import org.springframework.restdocs.restassured3.RestDocumentationFilter;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static javax.servlet.http.HttpServletResponse.SC_CREATED;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -29,8 +31,11 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PaymentWorkflowApiTest {
+
+    @LocalServerPort
+    int port;
 
     @Rule
     public final JUnitRestDocumentation junitRestDocumentation = new JUnitRestDocumentation();
@@ -71,6 +76,7 @@ public class PaymentWorkflowApiTest {
                         fieldWithPath("payment.transactions[].recipient.lastName").description("Recipient's last name"),
                         fieldWithPath("payment.transactions[].recipient.bankName").description("Recipient's bank name"),
                         fieldWithPath("payment.transactions[].recipient.bankAddress").description("Recipient's bank address"),
+                        fieldWithPath("payment.transactions[].recipient.bankUrn").description("Recipient's bank URN"),
                         fieldWithPath("payment.transactions[].recipient.accountNumber").description("Recipient's account number")
                 )
         );
@@ -86,6 +92,7 @@ public class PaymentWorkflowApiTest {
         recipient.setBankName("prior");
         recipient.setBankAddress("minsk");
         recipient.setFirstName("fn");
+        recipient.setBankUrn("0000/00222/0XXXX");
         recipient.setLastName("ln");
         Transaction transaction = new Transaction();
         transaction.setAmount(10f);
@@ -102,12 +109,13 @@ public class PaymentWorkflowApiTest {
         paymentTransfer.setPayment(payment);
 
         given(this.documentationSpec)
+            .port(port)
             .filter(documentationFilter)
             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
             .body(paymentTransfer)
         .when()
             .post("/api/v1/payment-transfers")
         .then()
-            .statusCode(SC_CREATED);
+            .statusCode(SC_OK);
     }
 }

@@ -11,6 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor;
@@ -27,12 +28,17 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UsersApiTest
 {
+    @LocalServerPort
+    int port;
+
     @Rule
     public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
@@ -80,6 +86,7 @@ public class UsersApiTest
         );
 
         User user = given(this.documentationSpec)
+                .port(port)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .body(userSample())
             .filter(document)
@@ -117,6 +124,7 @@ public class UsersApiTest
                         fieldWithPath("recipients[].lastName").description("Recipient LastName"),
                         fieldWithPath("recipients[].bankName").description("Recipient bankName"),
                         fieldWithPath("recipients[].bankAddress").description("Recipient bankAddress"),
+                        fieldWithPath("recipients[].bankUrn").description("Recipient bank URN"),
                         fieldWithPath("recipients[].accountNumber").description("Recipient accountNumber"),
                         fieldWithPath("accounts[]").description("The list of accounts associated with the user"),
                         fieldWithPath("accounts[].id").description("Account id"),
@@ -127,6 +135,7 @@ public class UsersApiTest
         );
 
         User user = given(this.documentationSpec)
+                        .port(port)
                         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                         .filter(document)
                 .when()
@@ -146,6 +155,7 @@ public class UsersApiTest
         RestDocumentationFilter document = document("getUsers", requestPreprocessor);
 
         User[] users = given(this.documentationSpec)
+                    .port(port)
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .filter(document)
                 .when()
@@ -168,11 +178,12 @@ public class UsersApiTest
                 );
 
          given(this.documentationSpec)
+            .port(port)
             .filter(document)
         .when()
             .post("/api/v1/users/{id}/activation", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
         .then()
-            .statusCode(HttpStatus.SC_CREATED);
+            .statusCode(HttpStatus.SC_OK);
     }
 
     @Test
@@ -182,11 +193,12 @@ public class UsersApiTest
         );
 
         given(this.documentationSpec)
+            .port(port)
             .filter(document)
         .when()
             .post("/api/v1/users/{id}/deactivation", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
         .then()
-            .statusCode(HttpStatus.SC_CREATED);
+            .statusCode(HttpStatus.SC_OK);
     }
 
     @Test
@@ -195,10 +207,14 @@ public class UsersApiTest
                 pathParameters(parameterWithName("id").description("User id"))
         );
 
+        Map<String, String> userUpdate = new HashMap<>();
+        userUpdate.put("email", "kyriba@gmail.com");
+
         User user = given(this.documentationSpec)
+                .port(port)
                 .filter(document)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .body(userSample())
+                .body(userUpdate)
             .when()
                 .patch("/api/v1/users/{id}", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
             .then()
@@ -230,6 +246,7 @@ public class UsersApiTest
         );
 
         Account account = given(this.documentationSpec)
+                    .port(port)
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .body(accountSample())
                     .filter(document)
@@ -259,6 +276,7 @@ public class UsersApiTest
         );
 
         Account[] accounts = given(this.documentationSpec)
+                    .port(port)
                     .filter(document)
                 .when()
                 .get("/api/v1/users/{id}/accounts", "8822e1f8-8053-40ee-8b73-bc7e6785a371")
@@ -289,6 +307,7 @@ public class UsersApiTest
         );
 
         Account accounts = given(this.documentationSpec)
+                    .port(port)
                     .filter(document)
                 .when()
                     .get("/api/v1/users/{userId}/accounts/{accountId}",
@@ -331,6 +350,7 @@ public class UsersApiTest
         updatedAccount.setNumber("123");
 
         Account account = given(this.documentationSpec)
+                    .port(port)
                     .filter(document)
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .body(updatedAccount)
@@ -357,6 +377,7 @@ public class UsersApiTest
                 ));
 
         given(this.documentationSpec)
+            .port(port)
             .filter(documentationFilter)
         .when()
             .delete("/api/v1/users/{userId}/accounts/{accountId}",
@@ -377,6 +398,7 @@ public class UsersApiTest
                         fieldWithPath("lastName").description("Last name"),
                         fieldWithPath("bankName").description("Bank name"),
                         fieldWithPath("bankAddress").description("Address of the bank"),
+                        fieldWithPath("bankUrn").description("URN of the bank"),
                         fieldWithPath("accountNumber").description("Account number")
                 ),
                 responseFields(
@@ -385,11 +407,13 @@ public class UsersApiTest
                         fieldWithPath("lastName").description("Last name"),
                         fieldWithPath("bankName").description("Bank name"),
                         fieldWithPath("bankAddress").description("Address of the bank"),
+                        fieldWithPath("bankUrn").description("URN of the bank"),
                         fieldWithPath("accountNumber").description("Account number")
                 )
         );
 
         Recipient recipient = given(this.documentationSpec)
+                    .port(port)
                     .filter(documentationFilter)
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -418,10 +442,12 @@ public class UsersApiTest
                         fieldWithPath("lastName").description("Last name"),
                         fieldWithPath("bankName").description("Bank name"),
                         fieldWithPath("bankAddress").description("Address of the bank"),
+                        fieldWithPath("bankUrn").description("URN of the bank"),
                         fieldWithPath("accountNumber").description("Account number")
                 ));
 
         Recipient recipient = given(this.documentationSpec)
+                    .port(port)
                     .filter(documentationFilter)
                     .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .when()
@@ -449,10 +475,12 @@ public class UsersApiTest
                         fieldWithPath("[].lastName").description("Last name"),
                         fieldWithPath("[].bankName").description("Bank name"),
                         fieldWithPath("[].bankAddress").description("Address of the bank"),
+                        fieldWithPath("[].bankUrn").description("URN of the bank"),
                         fieldWithPath("[].accountNumber").description("Account number")
                 ));
 
         Recipient[] recipients = given(this.documentationSpec)
+                    .port(port)
                     .filter(documentationFilter)
                     .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .when()
@@ -480,6 +508,7 @@ public class UsersApiTest
                         fieldWithPath("lastName").description("Last name"),
                         fieldWithPath("bankName").description("Bank name"),
                         fieldWithPath("bankAddress").description("Address of the bank"),
+                        fieldWithPath("bankUrn").description("URN of the bank"),
                         fieldWithPath("accountNumber").description("Account number")
                 ),
                 responseFields(
@@ -488,6 +517,7 @@ public class UsersApiTest
                         fieldWithPath("lastName").description("Last name"),
                         fieldWithPath("bankName").description("Bank name"),
                         fieldWithPath("bankAddress").description("Address of the bank"),
+                        fieldWithPath("bankUrn").description("URN of the bank"),
                         fieldWithPath("accountNumber").description("Account number")
                 ));
         Recipient newRecipient = new Recipient();
@@ -499,6 +529,7 @@ public class UsersApiTest
         newRecipient.setLastName("Ivanov");
 
         Recipient recipient = given(this.documentationSpec)
+                    .port(port)
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .filter(documentationFilter)
@@ -525,6 +556,7 @@ public class UsersApiTest
                 ));
 
         given(this.documentationSpec)
+                .port(port)
                 .filter(documentationFilter)
                 .when()
                 .delete("/api/v1/users/{userId}/accounts/{recipientId}",
@@ -553,6 +585,7 @@ public class UsersApiTest
                 "                \"lastName\": \"Ivanov\",\n" +
                 "                \"bankName\": \"prior bank\",\n" +
                 "                \"bankAddress\": \"kiev\",\n" +
+                "                \"bankUrn\": \"0000/00222/0XXXX\",\n" +
                 "                \"accountNumber\": \"12345\"\n" +
                 "            }";
     }

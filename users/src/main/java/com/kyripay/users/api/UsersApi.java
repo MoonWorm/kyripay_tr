@@ -8,10 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.kyripay.users.api.Dummies.*;
 
@@ -47,20 +44,20 @@ public class UsersApi
 
     @ApiOperation("Activate a user")
     @PostMapping("/users/{id}/activation")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     void activateUser(@PathVariable String id) { }
 
     @ApiOperation("Deactivate a user")
     @PostMapping("/users/{id}/deactivation")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     void deativateUser(@PathVariable String id) { }
 
     @ApiOperation("Update a user")
     @PatchMapping("/users/{id}")
     User updateUser(@PathVariable String id,
-                    @RequestBody User user) {
+                    @RequestBody Map update) {
         return getDummyUser();
-    }
+    }/**/
 
     @ApiOperation("Get accounts list for a user")
     @GetMapping("/users/{id}/accounts")
