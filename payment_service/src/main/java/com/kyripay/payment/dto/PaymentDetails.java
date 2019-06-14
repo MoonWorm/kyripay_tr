@@ -22,17 +22,9 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class PaymentDetails
 {
-
-  @NotNull(message = "User id must be specified")
-  @ApiModelProperty(value = "Related user id", example = "5")
-  private Long userId;
-
-  @NotBlank(message = "Template name must be specified")
-  @ApiModelProperty(value = "Template name", example = "My payment for the apartment rental")
-  private String name;
 
   @Valid
   @NotNull(message = "Payment amount must be specified")

@@ -22,6 +22,7 @@
 		<spring-cloud.version>Greenwich.SR1</spring-cloud.version>
 		<asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
 		<jooq.version>3.11.11</jooq.version>
+		<postgresql.driver.version>42.2.5</postgresql.driver.version>
 	</properties>
 
 	<dependencies>
@@ -39,7 +40,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jdbc</artifactId>
+			<artifactId>spring-boot-starter-jooq</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -49,12 +50,6 @@
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.2.5</version>
-			<scope>runtime</scope>
 		</dependency>
 
 
@@ -81,9 +76,20 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq</artifactId>
+			<version>${jooq.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq-meta</artifactId>
+			<version>${jooq.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq-codegen</artifactId>
 			<version>${jooq.version}</version>
 		</dependency>
 
@@ -106,7 +112,6 @@
 			<version>${rest-assured.version}</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 
 	<dependencyManagement>
@@ -131,8 +136,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>9</source>
-					<target>9</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -184,7 +189,127 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>migrate</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<configuration>
+					<driver>${jdbc.driver}</driver>
+					<url>${jdbc.url}</url>
+					<user>${jdbc.user}</user>
+					<password>${jdbc.password}</password>
+					<schemas>${schema.name}</schemas>
+					<outOfOrder>true</outOfOrder>
+					<ignoreMissingMigrations>true</ignoreMissingMigrations>
+					<locations>
+						<location>${flyway.locations}</location>
+					</locations>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jooq</groupId>
+				<artifactId>jooq-codegen-maven</artifactId>
+				<version>${jooq.version}</version>
+				<executions>
+					<execution>
+						<id>jooq-codegen</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<configuration>
+					<jdbc>
+						<driver>${jdbc.driver}</driver>
+						<url>${jdbc.url}</url>
+						<user>${jdbc.user}</user>
+						<password>${jdbc.password}</password>
+					</jdbc>
+					<generator>
+						<database>
+							<name>${jooq.database}</name>
+							<includes>.*</includes>
+							<excludes></excludes>
+							<inputSchema>${schema.name}</inputSchema>
+						</database>
+						<target>
+							<packageName>com.kyripay.payment.dao.impl.jooq.meta</packageName>
+							<directory>target/generated-sources/jooq</directory>
+						</target>
+					</generator>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<jdbc.url>jdbc:postgresql://localhost:5432/payments_ms</jdbc.url>
+				<jdbc.user>payments_ms_user</jdbc.user>
+				<jdbc.password>12345</jdbc.password>
+				<jdbc.driver>org.postgresql.Driver</jdbc.driver>
+				<jooq.database>org.jooq.meta.postgres.PostgresDatabase</jooq.database>
+				<flyway.locations>filesystem:src/main/resources/db/migration/init,filesystem:src/main/resources/db/migration/tables,filesystem:src/main/resources/db/migration/data</flyway.locations>
+				<schema.name>PAYMENTS</schema.name>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.postgresql</groupId>
+					<artifactId>postgresql</artifactId>
+					<version>${postgresql.driver.version}</version>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<excludes>
+								<exclude>../api/*.java</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>integration</id>
+			<properties>
+				<jdbc.url>jdbc:h2:~/payments_ms;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE</jdbc.url>
+				<jdbc.user>sa</jdbc.user>
+				<jdbc.password></jdbc.password>
+				<jdbc.driver>org.h2.Driver</jdbc.driver>
+				<jooq.database>org.jooq.meta.h2.H2Database</jooq.database>
+				<flyway.locations>filesystem:src/main/resources/db/migration/tables,filesystem:src/main/resources/db/migration/data</flyway.locations>
+				<schema.name>PUBLIC</schema.name>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>com.h2database</groupId>
+					<artifactId>h2</artifactId>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+
+	</profiles>
 
 </project>

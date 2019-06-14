@@ -1,0 +1,19 @@
+{
+  "name": "Payment Template 1",
+  "paymentDetails": {
+    "amount": {
+      "amount": 50,
+      "currency": "USD"
+    },
+    "bankId": 123,
+    "accountNumber": "12345AN",
+    "paymentFormat": "ISO_123",
+    "recipientInfo": {
+      "firstName": "Vasia",
+      "lastName": "Pupkin",
+      "bankName": "Cool Bank and Partners",
+      "bankAddress": "Paris, Main str., 1-2",
+      "accountNumber": "54321TTU"
+    }
+  }
+}

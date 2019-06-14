@@ -54,8 +54,6 @@ public class PaymentController extends GenericController
   {
     return new Payment(
         PaymentDetails.builder()
-            .userId(2L)
-            .name("Template 1")
             .amount(new Amount(50L, Currency.BYN))
             .bankId(123L)
             .accountNumber("12345")

@@ -23,7 +23,7 @@ import static springfox.documentation.builders.RequestHandlerSelectors.basePacka
  */
 @Configuration
 @EnableSwagger2
-public class SwaggerConfiguration
+public class SwaggerConfig
 {
 
   @Bean

@@ -5,24 +5,14 @@
  *******************************************************************************/
 package com.kyripay.payment.api;
 
-import com.kyripay.payment.dto.Amount;
-import com.kyripay.payment.dto.Currency;
-import com.kyripay.payment.dto.IdentifiablePaymentDetails;
-import com.kyripay.payment.dto.PaymentDetails;
-import com.kyripay.payment.dto.RecipientInfo;
+import com.kyripay.payment.dto.PaymentTemplateRequest;
+import com.kyripay.payment.dto.PaymentTemplateResponse;
+import com.kyripay.payment.service.PaymentTemplateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -31,84 +21,54 @@ import java.util.List;
  */
 @RestController
 @Api(value = "Payment Template Endpoint", description = "Set of API methods that allows to manage payment templates: " +
-    "create, read, update and perform a deletion.")
-public class PaymentTemplateController extends GenericController
-{
+        "create, read, update and perform a deletion.")
+public class PaymentTemplateController extends GenericController {
 
-  @ApiOperation("Creates a passed payment template")
-  @PostMapping("/paymenttemplates")
-  IdentifiablePaymentDetails create(@Valid @RequestBody PaymentDetails paymentTemplate)
-  {
-    return new IdentifiablePaymentDetails(1L, paymentTemplate);
-  }
+    private PaymentTemplateService paymentTemplateService;
 
+    public PaymentTemplateController(PaymentTemplateService paymentTemplateService) {
+        this.paymentTemplateService = paymentTemplateService;
+    }
 
-  @ApiOperation("Reads all the existing payment templates")
-  @GetMapping("/paymenttemplates")
-  List<IdentifiablePaymentDetails> readAll()
-  {
-    return Arrays.asList(
-        new IdentifiablePaymentDetails(
-            1L,
-            PaymentDetails.builder()
-                .userId(2L)
-                .name("Template 1")
-                .amount(new Amount(20L, Currency.BYN))
-                .bankId(123L)
-                .accountNumber("12345")
-                .paymentFormat("ISO_123")
-                .recipientInfo(RecipientInfo.builder().firstName("Vasia").lastName("Pupkin").bankName("Bar Bank")
-                    .bankAddress("Main Street 1-1").accountNumber("54321").build())
-                .build()
-        ),
-        new IdentifiablePaymentDetails(
-            2L,
-            PaymentDetails.builder()
-                .userId(3L)
-                .name("Template 2")
-                .amount(new Amount(50L, Currency.USD))
-                .bankId(321L)
-                .accountNumber("56789")
-                .paymentFormat("ISO_321")
-                .recipientInfo(RecipientInfo.builder().firstName("Ivan").lastName("Ivanov").bankName("Bar Bank 2")
-                    .bankAddress("Secondary Street 1-1").accountNumber("56789").build())
-                .build()
-        )
-    );
-  }
+    @ApiOperation("Creates a passed payment template")
+    @PostMapping("/paymenttemplates")
+    PaymentTemplateResponse create(@RequestHeader long userId,
+                                   @Valid @RequestBody PaymentTemplateRequest paymentTemplate) {
+        return paymentTemplateService.create(userId, paymentTemplate);
+    }
 
 
-  @ApiOperation("Reads an existing payment template by id")
-  @GetMapping("/paymenttemplates/{id}")
-  PaymentDetails readById(@NotNull(message = "Payment template id must be specified") @PathVariable Long id)
-  {
-    return PaymentDetails.builder()
-        .userId(2L)
-        .name("Template 1")
-        .amount(new Amount(20L, Currency.BYN))
-        .bankId(123L)
-        .accountNumber("12345")
-        .paymentFormat("ISO_123")
-        .recipientInfo(RecipientInfo.builder().firstName("Vasia").lastName("Pupkin").bankName("Bar Bank")
-            .bankAddress("Main Street 1-1").accountNumber("54321").build())
-        .build();
-  }
+    @ApiOperation("Reads all the existing payment templates")
+    @GetMapping("/paymenttemplates")
+    List<PaymentTemplateResponse> readAll(@RequestHeader long userId,
+                                          @RequestParam int limit,
+                                          @RequestParam int offset) {
+        return paymentTemplateService.readAll(userId, limit, offset);
+    }
 
 
-  @ApiOperation("Updates passed payment template")
-  @PutMapping("/paymenttemplates/{id}")
-  PaymentDetails update(@NotNull(message = "Payment template id must be specified") @PathVariable Long id,
-                        @RequestBody @Valid PaymentDetails paymentTemplate)
-  {
-    return paymentTemplate;
-  }
+    @ApiOperation("Reads an existing payment template by id")
+    @GetMapping("/paymenttemplates/{paymentTemplateId}")
+    PaymentTemplateResponse readById(@RequestHeader long userId,
+                                     @PathVariable long paymentTemplateId) {
+        return paymentTemplateService.readById(userId, paymentTemplateId);
+    }
 
 
-  @ApiOperation("Deletes payment template by its unique identifier")
-  @DeleteMapping("/paymenttemplates/{id}")
-  void delete(@NotNull(message = "Payment template id must be specified") @PathVariable Long id)
-  {
+    @ApiOperation("Updates passed payment template")
+    @PutMapping("/paymenttemplates/{paymentTemplateId}")
+    PaymentTemplateResponse update(@RequestHeader long userId,
+                                   @PathVariable long paymentTemplateId,
+                                   @RequestBody @Valid PaymentTemplateRequest paymentTemplate) {
+        return paymentTemplateService.update(userId, paymentTemplateId, paymentTemplate);
+    }
 
-  }
+
+    @ApiOperation("Deletes payment template by its unique identifier")
+    @DeleteMapping("/paymenttemplates/{paymentTemplateId}")
+    void delete(@RequestHeader long userId,
+                @PathVariable long paymentTemplateId) {
+        paymentTemplateService.delete(userId, paymentTemplateId);
+    }
 
 }
