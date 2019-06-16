@@ -73,12 +73,7 @@ public class ConverterController
   )
   Document getDocument(@NotBlank(message = "Document id must be provided") @PathVariable String id)
   {
-    Optional<Document> document = conversionService.getDocument(id);
-    if (document.isPresent()){
-      return document.get();
-    } else {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Document not fount");
-    }
+    return conversionService.getDocument(id);
   }
 
 

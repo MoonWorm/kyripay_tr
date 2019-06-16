@@ -6,6 +6,7 @@ import com.kyripay.converter.domain.PaymentDocument;
 import com.kyripay.converter.dto.Document;
 import com.kyripay.converter.dto.DocumentStatus;
 import com.kyripay.converter.dto.Payment;
+import com.kyripay.converter.exceptions.DocumentNotFoundException;
 import com.kyripay.converter.exceptions.WrongFormatException;
 import com.kyripay.converter.repository.DocumentRepostiory;
 import org.springframework.stereotype.Service;
@@ -46,13 +47,10 @@ public class ConversionServiceImpl implements ConversionService
 
 
   @Override
-  public Optional<Document> getDocument(String id)
+  public Document getDocument(String id)
   {
-    PaymentDocument document = repostiory.findById(id).orElse(null);
-    if (document != null)
-      return Optional.of(new Document(document.getFormat(), document.getStatus(), document.getData()));
-    else
-      return Optional.empty();
+    PaymentDocument document = repostiory.findById(id).orElseThrow(() -> new DocumentNotFoundException("Document not found"));
+    return new Document(document.getFormat(), document.getStatus(), document.getData());
   }
 
 

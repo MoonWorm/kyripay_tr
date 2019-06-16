@@ -1,8 +1,7 @@
 version: "3"
 services:
   converter:
-    build:
-      context: .
+    image: astankevich/kyripay-converter
     container_name: converter
   mongodb:
     image: mongo:3.6
