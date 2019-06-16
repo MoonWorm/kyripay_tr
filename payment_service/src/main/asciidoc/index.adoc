@@ -24,6 +24,24 @@ And one showing the HTTP response:
 
 include::{snippets}/payment/create-success/http-response.adoc[]
 
+=== Read all the existing payments:
+
+Path parameters should looks like:
+
+include::{snippets}/payment/read-all-success/path-parameters.adoc[]
+
+Request sample using cURL:
+
+include::{snippets}/payment/read-all-success/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/payment/read-all-success/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/payment/read-all-success/http-response.adoc[]
+
 === Read an existing payment by id:
 
 Path parameters should looks like:

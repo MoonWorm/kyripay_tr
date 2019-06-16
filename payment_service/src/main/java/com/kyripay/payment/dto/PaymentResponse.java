@@ -7,6 +7,7 @@ package com.kyripay.payment.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 
@@ -15,11 +16,15 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class IdentifiablePaymentDetails
+@Builder
+public class PaymentResponse
 {
 
   @ApiModelProperty(value = "Unique identifier", example = "4")
   private Long id;
+
+  @ApiModelProperty(value = "Payment status", example = "COMPLETED")
+  private Status status;
 
   private PaymentDetails paymentDetails;
 

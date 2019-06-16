@@ -47,7 +47,7 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
  * @author M-ATA
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = DEFINED_PORT)
+@SpringBootTest(webEnvironment = DEFINED_PORT, value = "eureka.client.enabled=false")
 public class PaymentTemplateControllerApiTest {
 
     @Rule
@@ -61,7 +61,7 @@ public class PaymentTemplateControllerApiTest {
                 .addFilter(documentationConfiguration(restDocumentation)).build();
     }
 
-    @Sql(statements = "DELETE FROM PUBLIC.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(statements = "DELETE FROM TEST.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void createSuccess() throws URISyntaxException, IOException {
         ExtractableResponse<Response> response = given(this.documentationSpec)
@@ -99,9 +99,9 @@ public class PaymentTemplateControllerApiTest {
     }
 
 
-    @Sql(statements = "INSERT INTO PUBLIC.PAYMENT_TEMPLATE (id, name, user_id, currency) VALUES (99, 'Template 1', 1, 'BYN');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(statements = "INSERT INTO PUBLIC.PAYMENT_TEMPLATE (id, name, user_id, currency) VALUES (100, 'Template 2', 1, 'BYN');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(statements = "DELETE FROM PUBLIC.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency, created_on, updated_on) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN', '2019-05-13 07:15:31.123456789', '2019-05-13 07:15:31.123456789');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency, created_on, updated_on) VALUES (2, 1, 'Template 2', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN', '2019-05-13 07:15:31.123456789', '2019-05-13 07:15:31.123456789');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(statements = "DELETE FROM TEST.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void readAllSuccess() {
         ExtractableResponse<Response> extractableResponse = given(this.documentationSpec)
@@ -122,8 +122,8 @@ public class PaymentTemplateControllerApiTest {
     }
 
 
-    @Sql(statements = "INSERT INTO PUBLIC.PAYMENT_TEMPLATE (id, name, user_id, currency) VALUES (1, 'Payment Template 1', 1, 'BYN');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(statements = "DELETE FROM PUBLIC.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency, created_on, updated_on) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN', '2019-05-13 07:15:31.123456789', '2019-05-13 07:15:31.123456789');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(statements = "DELETE FROM TEST.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void readByIdSuccess() {
         given(this.documentationSpec)
@@ -139,8 +139,8 @@ public class PaymentTemplateControllerApiTest {
     }
 
 
-    @Sql(statements = "INSERT INTO PUBLIC.PAYMENT_TEMPLATE (id, name, user_id, currency) VALUES (1, 'Template 1', 1, 'BYN');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(statements = "DELETE FROM PUBLIC.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency, created_on, updated_on) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN', '2019-05-13 07:15:31.123456789', '2019-05-13 07:15:31.123456789');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(statements = "DELETE FROM TEST.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void updateSuccess() throws URISyntaxException, IOException {
         given(this.documentationSpec)
@@ -176,7 +176,8 @@ public class PaymentTemplateControllerApiTest {
         assertThat(responseModel.getErrors().size(), is(1));
     }
 
-    @Sql(statements = "INSERT INTO PUBLIC.PAYMENT_TEMPLATE (id, name, user_id, currency) VALUES (1, 'Template 1', 1, 'BYN');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency, created_on, updated_on) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN', '2019-05-13 07:15:31.123456789', '2019-05-13 07:15:31.123456789');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(statements = "DELETE FROM TEST.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void deleteSuccess() {
         given(this.documentationSpec)

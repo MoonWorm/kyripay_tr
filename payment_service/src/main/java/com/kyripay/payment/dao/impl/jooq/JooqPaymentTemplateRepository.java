@@ -1,17 +1,20 @@
 package com.kyripay.payment.dao.impl.jooq;
 
-import com.kyripay.payment.dao.PaymentTemplateRepository;
 import com.kyripay.payment.dao.exception.RepositoryException;
 import com.kyripay.payment.dao.impl.jooq.meta.tables.records.PaymentTemplateRecord;
+import com.kyripay.payment.dto.PaymentDetails;
 import com.kyripay.payment.dto.PaymentTemplateRequest;
+import com.kyripay.payment.dto.RecipientInfo;
 import org.jooq.DSLContext;
 import org.jooq.Result;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+
 import static com.kyripay.payment.dao.impl.jooq.meta.Tables.PAYMENT_TEMPLATE;
 
 @Repository
-public class JooqPaymentTemplateRepository implements PaymentTemplateRepository {
+public class JooqPaymentTemplateRepository {
 
     private DSLContext ctx;
 
@@ -20,25 +23,26 @@ public class JooqPaymentTemplateRepository implements PaymentTemplateRepository 
     }
 
 
-    @Override
     public PaymentTemplateRecord create(long userId, PaymentTemplateRequest data) throws RepositoryException {
         try {
             PaymentTemplateRecord record = ctx.newRecord(PAYMENT_TEMPLATE);
             record.setUserId(userId);
             populateRecord(record, data);
-            ctx.executeInsert(record);
-            return readByName(userId, record.getName());
+            long currentTimeMs = System.currentTimeMillis();
+            record.setCreatedOn(new Timestamp(currentTimeMs));
+            record.setUpdatedOn(new Timestamp(currentTimeMs));
+            record.store();
+            return record;
         } catch (Exception e) {
-            throw new RepositoryException("Can't store payment template in repository.", e);
+            throw new RepositoryException("Can't store a payment template in the repository.", e);
         }
     }
 
-    @Override
     public Result<PaymentTemplateRecord> readAll(long userId, int limit, int offset) throws RepositoryException {
         try {
             return ctx.selectFrom(PAYMENT_TEMPLATE)
                     .where(PAYMENT_TEMPLATE.USER_ID.eq(userId))
-                    .orderBy(PAYMENT_TEMPLATE.NAME.asc())
+                    .orderBy(PAYMENT_TEMPLATE.CREATED_ON.asc())
                     .limit(limit)
                     .offset(offset)
                     .fetch();
@@ -47,7 +51,6 @@ public class JooqPaymentTemplateRepository implements PaymentTemplateRepository 
         }
     }
 
-    @Override
     public PaymentTemplateRecord readById(long userId, long paymentTemplateId) throws RepositoryException {
         try {
             return ctx.selectFrom(PAYMENT_TEMPLATE)
@@ -58,7 +61,6 @@ public class JooqPaymentTemplateRepository implements PaymentTemplateRepository 
         }
     }
 
-    @Override
     public PaymentTemplateRecord readByName(long userId, String name) throws RepositoryException {
         try {
             return ctx.selectFrom(PAYMENT_TEMPLATE)
@@ -69,13 +71,13 @@ public class JooqPaymentTemplateRepository implements PaymentTemplateRepository 
         }
     }
 
-    @Override
     public PaymentTemplateRecord update(long userId, long templateId, PaymentTemplateRequest data) throws RepositoryException {
         try {
             PaymentTemplateRecord record = ctx.newRecord(PAYMENT_TEMPLATE);
             record.setId(templateId);
             record.setUserId(userId);
             populateRecord(record, data);
+            record.setUpdatedOn(new Timestamp(System.currentTimeMillis()));
             ctx.executeUpdate(record);
             return record;
         } catch (Exception e) {
@@ -83,20 +85,6 @@ public class JooqPaymentTemplateRepository implements PaymentTemplateRepository 
         }
     }
 
-    private void populateRecord(PaymentTemplateRecord record, PaymentTemplateRequest data) {
-        record.setName(data.getName());
-        record.setBankId(data.getPaymentDetails().getBankId());
-        record.setAmount(data.getPaymentDetails().getAmount().getAmount());
-        record.setCurrency(data.getPaymentDetails().getAmount().getCurrency().name());
-        record.setAccountNumber(data.getPaymentDetails().getAccountNumber());
-        record.setRecipientFirstName(data.getPaymentDetails().getRecipientInfo().getFirstName());
-        record.setRecipientLastName(data.getPaymentDetails().getRecipientInfo().getLastName());
-        record.setRecipientBankName(data.getPaymentDetails().getRecipientInfo().getBankName());
-        record.setRecipientBankAddress(data.getPaymentDetails().getRecipientInfo().getBankAddress());
-        record.setRecipientBankAccount(data.getPaymentDetails().getRecipientInfo().getAccountNumber());
-    }
-
-    @Override
     public void delete(long userId, long paymentTemplateId) throws RepositoryException {
         try {
             ctx.delete(PAYMENT_TEMPLATE)
@@ -107,4 +95,22 @@ public class JooqPaymentTemplateRepository implements PaymentTemplateRepository 
         }
     }
 
+    private void populateRecord(PaymentTemplateRecord record, PaymentTemplateRequest data) {
+        record.setName(data.getName());
+        if (data.getPaymentDetails() != null) {
+            PaymentDetails paymentDetails = data.getPaymentDetails();
+            record.setBankId(paymentDetails.getBankId());
+            record.setAmount(paymentDetails.getAmount().getAmount());
+            record.setCurrency(paymentDetails.getAmount().getCurrency().name());
+            record.setAccountNumber(paymentDetails.getAccountNumber());
+            if (paymentDetails.getRecipientInfo() != null) {
+                RecipientInfo recipientInfo = paymentDetails.getRecipientInfo();
+                record.setRecipientFirstName(recipientInfo.getFirstName());
+                record.setRecipientLastName(recipientInfo.getLastName());
+                record.setRecipientBankName(recipientInfo.getBankName());
+                record.setRecipientBankAddress(recipientInfo.getBankAddress());
+                record.setRecipientBankAccount(recipientInfo.getAccountNumber());
+            }
+        }
+    }
 }

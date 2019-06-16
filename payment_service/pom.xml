@@ -23,6 +23,12 @@
 		<asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
 		<jooq.version>3.11.11</jooq.version>
 		<postgresql.driver.version>42.2.5</postgresql.driver.version>
+
+		<jdbc.url>jdbc:postgresql://localhost:5432/payments_ms</jdbc.url>
+		<jdbc.user>payments_ms_user</jdbc.user>
+		<jdbc.password>12345</jdbc.password>
+		<jdbc.driver>org.postgresql.Driver</jdbc.driver>
+		<jooq.database>org.jooq.meta.postgres.PostgresDatabase</jooq.database>
 	</properties>
 
 	<dependencies>
@@ -93,6 +99,12 @@
 			<version>${jooq.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgresql.driver.version}</version>
+			<scope>runtime</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -259,22 +271,9 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<jdbc.url>jdbc:postgresql://localhost:5432/payments_ms</jdbc.url>
-				<jdbc.user>payments_ms_user</jdbc.user>
-				<jdbc.password>12345</jdbc.password>
-				<jdbc.driver>org.postgresql.Driver</jdbc.driver>
-				<jooq.database>org.jooq.meta.postgres.PostgresDatabase</jooq.database>
 				<flyway.locations>filesystem:src/main/resources/db/migration/init,filesystem:src/main/resources/db/migration/tables,filesystem:src/main/resources/db/migration/data</flyway.locations>
 				<schema.name>PAYMENTS</schema.name>
 			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>org.postgresql</groupId>
-					<artifactId>postgresql</artifactId>
-					<version>${postgresql.driver.version}</version>
-					<scope>runtime</scope>
-				</dependency>
-			</dependencies>
 			<build>
 				<plugins>
 					<plugin>
@@ -293,21 +292,9 @@
 		<profile>
 			<id>integration</id>
 			<properties>
-				<jdbc.url>jdbc:h2:~/payments_ms;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER=TRUE</jdbc.url>
-				<jdbc.user>sa</jdbc.user>
-				<jdbc.password></jdbc.password>
-				<jdbc.driver>org.h2.Driver</jdbc.driver>
-				<jooq.database>org.jooq.meta.h2.H2Database</jooq.database>
-				<flyway.locations>filesystem:src/main/resources/db/migration/tables,filesystem:src/main/resources/db/migration/data</flyway.locations>
-				<schema.name>PUBLIC</schema.name>
+				<flyway.locations>filesystem:src/test/resources/db/migration/init,filesystem:src/main/resources/db/migration/tables,filesystem:src/main/resources/db/migration/data</flyway.locations>
+				<schema.name>TEST</schema.name>
 			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>com.h2database</groupId>
-					<artifactId>h2</artifactId>
-					<scope>runtime</scope>
-				</dependency>
-			</dependencies>
 		</profile>
 
 	</profiles>

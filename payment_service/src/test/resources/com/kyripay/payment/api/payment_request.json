@@ -1,6 +1,5 @@
 {
   "userId": 123,
-  "name": "Payment Template 1",
   "amount": {
     "amount": 50,
     "currency": "USD"
