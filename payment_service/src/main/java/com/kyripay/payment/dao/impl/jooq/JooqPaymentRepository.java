@@ -9,7 +9,6 @@ import com.kyripay.payment.dto.Status;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import static com.kyripay.payment.dao.impl.jooq.meta.Tables.PAYMENT;
@@ -30,9 +29,6 @@ public class JooqPaymentRepository {
             record.setUserId(userId);
             populateRecord(record, data);
             record.setStatus(Status.CREATED.name());
-            long currentTimeMs = System.currentTimeMillis();
-            record.setCreatedOn(new Timestamp(currentTimeMs));
-            record.setUpdatedOn(new Timestamp(currentTimeMs));
             record.store();
             return record;
         } catch (Exception e) {
@@ -74,16 +70,15 @@ public class JooqPaymentRepository {
         }
     }
 
-    public void updateStatus(long userId, long paymentId, String status) throws RepositoryException {
+    public String updateStatus(long userId, long paymentId, String status) throws RepositoryException {
         try {
-            int rowsUpdated = ctx.update(PAYMENT)
+            return ctx.update(PAYMENT)
                     .set(PAYMENT.STATUS, status)
                     .where(PAYMENT.ID.eq(paymentId).and(PAYMENT.USER_ID.eq(userId)))
-                    .execute();
-            if (rowsUpdated == 0) {
-                throw new RepositoryException("Can't find the payment [id = " + paymentId + "] of user [id = "
-                        + userId + "].");
-            }
+                    .returning(PAYMENT.STATUS)
+                    .fetchOne()
+                    .get(PAYMENT.STATUS);
+
         } catch (Exception e) {
             throw new RepositoryException("Can't update the payment status in the repository.", e);
         }

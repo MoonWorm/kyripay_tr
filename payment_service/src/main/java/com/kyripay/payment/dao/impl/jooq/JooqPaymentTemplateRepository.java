@@ -9,8 +9,6 @@ import org.jooq.DSLContext;
 import org.jooq.Result;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
-
 import static com.kyripay.payment.dao.impl.jooq.meta.Tables.PAYMENT_TEMPLATE;
 
 @Repository
@@ -28,9 +26,6 @@ public class JooqPaymentTemplateRepository {
             PaymentTemplateRecord record = ctx.newRecord(PAYMENT_TEMPLATE);
             record.setUserId(userId);
             populateRecord(record, data);
-            long currentTimeMs = System.currentTimeMillis();
-            record.setCreatedOn(new Timestamp(currentTimeMs));
-            record.setUpdatedOn(new Timestamp(currentTimeMs));
             record.store();
             return record;
         } catch (Exception e) {
@@ -61,25 +56,23 @@ public class JooqPaymentTemplateRepository {
         }
     }
 
-    public PaymentTemplateRecord readByName(long userId, String name) throws RepositoryException {
-        try {
-            return ctx.selectFrom(PAYMENT_TEMPLATE)
-                    .where(PAYMENT_TEMPLATE.USER_ID.eq(userId).and(PAYMENT_TEMPLATE.NAME.eq(name)))
-                    .fetchAny();
-        } catch (Exception e) {
-            throw new RepositoryException("Can't read a payment template from the repository.", e);
-        }
-    }
-
     public PaymentTemplateRecord update(long userId, long templateId, PaymentTemplateRequest data) throws RepositoryException {
         try {
-            PaymentTemplateRecord record = ctx.newRecord(PAYMENT_TEMPLATE);
-            record.setId(templateId);
-            record.setUserId(userId);
-            populateRecord(record, data);
-            record.setUpdatedOn(new Timestamp(System.currentTimeMillis()));
-            ctx.executeUpdate(record);
-            return record;
+            PaymentDetails paymentDetails = data.getPaymentDetails();
+            RecipientInfo recipientInfo = paymentDetails == null ? null : paymentDetails.getRecipientInfo();
+            return ctx.update(PAYMENT_TEMPLATE)
+                    .set(PAYMENT_TEMPLATE.BANK_ID, paymentDetails == null ? null : paymentDetails.getBankId())
+                    .set(PAYMENT_TEMPLATE.AMOUNT, paymentDetails == null ? null : paymentDetails.getAmount().getAmount())
+                    .set(PAYMENT_TEMPLATE.CURRENCY, paymentDetails == null ? null : paymentDetails.getAmount().getCurrency().name())
+                    .set(PAYMENT_TEMPLATE.ACCOUNT_NUMBER, paymentDetails == null ? null : paymentDetails.getAccountNumber())
+                    .set(PAYMENT_TEMPLATE.RECIPIENT_FIRST_NAME, recipientInfo == null ? null : recipientInfo.getFirstName())
+                    .set(PAYMENT_TEMPLATE.RECIPIENT_LAST_NAME, recipientInfo == null ? null : recipientInfo.getLastName())
+                    .set(PAYMENT_TEMPLATE.RECIPIENT_BANK_NAME, recipientInfo == null ? null : recipientInfo.getBankName())
+                    .set(PAYMENT_TEMPLATE.RECIPIENT_BANK_ADDRESS, recipientInfo == null ? null : recipientInfo.getBankAddress())
+                    .set(PAYMENT_TEMPLATE.RECIPIENT_BANK_ACCOUNT, recipientInfo == null ? null : recipientInfo.getAccountNumber())
+                    .where(PAYMENT_TEMPLATE.ID.eq(templateId).and(PAYMENT_TEMPLATE.USER_ID.eq(userId)))
+                    .returning()
+                    .fetchOne();
         } catch (Exception e) {
             throw new RepositoryException("Can't update the payment template in the repository.", e);
         }

@@ -1,18 +1,18 @@
 {
-  "userId": null,
-  "name": "",
-  "amount": {
-    "amount": null,
-    "currency": null
-  },
-  "bankId": null,
-  "accountNumber": "",
-  "paymentFormat": "",
-  "recipientInfo": {
-    "firstName": "",
-    "lastName": null,
-    "bankName": "",
-    "bankAddress": null,
-    "accountNumber": ""
+  "paymentDetails": {
+    "amount": {
+      "amount": null,
+      "currency": null
+    },
+    "bankId": null,
+    "accountNumber": "",
+    "paymentFormat": "",
+    "recipientInfo": {
+      "firstName": "",
+      "lastName": null,
+      "bankName": "",
+      "bankAddress": null,
+      "accountNumber": ""
+    }
   }
 }

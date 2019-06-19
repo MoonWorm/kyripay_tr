@@ -23,6 +23,6 @@ public interface PaymentService {
     Status getStatus(long userId, long paymentId) throws ServiceException;
 
     @Transactional
-    void updateStatus(long userId, long paymentId, Status status) throws ServiceException;
+    Status updateStatus(long userId, long paymentId, Status status) throws ServiceException;
 
 }

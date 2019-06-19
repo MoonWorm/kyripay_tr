@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  api:
+    depends_on:
+      - db
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/payments_ms
+  db:
+    image: postgres:11.3
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=payments_ms
+      - POSTGRES_USER=payments_ms_user
+      - POSTGRES_PASSWORD=12345

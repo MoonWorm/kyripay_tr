@@ -24,11 +24,13 @@
 		<jooq.version>3.11.11</jooq.version>
 		<postgresql.driver.version>42.2.5</postgresql.driver.version>
 
-		<jdbc.url>jdbc:postgresql://localhost:5432/payments_ms</jdbc.url>
+		<schema.name>payments</schema.name>
 		<jdbc.user>payments_ms_user</jdbc.user>
 		<jdbc.password>12345</jdbc.password>
 		<jdbc.driver>org.postgresql.Driver</jdbc.driver>
 		<jooq.database>org.jooq.meta.postgres.PostgresDatabase</jooq.database>
+		<flyway.locations>filesystem:src/main/resources/db/migration/tables,filesystem:src/main/resources/db/migration/data</flyway.locations>
+		<jdbc.url>jdbc:postgresql://localhost:5432/payments_ms?currentSchema=${schema.name}</jdbc.url>
 	</properties>
 
 	<dependencies>
@@ -219,11 +221,13 @@
 					<user>${jdbc.user}</user>
 					<password>${jdbc.password}</password>
 					<schemas>${schema.name}</schemas>
-					<outOfOrder>true</outOfOrder>
 					<ignoreMissingMigrations>true</ignoreMissingMigrations>
 					<locations>
 						<location>${flyway.locations}</location>
 					</locations>
+					<placeholders>
+						<schemaName>${schema.name}</schemaName>
+					</placeholders>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -270,10 +274,6 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
-			<properties>
-				<flyway.locations>filesystem:src/main/resources/db/migration/init,filesystem:src/main/resources/db/migration/tables,filesystem:src/main/resources/db/migration/data</flyway.locations>
-				<schema.name>PAYMENTS</schema.name>
-			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -292,8 +292,10 @@
 		<profile>
 			<id>integration</id>
 			<properties>
-				<flyway.locations>filesystem:src/test/resources/db/migration/init,filesystem:src/main/resources/db/migration/tables,filesystem:src/main/resources/db/migration/data</flyway.locations>
-				<schema.name>TEST</schema.name>
+				<!-- Override some properties -->
+				<flyway.locations>filesystem:src/main/resources/db/migration/tables</flyway.locations>
+				<schema.name>test</schema.name>
+				<jdbc.url>jdbc:postgresql://localhost:5432/payments_ms?currentSchema=${schema.name}</jdbc.url>
 			</properties>
 		</profile>
 

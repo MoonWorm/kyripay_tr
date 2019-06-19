@@ -5,11 +5,10 @@
  *******************************************************************************/
 package com.kyripay.payment.api;
 
+import com.kyripay.payment.dto.PaymentResponse;
 import com.kyripay.payment.dto.Status;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
@@ -64,7 +64,7 @@ public class PaymentControllerApiTest {
     @Sql(statements = "DELETE FROM TEST.PAYMENT;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void createSuccess() throws URISyntaxException, IOException {
-        ExtractableResponse<Response> response = given(this.documentationSpec)
+        PaymentResponse response = given(this.documentationSpec)
                 .filter(document("payment/{method-name}"))
                 .contentType(ContentType.JSON)
                 .header("userId", 1L)
@@ -74,15 +74,15 @@ public class PaymentControllerApiTest {
                 .then()
                 .assertThat().statusCode(SC_OK)
                 .contentType(ContentType.JSON)
-                .extract();
-        assertNotNull(response.jsonPath().get("id"));
-        assertNotNull(response.jsonPath().get("paymentDetails"));
+                .extract()
+                .as(PaymentResponse.class);
+        assertNotNull(response);
     }
 
 
     @Test
     public void createInvalid() throws IOException, URISyntaxException {
-        Response response = given()
+        CustomGlobalExceptionHandler.ErrorsInfo responseModel = given()
                 .contentType(ContentType.JSON)
                 .header("userId", 1L)
                 .body(readTestResource("/com/kyripay/payment/api/payment_request_invalid.json"))
@@ -92,41 +92,41 @@ public class PaymentControllerApiTest {
                 .assertThat().statusCode(SC_BAD_REQUEST)
                 .contentType(ContentType.JSON)
                 .extract()
-                .response();
-        CustomGlobalExceptionHandler.ErrorsInfo responseModel = response.as(CustomGlobalExceptionHandler.ErrorsInfo.class);
+                .response()
+                .as(CustomGlobalExceptionHandler.ErrorsInfo.class);
 
         assertThat(responseModel.getStatus(), is(400));
-        assertThat(responseModel.getErrors().size(), is(12));
+        assertThat(responseModel.getErrors().size(), is(10));
     }
 
 
-    @Sql(statements = "INSERT INTO TEST.PAYMENT (id, user_id, status, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency, created_on, updated_on) VALUES (1, 1, 'CREATED', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN', '2019-05-13 07:15:31.123456789', '2019-05-13 07:15:31.123456789');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(statements = "INSERT INTO TEST.PAYMENT (id, user_id, status, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency, created_on, updated_on) VALUES (2, 1, 'PROCESSING', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN', '2019-05-13 07:15:31.123456789', '2019-05-13 07:15:31.123456789');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(statements = "INSERT INTO TEST.PAYMENT (id, user_id, status, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (1, 1, 'CREATED', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
+    @Sql(statements = "INSERT INTO TEST.PAYMENT (id, user_id, status, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (2, 1, 'PROCESSING', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
     @Sql(statements = "DELETE FROM TEST.PAYMENT;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void readAllSuccess() {
-        ExtractableResponse<Response> response = given(this.documentationSpec)
-                .filter(document("payment/{method-name}",
-                        pathParameters(parameterWithName("id").description("Payment unique identifier"))))
+        List<PaymentResponse> response = given(this.documentationSpec)
+                .filter(document("payment/{method-name}"))
                 .contentType(ContentType.JSON)
                 .header("userId", 1L)
                 .param("limit", 3)
                 .param("offset", 0)
                 .when()
-                .get("/api/v1/payments/{id}", 1)
+                .get("/api/v1/payments")
                 .then()
                 .assertThat().statusCode(SC_OK)
                 .contentType(ContentType.JSON)
-                .extract();
-        assertNotNull(response.jsonPath().get("paymentDetails"));
-        assertNotNull(response.jsonPath().get("status"));
+                .extract()
+                .as(List.class);
+        assertNotNull(response);
+        assertThat(response.size(), is(2));
     }
 
-    @Sql(statements = "INSERT INTO TEST.PAYMENT (id, user_id, status, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency, created_on, updated_on) VALUES (1, 1, 'CREATED', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN', '2019-05-13 07:15:31.123456789', '2019-05-13 07:15:31.123456789');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(statements = "INSERT INTO TEST.PAYMENT (id, user_id, status, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (1, 1, 'CREATED', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
     @Sql(statements = "DELETE FROM TEST.PAYMENT;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void readByIdSuccess() {
-        ExtractableResponse<Response> response = given(this.documentationSpec)
+        PaymentResponse response = given(this.documentationSpec)
                 .filter(document("payment/{method-name}",
                         pathParameters(parameterWithName("id").description("Payment unique identifier"))))
                 .contentType(ContentType.JSON)
@@ -136,13 +136,13 @@ public class PaymentControllerApiTest {
                 .then()
                 .assertThat().statusCode(SC_OK)
                 .contentType(ContentType.JSON)
-                .extract();
-        assertNotNull(response.jsonPath().get("paymentDetails"));
-        assertNotNull(response.jsonPath().get("status"));
+                .extract()
+                .as(PaymentResponse.class);
+        assertNotNull(response);
     }
 
 
-    @Sql(statements = "INSERT INTO TEST.PAYMENT (id, user_id, status, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency, created_on, updated_on) VALUES (1, 1, 'PROCESSING', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN', '2019-05-13 07:15:31.123456789', '2019-05-13 07:15:31.123456789');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(statements = "INSERT INTO TEST.PAYMENT (id, user_id, status, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (1, 1, 'PROCESSING', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
     @Test
     public void getStatusSuccess() {
         PaymentController.PaymentStatus responseStatus = given(this.documentationSpec)
@@ -161,7 +161,7 @@ public class PaymentControllerApiTest {
     }
 
 
-    @Sql(statements = "INSERT INTO TEST.PAYMENT (id, user_id, status, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency, created_on, updated_on) VALUES (1, 1, 'PROCESSING', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN', '2019-05-13 07:15:31.123456789', '2019-05-13 07:15:31.123456789');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(statements = "INSERT INTO TEST.PAYMENT (id, user_id, status, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (1, 1, 'PROCESSING', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
     @Sql(statements = "DELETE FROM TEST.PAYMENT;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void updateStatusSuccess() throws URISyntaxException, IOException {
@@ -184,7 +184,7 @@ public class PaymentControllerApiTest {
 
     @Test
     public void updateStatusInvalid() throws URISyntaxException, IOException {
-        Response response = given()
+        CustomGlobalExceptionHandler.ErrorsInfo responseModel = given()
                 .contentType(ContentType.JSON)
                 .header("userId", 1L)
                 .body(readTestResource("/com/kyripay/payment/api/payment_status_invalid.json"))
@@ -193,8 +193,8 @@ public class PaymentControllerApiTest {
                 .then()
                 .assertThat().statusCode(SC_BAD_REQUEST)
                 .extract()
-                .response();
-        CustomGlobalExceptionHandler.ErrorsInfo responseModel = response.as(CustomGlobalExceptionHandler.ErrorsInfo.class);
+                .response()
+                .as(CustomGlobalExceptionHandler.ErrorsInfo.class);
 
         assertThat(responseModel.getStatus(), is(400));
         assertThat(responseModel.getErrors().size(), is(1));

@@ -5,6 +5,7 @@
  *******************************************************************************/
 package com.kyripay.payment.api;
 
+import com.kyripay.payment.dto.PaymentTemplateResponse;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
@@ -13,12 +14,9 @@ import io.restassured.specification.RequestSpecification;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.experimental.categories.Categories;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.restdocs.JUnitRestDocumentation;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -64,7 +62,7 @@ public class PaymentTemplateControllerApiTest {
     @Sql(statements = "DELETE FROM TEST.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void createSuccess() throws URISyntaxException, IOException {
-        ExtractableResponse<Response> response = given(this.documentationSpec)
+        PaymentTemplateResponse response = given(this.documentationSpec)
                 .filter(document("payment-template/{method-name}"))
                 .contentType(ContentType.JSON)
                 .header("userId", 1L)
@@ -74,14 +72,14 @@ public class PaymentTemplateControllerApiTest {
                 .then()
                 .assertThat().statusCode(SC_OK)
                 .contentType(ContentType.JSON)
-                .extract();
-        assertNotNull(response.jsonPath().get("id"));
-        assertNotNull(response.jsonPath().get("paymentDetails"));
+                .extract()
+                .as(PaymentTemplateResponse.class);
+        assertNotNull(response);
     }
 
     @Test
     public void createInvalid() throws IOException, URISyntaxException {
-        Response response = given()
+        CustomGlobalExceptionHandler.ErrorsInfo responseModel = given()
                 .contentType(ContentType.JSON)
                 .header("userId", 1L)
                 .body(readTestResource("/com/kyripay/payment/api/payment_template_request_invalid.json"))
@@ -91,20 +89,19 @@ public class PaymentTemplateControllerApiTest {
                 .assertThat().statusCode(SC_BAD_REQUEST)
                 .contentType(ContentType.JSON)
                 .extract()
-                .response();
-        CustomGlobalExceptionHandler.ErrorsInfo responseModel = response.as(CustomGlobalExceptionHandler.ErrorsInfo.class);
-
+                .response()
+                .as(CustomGlobalExceptionHandler.ErrorsInfo.class);
         assertThat(responseModel.getStatus(), is(400));
         assertThat(responseModel.getErrors().size(), is(1));
     }
 
 
-    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency, created_on, updated_on) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN', '2019-05-13 07:15:31.123456789', '2019-05-13 07:15:31.123456789');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency, created_on, updated_on) VALUES (2, 1, 'Template 2', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN', '2019-05-13 07:15:31.123456789', '2019-05-13 07:15:31.123456789');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
+    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (2, 1, 'Template 2', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
     @Sql(statements = "DELETE FROM TEST.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void readAllSuccess() {
-        ExtractableResponse<Response> extractableResponse = given(this.documentationSpec)
+        List<PaymentTemplateResponse> response = given(this.documentationSpec)
                 .filter(document("payment-template/{method-name}"))
                 .contentType(ContentType.JSON)
                 .header("userId", 1L)
@@ -115,18 +112,18 @@ public class PaymentTemplateControllerApiTest {
                 .then()
                 .assertThat().statusCode(SC_OK)
                 .contentType(ContentType.JSON)
-                .extract();
-        List response = extractableResponse.body().as(List.class);
+                .extract()
+                .as(List.class);
         assertNotNull(response);
         assertEquals(2, response.size());
     }
 
 
-    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency, created_on, updated_on) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN', '2019-05-13 07:15:31.123456789', '2019-05-13 07:15:31.123456789');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
     @Sql(statements = "DELETE FROM TEST.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void readByIdSuccess() {
-        given(this.documentationSpec)
+        PaymentTemplateResponse response = given(this.documentationSpec)
                 .filter(document("payment-template/{method-name}",
                         pathParameters(parameterWithName("id").description("Payment template unique identifier"))))
                 .contentType(ContentType.JSON)
@@ -135,15 +132,18 @@ public class PaymentTemplateControllerApiTest {
                 .get("/api/v1/paymenttemplates/{id}", 1)
                 .then()
                 .assertThat().statusCode(SC_OK)
-                .contentType(ContentType.JSON);
+                .contentType(ContentType.JSON)
+                .extract()
+                .as(PaymentTemplateResponse.class);
+        assertNotNull(response);
     }
 
 
-    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency, created_on, updated_on) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN', '2019-05-13 07:15:31.123456789', '2019-05-13 07:15:31.123456789');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
     @Sql(statements = "DELETE FROM TEST.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void updateSuccess() throws URISyntaxException, IOException {
-        given(this.documentationSpec)
+        PaymentTemplateResponse response = given(this.documentationSpec)
                 .filter(document("payment-template/{method-name}",
                         pathParameters(parameterWithName("id").description("Payment template unique identifier"))))
                 .contentType(ContentType.JSON)
@@ -153,13 +153,17 @@ public class PaymentTemplateControllerApiTest {
                 .put("/api/v1/paymenttemplates/{id}", 1)
                 .then()
                 .assertThat().statusCode(SC_OK)
-                .contentType(ContentType.JSON);
+                .contentType(ContentType.JSON)
+                .extract()
+                .response()
+                .as(PaymentTemplateResponse.class);
+        assertNotNull(response);
     }
 
 
     @Test
     public void updateInvalid() throws IOException, URISyntaxException {
-        Response response = given()
+        CustomGlobalExceptionHandler.ErrorsInfo responseModel = given()
                 .contentType(ContentType.JSON)
                 .header("userId", 1L)
                 .body(readTestResource("/com/kyripay/payment/api/payment_template_request_invalid.json"))
@@ -169,14 +173,14 @@ public class PaymentTemplateControllerApiTest {
                 .assertThat().statusCode(SC_BAD_REQUEST)
                 .contentType(ContentType.JSON)
                 .extract()
-                .response();
-        CustomGlobalExceptionHandler.ErrorsInfo responseModel = response.as(CustomGlobalExceptionHandler.ErrorsInfo.class);
+                .response()
+                .as(CustomGlobalExceptionHandler.ErrorsInfo.class);
 
         assertThat(responseModel.getStatus(), is(400));
         assertThat(responseModel.getErrors().size(), is(1));
     }
 
-    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency, created_on, updated_on) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN', '2019-05-13 07:15:31.123456789', '2019-05-13 07:15:31.123456789');", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
     @Sql(statements = "DELETE FROM TEST.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void deleteSuccess() {

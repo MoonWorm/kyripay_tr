@@ -69,10 +69,10 @@ public class PaymentController extends GenericController {
 
     @ApiOperation("Updates a status for an existing payment")
     @PutMapping(value = "/payments/{paymentId}/status")
-    void updateStatus(@RequestHeader long userId,
+    PaymentStatus updateStatus(@RequestHeader long userId,
                       @PathVariable long paymentId,
                       @Valid @RequestBody PaymentStatus status) {
-        paymentService.updateStatus(userId, paymentId, status.getStatus());
+        return new PaymentStatus(paymentService.updateStatus(userId, paymentId, status.getStatus()));
     }
 
 

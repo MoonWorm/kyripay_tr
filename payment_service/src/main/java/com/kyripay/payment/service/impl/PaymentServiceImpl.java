@@ -51,9 +51,10 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public void updateStatus(long userId, long paymentTemplateId, Status status) throws ServiceException {
+    public Status updateStatus(long userId, long paymentTemplateId, Status status) throws ServiceException {
         try {
-            paymentRepository.updateStatus(userId, paymentTemplateId, status.name());
+            String statusUpdated = paymentRepository.updateStatus(userId, paymentTemplateId, status.name());
+            return Status.valueOf(statusUpdated);
         } catch (Exception e) {
             throw new ServiceException("Can't update the payment.status", e);
         }

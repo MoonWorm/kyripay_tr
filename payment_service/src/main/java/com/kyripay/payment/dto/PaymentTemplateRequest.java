@@ -3,11 +3,13 @@ package com.kyripay.payment.dto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class PaymentTemplateRequest {
 
     @NotBlank(message = "Template name must be specified")
