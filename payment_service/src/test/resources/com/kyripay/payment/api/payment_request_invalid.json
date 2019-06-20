@@ -6,7 +6,6 @@
     },
     "bankId": null,
     "accountNumber": "",
-    "paymentFormat": "",
     "recipientInfo": {
       "firstName": "",
       "lastName": null,

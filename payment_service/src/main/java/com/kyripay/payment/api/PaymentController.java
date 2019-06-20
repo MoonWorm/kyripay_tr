@@ -7,18 +7,13 @@ package com.kyripay.payment.api;
 
 import com.kyripay.payment.dto.PaymentRequest;
 import com.kyripay.payment.dto.PaymentResponse;
-import com.kyripay.payment.dto.Status;
+import com.kyripay.payment.dto.PaymentStatus;
 import com.kyripay.payment.service.PaymentService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
@@ -75,19 +70,5 @@ public class PaymentController extends GenericController {
         return new PaymentStatus(paymentService.updateStatus(userId, paymentId, status.getStatus()));
     }
 
-
-    /**
-     * @author M-ATA
-     */
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class PaymentStatus {
-
-        @NotNull(message = "Payment status must be specified")
-        @ApiModelProperty(value = "Payment status", example = "COMPLETED")
-        private Status status;
-
-    }
 
 }

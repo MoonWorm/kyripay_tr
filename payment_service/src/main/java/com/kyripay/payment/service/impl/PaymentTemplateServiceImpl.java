@@ -1,6 +1,8 @@
 package com.kyripay.payment.service.impl;
 
 import com.kyripay.payment.dao.impl.jooq.JooqPaymentTemplateRepository;
+import com.kyripay.payment.domain.vo.Amount;
+import com.kyripay.payment.domain.vo.Currency;
 import com.kyripay.payment.service.exception.ServiceException;
 import com.kyripay.payment.dao.impl.jooq.meta.tables.records.PaymentTemplateRecord;
 import com.kyripay.payment.dto.*;

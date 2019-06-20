@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
 public class PaymentTemplateResponse {
 
     @ApiModelProperty(value = "Unique identifier", example = "4")
-    private Long id;
+    private long id;
 
     @ApiModelProperty(value = "Template name", example = "My payment for the apartment rental")
     private String name;

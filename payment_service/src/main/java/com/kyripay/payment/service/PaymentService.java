@@ -1,5 +1,6 @@
 package com.kyripay.payment.service;
 
+import com.kyripay.payment.domain.vo.Status;
 import com.kyripay.payment.dto.*;
 import com.kyripay.payment.service.exception.ServiceException;
 import org.springframework.transaction.annotation.Transactional;

@@ -5,6 +5,7 @@
  *******************************************************************************/
 package com.kyripay.payment.dto;
 
+import com.kyripay.payment.domain.vo.Status;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,11 +22,14 @@ public class PaymentResponse
 {
 
   @ApiModelProperty(value = "Unique identifier", example = "4")
-  private Long id;
+  private long id;
 
   @ApiModelProperty(value = "Payment status", example = "COMPLETED")
   private Status status;
 
   private PaymentDetails paymentDetails;
+
+  @ApiModelProperty(value = "Payment creation time in millis since Epoch in UTC zone", example = "12343252134")
+  private long createdOn;
 
 }

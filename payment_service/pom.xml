@@ -31,6 +31,7 @@
 		<jooq.database>org.jooq.meta.postgres.PostgresDatabase</jooq.database>
 		<flyway.locations>filesystem:src/main/resources/db/migration/tables,filesystem:src/main/resources/db/migration/data</flyway.locations>
 		<jdbc.url>jdbc:postgresql://localhost:5432/payments_ms?currentSchema=${schema.name}</jdbc.url>
+		<dozer.version>5.3.1</dozer.version>
 	</properties>
 
 	<dependencies>
@@ -50,10 +51,17 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jooq</artifactId>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>-->
+
+		<dependency>
+			<groupId>net.sf.dozer</groupId>
+			<artifactId>dozer</artifactId>
+			<version>${dozer.version}</version>
 		</dependency>
+
 
 		<dependency>
 			<groupId>org.flywaydb</groupId>

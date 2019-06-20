@@ -5,6 +5,7 @@
  *******************************************************************************/
 package com.kyripay.payment.dto;
 
+import com.kyripay.payment.domain.vo.Amount;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,10 +38,6 @@ public class PaymentDetails
   @NotBlank(message = "Account number must be specified")
   @ApiModelProperty(value = "Account number of the mentioned bank that will be used for the payment", example = "12345")
   private String accountNumber;
-
-  @NotBlank(message = "Payment format must be specified")
-  @ApiModelProperty(value = "Which payment format should be used for the payment", example = "ISO_123")
-  private String paymentFormat;
 
   @Valid
   @NotNull(message = "Recipient info must be specified")

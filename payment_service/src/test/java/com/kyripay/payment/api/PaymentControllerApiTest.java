@@ -6,7 +6,8 @@
 package com.kyripay.payment.api;
 
 import com.kyripay.payment.dto.PaymentResponse;
-import com.kyripay.payment.dto.Status;
+import com.kyripay.payment.domain.vo.Status;
+import com.kyripay.payment.dto.PaymentStatus;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
@@ -145,7 +146,7 @@ public class PaymentControllerApiTest {
     @Sql(statements = "INSERT INTO TEST.PAYMENT (id, user_id, status, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (1, 1, 'PROCESSING', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
     @Test
     public void getStatusSuccess() {
-        PaymentController.PaymentStatus responseStatus = given(this.documentationSpec)
+        PaymentStatus responseStatus = given(this.documentationSpec)
                 .filter(document("payment/{method-name}",
                         pathParameters(parameterWithName("id").description("Payment unique identifier"))))
                 .contentType(ContentType.JSON)
@@ -156,7 +157,7 @@ public class PaymentControllerApiTest {
                 .assertThat().statusCode(SC_OK)
                 .contentType(ContentType.JSON)
                 .extract()
-                .as(PaymentController.PaymentStatus.class);
+                .as(PaymentStatus.class);
         assertThat(responseStatus.getStatus(), is(Status.PROCESSING));
     }
 
@@ -165,7 +166,7 @@ public class PaymentControllerApiTest {
     @Sql(statements = "DELETE FROM TEST.PAYMENT;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void updateStatusSuccess() throws URISyntaxException, IOException {
-        PaymentController.PaymentStatus responseStatus = given(this.documentationSpec)
+        PaymentStatus responseStatus = given(this.documentationSpec)
                 .filter(document("payment/{method-name}",
                         pathParameters(parameterWithName("id").description("Payment unique identifier"))))
                 .contentType(ContentType.JSON)
@@ -177,7 +178,7 @@ public class PaymentControllerApiTest {
                 .assertThat()
                 .statusCode(SC_OK)
                 .extract()
-                .as(PaymentController.PaymentStatus.class);
+                .as(PaymentStatus.class);
         assertThat(responseStatus.getStatus(), is(Status.COMPLETED));
     }
 

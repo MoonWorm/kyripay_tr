@@ -6,7 +6,6 @@
     },
     "bankId": 123,
     "accountNumber": "12345AN",
-    "paymentFormat": "ISO_123",
     "recipientInfo": {
       "firstName": "Vasia",
       "lastName": "Pupkin",
