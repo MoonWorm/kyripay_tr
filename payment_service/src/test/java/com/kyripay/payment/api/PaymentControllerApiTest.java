@@ -7,7 +7,7 @@ package com.kyripay.payment.api;
 
 import com.kyripay.payment.dto.PaymentResponse;
 import com.kyripay.payment.domain.vo.Status;
-import com.kyripay.payment.dto.PaymentStatus;
+import com.kyripay.payment.api.dto.PaymentStatus;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
@@ -97,7 +97,7 @@ public class PaymentControllerApiTest {
                 .as(CustomGlobalExceptionHandler.ErrorsInfo.class);
 
         assertThat(responseModel.getStatus(), is(400));
-        assertThat(responseModel.getErrors().size(), is(10));
+        assertThat(responseModel.getErrors().size(), is(9));
     }
 
 

@@ -1,16 +1,10 @@
 {
   "paymentDetails": {
-    "amount": {
-      "amount": null,
-      "currency": null
-    },
-    "bankId": null,
+    "amount": {},
     "accountNumber": "",
     "recipientInfo": {
       "firstName": "",
-      "lastName": null,
       "bankName": "",
-      "bankAddress": null,
       "accountNumber": ""
     }
   }

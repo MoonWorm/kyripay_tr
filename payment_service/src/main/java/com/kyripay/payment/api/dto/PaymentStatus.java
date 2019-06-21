@@ -1,4 +1,4 @@
-package com.kyripay.payment.dto;
+package com.kyripay.payment.api.dto;
 
 import com.kyripay.payment.domain.vo.Status;
 import io.swagger.annotations.ApiModelProperty;

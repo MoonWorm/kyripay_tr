@@ -7,7 +7,7 @@ package com.kyripay.payment.api;
 
 import com.kyripay.payment.dto.PaymentRequest;
 import com.kyripay.payment.dto.PaymentResponse;
-import com.kyripay.payment.dto.PaymentStatus;
+import com.kyripay.payment.api.dto.PaymentStatus;
 import com.kyripay.payment.service.PaymentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
