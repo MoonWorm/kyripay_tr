@@ -1,15 +1,17 @@
 package com.kyripay.converter.exceptions;
 
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import lombok.Getter;
 
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
 public class DocumentNotFoundException extends RuntimeException
 {
-  public DocumentNotFoundException(String message)
+  @Getter
+  private final String documentId;
+
+  public DocumentNotFoundException(String documentId)
   {
-    super(message);
+    super(String.format("Document %s not found", documentId));
+    this.documentId = documentId;
   }
 }

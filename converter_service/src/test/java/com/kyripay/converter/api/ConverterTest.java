@@ -1,6 +1,5 @@
 package com.kyripay.converter.api;
 
-import com.kyripay.converter.converters.Format;
 import com.kyripay.converter.domain.PaymentDocument;
 import com.kyripay.converter.dto.DocumentStatus;
 import com.kyripay.converter.repository.DocumentRepostiory;
@@ -8,23 +7,27 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.testcontainers.containers.GenericContainer;
 
 import java.util.Base64;
-import java.util.Optional;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
@@ -34,14 +37,31 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureRestDocs("build/generated-snippets")
+@ContextConfiguration(initializers = ConverterTest.Initializer.class)
 public class ConverterTest
 {
+
+    @ClassRule
+    public static GenericContainer mongo = new GenericContainer<>("mongo:3.6").withExposedPorts(27017);
+
+    public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext>
+    {
+        @Override
+        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
+            TestPropertyValues values = TestPropertyValues.of(
+                "spring.data.mongodb.host=" + mongo.getContainerIpAddress(),
+                "spring.data.mongodb.port=" + mongo.getMappedPort(27017)
+            );
+            values.applyTo(configurableApplicationContext);
+        }
+    }
 
     @Rule
     public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     private RequestSpecification spec;
-
+    @Autowired
+    private DocumentRepostiory repostiory;
 
     @Before
     public void setUp() {
@@ -49,9 +69,6 @@ public class ConverterTest
             documentationConfiguration(this.restDocumentation))
             .build();
     }
-
-    @MockBean
-    private DocumentRepostiory mockedDocumentRepository;
 
     @Test
     public void convertDocument(){
@@ -64,7 +81,7 @@ public class ConverterTest
                     "    \"id\": \"123\",\n" +
                     "    \"number\": \"ACC123\"\n" +
                     "  },\n" +
-                    "  \"id\": \"payment 1\",\n" +
+                    "  \"id\": \"ID\",\n" +
                     "  \"transactions\": [\n" +
                     "    {\n" +
                     "      \"amount\": 999,\n" +
@@ -92,6 +109,7 @@ public class ConverterTest
                 .jsonPath().get("documentId");
 
         assertNotNull(id);
+        assertNotNull(repostiory.findById(id).orElse(null));
     }
 
     @Test
@@ -148,9 +166,8 @@ public class ConverterTest
 
     @Test
     public void getDocument(){
-        when(mockedDocumentRepository.findById("1")).thenReturn(
-            Optional.of(new PaymentDocument("1", Format.IDENTITY, DocumentStatus.READY ,"test".getBytes()))
-        );
+
+        repostiory.save(new PaymentDocument("ID", "test", DocumentStatus.READY, "test".getBytes()));
 
         String data = given(this.spec)
             .body("test data".getBytes())
@@ -158,7 +175,7 @@ public class ConverterTest
                 parameterWithName("id").description("Converted document id")
             )))
             .when()
-            .get("/api/v1/documents/{id}", "1")
+            .get("/api/v1/documents/{id}", "ID")
             .then()
             .statusCode(HttpStatus.SC_OK)
             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -167,5 +184,4 @@ public class ConverterTest
 
         assertEquals(new String(Base64.getDecoder().decode(data)), "test");
     }
-
 }

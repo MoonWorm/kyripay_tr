@@ -1,7 +1,6 @@
 package com.kyripay.converter.domain;
 
 import com.kyripay.converter.dto.DocumentStatus;
-import com.kyripay.converter.converters.Format;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -18,7 +17,7 @@ public class PaymentDocument
   @Id
   private final String id;
   @NotNull
-  private final Format format;
+  private final String format;
   @NotNull
   private DocumentStatus status;
   private byte[] data;
