@@ -20,16 +20,8 @@ import java.util.Map;
  */
 @Data
 @NoArgsConstructor
-abstract class GenericNotification
+abstract class GenericNotificationRequest
 {
-  @NotNull(message = "User id must be specified")
-  @ApiModelProperty(value = "Unique user id of the recipient", example = "123")
-  private Long userId;
-
-  @NotNull(message = "User id must be specified")
-  @ApiModelProperty(value = "System sender type of the notification that keep responsibility of the sending message. " +
-      "Can be used for setting a proper system sender for a message, e.g. email or sender name.")
-  private Sender sender;
 
   @NotBlank(message = "Template id for notification content must not be blank")
   @ApiModelProperty(value = "Template identifier that will be used for message body composing. " +

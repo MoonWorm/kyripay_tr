@@ -5,8 +5,11 @@
  *******************************************************************************/
 package com.kyripay.notification.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
 
 
 /**
@@ -14,7 +17,12 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-public class SmsNotification extends GenericNotification
+public class EmailNotificationRequest extends GenericNotificationRequest
 {
+
+  @NotBlank(message = "Template id for an email title must not be blank")
+  @ApiModelProperty(value = "Template identifier that will be used for title composing. " +
+      "All passed parameters can be applied as a placeholders.", example = "payment_completed_title.twig")
+  private String titleTemplateId;
 
 }

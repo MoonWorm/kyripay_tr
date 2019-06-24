@@ -5,13 +5,15 @@
  *******************************************************************************/
 package com.kyripay.notification.api;
 
-import com.kyripay.notification.dto.EmailNotification;
-import com.kyripay.notification.dto.SmsNotification;
+import com.kyripay.notification.dto.EmailNotificationRequest;
+import com.kyripay.notification.dto.NotificationResponse;
+import com.kyripay.notification.dto.SmsNotificationRequest;
+import com.kyripay.notification.service.EmailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -26,17 +28,26 @@ import javax.validation.Valid;
 public class NotificationController
 {
 
+  private EmailService emailService;
+
+  public NotificationController(EmailService emailService) {
+    this.emailService = emailService;
+  }
+
   @ApiOperation("Sends an email to a user")
   @PostMapping("/api/v1/emailnotifications")
-  void createEmailNotification(@Valid @RequestBody EmailNotification notification)
+  NotificationResponse createEmailNotification(@RequestHeader long userId,
+                                               @Valid @RequestBody EmailNotificationRequest notification)
   {
-
+    String to = "aliaksei.taliuk@gmail.com"; // resolve by userId using user service
+    return emailService.sendSimpleMessage(to, notification);
   }
 
 
   @ApiOperation("Sends SMS text message to a user")
   @PostMapping("/api/v1/smsnotifications")
-  void createSmsNotification(@Valid @RequestBody SmsNotification notification)
+  void createSmsNotification(@RequestHeader long userId,
+                             @Valid @RequestBody SmsNotificationRequest notification)
   {
 
   }

@@ -5,10 +5,16 @@
  *******************************************************************************/
 package com.kyripay.notification.dto;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+
 /**
  * @author M-ATA
  */
-enum Sender
+@Data
+@NoArgsConstructor
+public class SmsNotificationRequest extends GenericNotificationRequest
 {
-  CUSTOMER_SERVICE, TECHNICAL_SUPPORT
+
 }

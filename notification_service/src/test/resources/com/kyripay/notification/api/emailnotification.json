@@ -1,10 +1,9 @@
 {
-  "userId": 123,
-  "sender": "CUSTOMER_SERVICE",
-  "titleTemplateId": "payment_completed_title.twig",
-  "bodyTemplateId": "payment_completed_body.twig",
+  "titleTemplateId": "registration_conf_subj",
+  "bodyTemplateId": "registration_conf_body",
   "parameters": {
-     "firstName": "Vasia",
-     "lastName": "Pupkin"
+    "honorific": "Mr",
+    "firstName": "Vasia",
+    "lastName": "Pupkin"
   }
 }
