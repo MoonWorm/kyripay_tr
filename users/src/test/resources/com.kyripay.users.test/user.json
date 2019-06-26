@@ -1,0 +1,29 @@
+{
+  "userDetails": {
+    "firstName": "Ivan",
+    "lastName": "Ivanov",
+    "address": "Kalvariuskaia 42, Minsk",
+    "email": "kyripay@gmail.com",
+    "phoneNumber": "3444",
+    "secretHash": "secret",
+    "userGroup": "CUSTOMER",
+    "active": true
+  },
+  "accounts": [
+    {
+      "bankId": "8822e1f8-8053-40ee-8b73-bc7e6785a371",
+      "number": "11122",
+      "currency": "EUR"
+    }
+  ],
+  "recipients": [
+    {
+      "firstName": "Alex",
+      "lastName": "Student",
+      "bankName": "bank",
+      "bankAddress": "address",
+      "bankUrn": "0000/00222/0XXXX",
+      "accountNumber": "12345"
+    }
+  ]
+}

@@ -1,17 +1,29 @@
 package com.kyripay.users.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode
+@Entity
+@Table(name = "recipients")
 public class Recipient {
-    @ApiModelProperty(value = "Recipient unique id (UUID)", example = "87acc585-dcf6-49ad-ae95-3422a5cdba44")
+    @ApiModelProperty(value = "Recipient unique id (UUID)", example = "87acc585-dcf6-49ad-ae95-3422a5cdba46")
+    @Id
+    @GeneratedValue
     private UUID id;
+    @ApiModelProperty(value = "User id (UUID)", example = "88acc585-dcf6-49ad-ae95-3422a5cdba45")
+    @Column(name = "user_id")
+    @JsonIgnore
+    private UUID userId;
     @NotBlank(message = "First name can't be empty")
     @ApiModelProperty(value = "First name", example = "Dmitry")
     private String firstName;
