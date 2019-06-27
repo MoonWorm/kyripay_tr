@@ -2,8 +2,8 @@ package com.kyripay.converter.exceptions;
 
 public class WrongFormatException extends RuntimeException
 {
-  public WrongFormatException(String message, Throwable cause)
+  public WrongFormatException(String message)
   {
-    super(message, cause);
+    super(message);
   }
 }

@@ -1,6 +1,6 @@
 package com.kyripay.converter.api;
 
-import com.kyripay.converter.domain.PaymentDocument;
+import com.kyripay.converter.dto.Document;
 import com.kyripay.converter.dto.DocumentStatus;
 import com.kyripay.converter.repository.DocumentRepostiory;
 import io.restassured.builder.RequestSpecBuilder;
@@ -167,7 +167,7 @@ public class ConverterTest
     @Test
     public void getDocument(){
 
-        repostiory.save(new PaymentDocument("ID", "test", DocumentStatus.READY, "test".getBytes()));
+        repostiory.save(new Document("ID", "test", DocumentStatus.READY, "test".getBytes()));
 
         String data = given(this.spec)
             .body("test data".getBytes())

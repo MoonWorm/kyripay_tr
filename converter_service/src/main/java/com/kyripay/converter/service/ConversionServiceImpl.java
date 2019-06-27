@@ -1,7 +1,6 @@
 package com.kyripay.converter.service;
 
 import com.kyripay.converter.converters.Converter;
-import com.kyripay.converter.domain.PaymentDocument;
 import com.kyripay.converter.dto.Document;
 import com.kyripay.converter.dto.DocumentStatus;
 import com.kyripay.converter.dto.FormatDetails;
@@ -10,35 +9,35 @@ import com.kyripay.converter.exceptions.DocumentNotFoundException;
 import com.kyripay.converter.exceptions.WrongFormatException;
 import com.kyripay.converter.repository.DocumentRepostiory;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 
 @Service
 @AllArgsConstructor
-public class ConversionServiceImpl implements ConversionService
+public class ConversionServiceImpl implements ConversionService, ConversionRequestListener
 {
   private final DocumentRepostiory repostiory;
   private final Map<String, Converter> availableConverters;
+  private final ApplicationEventPublisher eventPublisher;
 
   @Override
   public String convert(Payment payment, String format)
   {
-    String id = UUID.randomUUID().toString();
-    PaymentDocument document = new PaymentDocument(id, format, DocumentStatus.PROCESSING, null);
-    repostiory.save(document);
-
-    try {
-      callConverter(availableConverters.get(format), payment, document);
-    } catch (NullPointerException e){
-      throw new WrongFormatException(String.format("Unable to get converter for the %s format", format), e);
+    if (!availableConverters.containsKey(format)){
+      throw new WrongFormatException(String.format("Unable to get converter for the %s format", format));
     }
 
+    String id = UUID.randomUUID().toString();
+    Document document = new Document(id, format, DocumentStatus.PROCESSING, null);
+    repostiory.save(document);
+    eventPublisher.publishEvent(new ConversionRequestEvent(this, id, format, payment));
     return id;
   }
 
@@ -46,8 +45,7 @@ public class ConversionServiceImpl implements ConversionService
   @Override
   public Document getDocument(String id)
   {
-    PaymentDocument document = repostiory.findById(id).orElseThrow(() -> new DocumentNotFoundException("Document not found"));
-    return new Document(document.getFormat(), document.getStatus(), document.getData());
+    return repostiory.findById(id).orElseThrow(() -> new DocumentNotFoundException("Document not found"));
   }
 
 
@@ -61,19 +59,20 @@ public class ConversionServiceImpl implements ConversionService
   }
 
 
-  private void callConverter(Converter converter, Payment payment, PaymentDocument document)
+  @Override
+  @Async
+  @EventListener
+  public void callConverter(ConversionRequestEvent request)
   {
-      CompletableFuture.supplyAsync(() -> converter.convert(payment)).handleAsync((result, exception) -> {
-            if (exception == null) {
-              document.setStatus(DocumentStatus.READY);
-              document.setData(result);
-            }
-            else {
-              document.setStatus(DocumentStatus.CONVERSION_FAILED);
-            }
-            repostiory.save(document);
-            return result;
-          }
-      );
+    try {
+      Converter converter = availableConverters.get(request.getFormat());
+      byte[] data = converter.convert(request.getPayment());
+      Document document = repostiory.findById(request.getDocumentId()).orElseThrow(() -> new DocumentNotFoundException("id"));
+      document.setStatus(DocumentStatus.READY);
+      document.setData(data);
+      repostiory.save(document);
+    } catch (RuntimeException e){
+      repostiory.save(new Document(request.getDocumentId(), request.getFormat(), DocumentStatus.CONVERSION_FAILED, null));
     }
+  }
 }
