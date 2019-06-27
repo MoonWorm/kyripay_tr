@@ -49,7 +49,7 @@ public class NotificationController
   void createSmsNotification(@RequestHeader long userId,
                              @Valid @RequestBody SmsNotificationRequest notification)
   {
-    throw new UnsupportedOperationException("SMS notification is temporary unavailable");
+    throw new UnsupportedOperationException("SMS notification is not supported yet");
   }
 
 }
