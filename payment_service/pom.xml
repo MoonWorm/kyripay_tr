@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.kyripay_tr</groupId>
-	<artifactId>payment</artifactId>
+	<artifactId>payment-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>payment_service</name>
+	<name>payment-service</name>
 	<description>Payment service for Kyripay application</description>
 
 	<properties>
@@ -24,9 +24,6 @@
 		<jooq.version>3.11.11</jooq.version>
 		<postgresql.driver.version>42.2.5</postgresql.driver.version>
 		<dozer.version>5.3.1</dozer.version>
-		<dockerfile.version>1.4.1</dockerfile.version>
-
-		<docker.image.prefix>ataliuk</docker.image.prefix>
 
 		<schema.name>payments</schema.name>
 		<jdbc.user>payments_ms_user</jdbc.user>
@@ -251,36 +248,6 @@
 			</plugin>
 
 			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>dockerfile-maven-plugin</artifactId>
-				<version>${dockerfile.version}</version>
-				<!-- Wire up to the default build phases -->
-				<executions>
-					<execution>
-						<id>default</id>
-						<goals>
-							<goal>build</goal>
-							<goal>push</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<repository>${docker.image.prefix}/${project.artifactId}</repository>
-					<buildArgs>
-						<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
-					</buildArgs>
-				</configuration>
-				<dependencies>
-					<!-- To make this work on JDK 9+ -->
-					<dependency>
-						<groupId>javax.activation</groupId>
-						<artifactId>javax.activation-api</artifactId>
-						<version>1.2.0</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
@@ -344,6 +311,47 @@
 								<include>../api/*Test.java</include>
 							</includes>
 						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>docker</id>
+			<properties>
+				<dockerfile.version>1.4.1</dockerfile.version>
+				<docker.image.prefix>ataliuk</docker.image.prefix>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.spotify</groupId>
+						<artifactId>dockerfile-maven-plugin</artifactId>
+						<version>${dockerfile.version}</version>
+						<!-- Wire up to the default build phases -->
+						<executions>
+							<execution>
+								<id>default</id>
+								<goals>
+									<goal>build</goal>
+									<goal>push</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<repository>${docker.image.prefix}/${project.artifactId}</repository>
+							<buildArgs>
+								<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+							</buildArgs>
+						</configuration>
+						<dependencies>
+							<!-- To make this work on JDK 9+ -->
+							<dependency>
+								<groupId>javax.activation</groupId>
+								<artifactId>javax.activation-api</artifactId>
+								<version>1.2.0</version>
+							</dependency>
+						</dependencies>
 					</plugin>
 				</plugins>
 			</build>
