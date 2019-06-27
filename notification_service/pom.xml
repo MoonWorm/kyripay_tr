@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.kyripay_tr</groupId>
-	<artifactId>notification</artifactId>
+	<artifactId>notification-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>notification_service</name>
+	<name>notification-service</name>
 	<description>Notification service for Kyripay application</description>
 
 	<properties>
@@ -20,9 +20,6 @@
 		<rest-assured.version>3.1.0</rest-assured.version>
 		<spring-restdocs.version>2.0.1.RELEASE</spring-restdocs.version>
 		<jtwig.version>5.58</jtwig.version>
-		<dockerfile.version>1.4.1</dockerfile.version>
-
-		<docker.image.prefix>ataliuk</docker.image.prefix>
 	</properties>
 
 	<dependencies>
@@ -134,36 +131,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-
-			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>dockerfile-maven-plugin</artifactId>
-				<version>${dockerfile.version}</version>
-				<!-- Wire up to the default build phases -->
-				<executions>
-					<execution>
-						<id>default</id>
-						<goals>
-							<goal>build</goal>
-							<goal>push</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<repository>${docker.image.prefix}/${project.artifactId}</repository>
-					<buildArgs>
-						<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
-					</buildArgs>
-				</configuration>
-				<dependencies>
-					<!-- To make this work on JDK 9+ -->
-					<dependency>
-						<groupId>javax.activation</groupId>
-						<artifactId>javax.activation-api</artifactId>
-						<version>1.2.0</version>
-					</dependency>
-				</dependencies>
-			</plugin>
 		</plugins>
 	</build>
 
@@ -233,6 +200,46 @@
 								<include>../api/*Test.java</include>
 							</includes>
 						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<properties>
+				<dockerfile.version>1.4.1</dockerfile.version>
+				<docker.image.prefix>ataliuk</docker.image.prefix>
+			</properties>
+			<id>docker</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.spotify</groupId>
+						<artifactId>dockerfile-maven-plugin</artifactId>
+						<version>${dockerfile.version}</version>
+						<!-- Wire up to the default build phases -->
+						<executions>
+							<execution>
+								<id>default</id>
+								<goals>
+									<goal>build</goal>
+									<goal>push</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<repository>${docker.image.prefix}/${project.artifactId}</repository>
+							<buildArgs>
+								<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+							</buildArgs>
+						</configuration>
+						<dependencies>
+							<!-- To make this work on JDK 9+ -->
+							<dependency>
+								<groupId>javax.activation</groupId>
+								<artifactId>javax.activation-api</artifactId>
+								<version>1.2.0</version>
+							</dependency>
+						</dependencies>
 					</plugin>
 				</plugins>
 			</build>
