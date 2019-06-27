@@ -23,6 +23,10 @@
 		<asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
 		<jooq.version>3.11.11</jooq.version>
 		<postgresql.driver.version>42.2.5</postgresql.driver.version>
+		<dozer.version>5.3.1</dozer.version>
+		<dockerfile.version>1.4.1</dockerfile.version>
+
+		<docker.image.prefix>ataliuk</docker.image.prefix>
 
 		<schema.name>payments</schema.name>
 		<jdbc.user>payments_ms_user</jdbc.user>
@@ -31,7 +35,6 @@
 		<jooq.database>org.jooq.meta.postgres.PostgresDatabase</jooq.database>
 		<flyway.locations>filesystem:src/main/resources/db/migration/tables,filesystem:src/main/resources/db/migration/data</flyway.locations>
 		<jdbc.url>jdbc:postgresql://localhost:5432/payments_ms?currentSchema=${schema.name}</jdbc.url>
-		<dozer.version>5.3.1</dozer.version>
 	</properties>
 
 	<dependencies>
@@ -245,6 +248,36 @@
 						</target>
 					</generator>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>${dockerfile.version}</version>
+				<!-- Wire up to the default build phases -->
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>build</goal>
+							<goal>push</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<repository>${docker.image.prefix}/${project.artifactId}</repository>
+					<buildArgs>
+						<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+					</buildArgs>
+				</configuration>
+				<dependencies>
+					<!-- To make this work on JDK 9+ -->
+					<dependency>
+						<groupId>javax.activation</groupId>
+						<artifactId>javax.activation-api</artifactId>
+						<version>1.2.0</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 
 			<plugin>
