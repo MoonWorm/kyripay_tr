@@ -9,7 +9,8 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       # Consider using "create-drop" for "test" profile
-      ddl-auto: create
+      # For now set to 'none' as migrations will be managed by Liquibase
+      ddl-auto: none
     show-sql: true
   h2:
     console:
@@ -24,11 +25,21 @@ spring:
       base-path: /api
       # This BLOCKS my @RepositoryRestResource CRUD repo recognition for some reason. Got back to default. investigate.
       # detection-strategy: annotated
+  application:
+    admin:
+      enabled: true
+
+  liquibase:
+    change-log: classpath:db/liquibase-changelog.xml
+    enabled: true
+
+
 server:
   port: 8090
 logging:
   level:
-    org.springframework.web: DEBUG
-    org.springframework.data: TRACE
+    org.springframework.web: INFO
+    org.springframework.data: INFO
     kyripay.traces: TRACE
-    org.hibernate: DEBUG
+    org.hibernate: INFO
+    org.liquibase: DEBUG

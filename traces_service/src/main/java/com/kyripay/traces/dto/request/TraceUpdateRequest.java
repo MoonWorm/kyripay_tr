@@ -3,27 +3,26 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be *
  * reproduced, distributed, altered or used in any form, in whole or in part.   *
  ********************************************************************************/
-package com.kyripay.traces.domain.trace;
+package com.kyripay.traces.dto.request;
 
-import lombok.AllArgsConstructor;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.util.Map;
 
 
 /**
  * @author M-ASI
  */
 @Data
-@Embeddable
-@AllArgsConstructor
 @NoArgsConstructor
-public class Header
+@ApiModel(value = "Trace creation request")
+public class TraceUpdateRequest
 {
-  @Column(name = "NAME", nullable = false)
-  private String name;
-
-  @Column(name = "VALUE", nullable = false)
-  private String value;
+  @ApiModelProperty(value = "Trace headers")
+  private Map<@NotBlank @Size(min = 1, max = 100) String, @Size(max = 255) String> headers;
 }
