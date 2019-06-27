@@ -8,8 +8,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 
 @SpringBootApplication
-@EnableSwagger2
-//@Import(SpringDataRestConfiguration.class)  //Causes Spring Boot to fail. springfox-data-rest:2.9.2 is incompatible, 3.x is not released yet
 public class TracesApplication {
 
     public static void main(String[] args) {

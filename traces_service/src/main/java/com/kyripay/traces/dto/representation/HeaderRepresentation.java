@@ -3,27 +3,36 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be *
  * reproduced, distributed, altered or used in any form, in whole or in part.   *
  ********************************************************************************/
-package com.kyripay.traces.domain.trace;
+package com.kyripay.traces.dto.representation;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 
 /**
  * @author M-ASI
  */
 @Data
-@Embeddable
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-public class Header
+@AllArgsConstructor
+@ApiModel(value = "Header representation")
+public class HeaderRepresentation
 {
-  @Column(name = "NAME", nullable = false)
+  @ApiModelProperty(value = "Header name")
+  @NotBlank
+  @Size(min = 1, max = 100)
   private String name;
 
-  @Column(name = "VALUE", nullable = false)
+  @ApiModelProperty(value = "Header value")
+  @NotBlank
+  @Size(min = 1, max = 255)
   private String value;
 }

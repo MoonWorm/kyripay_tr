@@ -5,25 +5,12 @@
  ********************************************************************************/
 package com.kyripay.traces.domain.trace;
 
-import org.springframework.data.rest.core.config.Projection;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-
 /**
  * @author M-ASI
  */
-@Projection(name = "full", types = { Trace.class })
-public interface FullTraceProjection
+public enum EventType
 {
-  Long getPaymentId();
-
-  LocalDateTime getCreated();
-
-  LocalDateTime getUpdated();
-
-  List<Header> getHeaders(); //TODO expose as a Map (k:v), not as a list of "map entries"
-
-  List<Event> getEvents();
+  SUCCESS,
+  ERROR,
+  INFO
 }

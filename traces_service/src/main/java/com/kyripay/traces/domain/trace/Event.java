@@ -5,11 +5,12 @@
  ********************************************************************************/
 package com.kyripay.traces.domain.trace;
 
+import com.kyripay.traces.dto.representation.EventRepresentation;
+import com.kyripay.traces.dto.request.EventCreationRequest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 
@@ -22,16 +23,14 @@ import java.time.LocalDateTime;
 public class Event
 {
   @Column(nullable = false)
-  @NotBlank(message = "Header name must de defined")
   private String name;
 
   @Column
   private String source;
 
   @Column(nullable = false)
-  @NotBlank(message = "Header name must de defined")
   @Enumerated(EnumType.STRING)
-  private Type type;
+  private EventType type;
 
   @Column
   private String comment;
@@ -39,11 +38,29 @@ public class Event
   @Column
   private LocalDateTime created;
 
-  public enum Type
+
+  public static Event fromCreationRequest(EventCreationRequest creationRequest)
   {
-    SUCCESS,
-    ERROR,
-    INFO
+    Event event = new Event();
+    event.setName(creationRequest.getName());
+    event.setSource(creationRequest.getSource());
+    event.setType(creationRequest.getType());
+    event.setComment(creationRequest.getComment());
+    event.setCreated(LocalDateTime.now());
+
+    return event;
+  }
+
+
+  public EventRepresentation toRepresentation()
+  {
+    return EventRepresentation.builder()
+        .name(name)
+        .source(source)
+        .type(type)
+        .comment(comment)
+        .created(created)
+        .build();
   }
 
 }

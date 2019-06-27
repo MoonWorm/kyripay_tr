@@ -1,0 +1,54 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+  <changeSet id="01" author="ASI">
+    <createTable tableName="TRACES">
+      <column name="PAYMENT_ID" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CREATION_DATE_TIME" type="datetime"/>
+      <column name="UPDATE_DATE_TIME" type="datetime"/>
+    </createTable>
+    <addPrimaryKey tableName="TRACES" columnNames="PAYMENT_ID" constraintName="PK_TRACES"/>
+  
+    <createTable tableName="TRACE_EVENTS">
+      <column name="TRACE_ID" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="NAME" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="SOURCE" type="varchar(255)"/>
+      <column name="TYPE" type="varchar(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="COMMENT" type="varchar(1000)"/>
+      <column name="CREATED" type="datetime"/>
+    </createTable>
+    <addForeignKeyConstraint baseTableName="TRACE_EVENTS" baseColumnNames="TRACE_ID" constraintName="FK_EVENT_TRACE" referencedTableName="TRACES" referencedColumnNames="PAYMENT_ID"/>
+    <createIndex tableName="TRACE_EVENTS" indexName="IDX_EVENT_TRACE" unique="false">
+      <column name="TRACE_ID"/>
+    </createIndex>
+
+
+    <createTable tableName="TRACE_HEADERS">
+      <column name="TRACE_ID" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="NAME" type="varchar(100)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="VALUE" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <addPrimaryKey tableName="TRACE_HEADERS" columnNames="TRACE_ID,NAME"/>
+    <createIndex tableName="TRACE_HEADERS" indexName="IDX_HEADER_TRACE" unique="false">
+      <column name="TRACE_ID"/>
+    </createIndex>
+  </changeSet>
+
+</databaseChangeLog>
