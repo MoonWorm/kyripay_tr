@@ -87,6 +87,7 @@ public class NotificationServiceApiTest {
         assertThat(responseModel.getErrors().size(), is(2));
     }
 
+    /*
     @Test
     public void createSmsNotificationSuccess() throws IOException, URISyntaxException {
         given(this.documentationSpec)
@@ -117,7 +118,7 @@ public class NotificationServiceApiTest {
 
         assertThat(responseModel.getStatus(), is(400));
         assertThat(responseModel.getErrors().size(), is(1));
-    }
+    }*/
 
     private String readTestResource(String relativePath) throws URISyntaxException, IOException {
         URI uri = NotificationServiceApiTest.class.getResource(relativePath).toURI();

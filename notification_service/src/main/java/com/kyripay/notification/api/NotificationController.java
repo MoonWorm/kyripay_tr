@@ -39,7 +39,7 @@ public class NotificationController
   NotificationResponse createEmailNotification(@RequestHeader long userId,
                                                @Valid @RequestBody EmailNotificationRequest notification)
   {
-    String to = "aliaksei.taliuk@gmail.com"; // resolve by userId using user service
+    String to = "aliaksei.taliuk@gmail.com"; // TODO: resolve by userId using UserService by FeignClient
     return emailService.sendSimpleMessage(to, notification);
   }
 
@@ -49,7 +49,7 @@ public class NotificationController
   void createSmsNotification(@RequestHeader long userId,
                              @Valid @RequestBody SmsNotificationRequest notification)
   {
-
+    throw new UnsupportedOperationException("SMS notification is temporary unavailable");
   }
 
 }
