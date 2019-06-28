@@ -1,3 +1,7 @@
+# How to run (service + postgres + pgadmin):
+* gradle bootJar
+* docker-compose up --build
+
 # Useful links & flow of consciousness
 
 * [Lombok onX](https://projectlombok.org/features/experimental/onX)
