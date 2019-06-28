@@ -3,7 +3,7 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be *
  * reproduced, distributed, altered or used in any form, in whole or in part.   *
  ********************************************************************************/
-package com.kyripay.traces.support;
+package com.kyripay.traces.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

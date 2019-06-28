@@ -1,17 +1,20 @@
 spring:
+
+  application:
+    name: Traces
+    admin:
+      enabled: true
+
   # https://www.baeldung.com/spring-boot-h2-database
   datasource:
     url: jdbc:h2:mem:traces_db
-    # sample for file-based db: url=jdbc:h2:file:/data/demo
     driver-class-name: org.h2.Driver
-    # By default, Spring Boot configures the application to connect to an in-memory store with the username sa and an empty password
+
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      # Consider using "create-drop" for "test" profile
-      # For now set to 'none' as migrations will be managed by Liquibase
       ddl-auto: none
     show-sql: true
+
   h2:
     console:
       enabled: true
@@ -20,26 +23,17 @@ spring:
         # to make H2 console accessible when run in Docker container
         web-allow-others: true
 
-  data:
-    rest:
-      base-path: /api
-      # This BLOCKS my @RepositoryRestResource CRUD repo recognition for some reason. Got back to default. investigate.
-      # detection-strategy: annotated
-  application:
-    admin:
-      enabled: true
-
   liquibase:
     change-log: classpath:db/liquibase-changelog.xml
     enabled: true
 
-
 server:
   port: 8090
+
 logging:
   level:
     org.springframework.web: INFO
     org.springframework.data: INFO
     kyripay.traces: TRACE
     org.hibernate: INFO
-    org.liquibase: DEBUG
+    org.liquibase: INFO
