@@ -10,6 +10,8 @@ services:
     ports:
       - 8090:8090
     container_name: traces-service
+    depends_on:
+      - postgres
 
 
   postgres:
@@ -31,6 +33,8 @@ services:
     ports:
       - 9098:80
     container_name: postgres-pgadmin
+    depends_on:
+      - postgres
 
 volumes:
   postgres_data:
