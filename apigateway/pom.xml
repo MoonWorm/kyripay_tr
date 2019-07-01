@@ -12,17 +12,23 @@
 	<artifactId>apigateway</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>apigateway</name>
-	<description>API Gateway and Eureka Service Discovery server for Kyripay training project</description>
+	<description>API Gateway for Kyripay training project</description>
 
 	<properties>
 		<java.version>1.8</java.version>
-		<spring-cloud.version>Greenwich.SR1</spring-cloud.version>
+		<spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
 	</properties>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+			<artifactId>spring-cloud-starter-gateway</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
 		</dependency>
 
 		<dependency>
