@@ -1,0 +1,14 @@
+version: "3"
+services:
+  acknowledgement:
+    image: sdikovitsky/kyripay-acknowledgement
+    container_name: acknowledgement
+    environment:
+      SPRING_DATA_MONGODB_HOST: mongodb
+    ports:
+      - 8080:8080
+  mongodb:
+    image: mongo:3.6
+    container_name: acknowledgement-mongodb
+    ports:
+      - 27017:27017

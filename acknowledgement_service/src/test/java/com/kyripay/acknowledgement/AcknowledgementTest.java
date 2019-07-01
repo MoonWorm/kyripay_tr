@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -20,6 +21,7 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@AutoConfigureRestDocs("build/generated-snippets")
 public class AcknowledgementTest {
     private RequestSpecification spec;
 
@@ -38,15 +40,16 @@ public class AcknowledgementTest {
         String id = given(this.spec)
                 .contentType(APPLICATION_JSON_UTF8_VALUE)
                 .body("{\n" +
-                        "  \"format\" : \"coolAckFormat\",\n" +
+                        "  \"format\" : \"BASIC_ACK\",\n" +
                         "  \"customer\" : \"cmp11\",\n" +
-                        "  \"data\" : \"someBase64CodedData\"\n" +
+                        "  \"data\" : \"someBase64CodedData\",\n" +
+                        "  \"id\" : \"aaaaa\"\n" +
                         "}")
-                .filter(document("acknowledgement"))
+                .filter(document("{methodName}"))
                 .when()
                 .post("/api/v1/acks")
                 .then()
-                .statusCode(HttpStatus.SC_OK)
+                .statusCode(HttpStatus.SC_ACCEPTED)
                 .contentType(APPLICATION_JSON_UTF8_VALUE)
                 .extract()
                 .jsonPath().get("id");
@@ -74,7 +77,7 @@ public class AcknowledgementTest {
         String errMessage = (String) given(this.spec)
                 .contentType(APPLICATION_JSON_UTF8_VALUE)
                 .body(body)
-                .filter(document("acknowledgement"))
+                .filter(document("{methodName}"))
                 .when()
                 .post("/api/v1/acks")
                 .then()

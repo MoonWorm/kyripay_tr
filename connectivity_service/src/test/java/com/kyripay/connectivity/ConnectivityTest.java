@@ -7,12 +7,12 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static io.restassured.RestAssured.given;
-import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -22,6 +22,7 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@AutoConfigureRestDocs("build/generated-snippets")
 public class ConnectivityTest {
     private RequestSpecification spec;
 
@@ -48,7 +49,7 @@ public class ConnectivityTest {
                         "  },\n" +
                         "  \"payload\" : \"base64codedPayloadData\"\n" +
                         "}")
-                .filter(document("connectivity", pathParameters(
+                .filter(document("{methodName}", pathParameters(
                         parameterWithName("protocolId").description("Protocol id to be used")
                 )))
                 .when()

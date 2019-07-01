@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.NotBlank;
 
@@ -21,4 +22,6 @@ public class Acknowledgement {
     @NotBlank(message = "Data can't be empty")
     @ApiModelProperty(value = "Acknowledgement base64 coded data")
     private String data;
+    @Id
+    private String id;
 }

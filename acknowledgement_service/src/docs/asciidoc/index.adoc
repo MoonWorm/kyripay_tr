@@ -7,7 +7,7 @@ API for parsing of acknowledgements and updating correspondent payments with the
 Accepts an acknowledgement, parse it using format defined in the request and update payments then
 
 .request
-include::{snippets}/acknowledgement/http-request.adoc[]
+include::{snippets}/acknowledgementConversion/http-request.adoc[]
 
 .response
-include::{snippets}/acknowledgement/http-response.adoc[]
+include::{snippets}/acknowledgementConversion/http-response.adoc[]

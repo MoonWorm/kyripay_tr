@@ -7,13 +7,13 @@ API for sending message to the 3rd party using different protocols
 Accepts the message with the payload to be send and all the connection properties needed for that
 
 .path parameters
-include::{snippets}/send/path-parameters.adoc[]
+include::{snippets}/sendMessage/path-parameters.adoc[]
 
 .request
-include::{snippets}/send/http-request.adoc[]
+include::{snippets}/sendMessage/http-request.adoc[]
 
 .response
-include::{snippets}/send/http-response.adoc[]
+include::{snippets}/sendMessage/http-response.adoc[]
 
 Message status can be received via '/api/v1/connection/message/{id}' endpoint
 
