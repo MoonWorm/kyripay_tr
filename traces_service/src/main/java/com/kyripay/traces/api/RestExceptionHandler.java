@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * @author M-ASI
  */
-@ControllerAdvice
+@ControllerAdvice(basePackageClasses = { GenericTraceController.class })
 public class RestExceptionHandler extends ResponseEntityExceptionHandler
 {
 

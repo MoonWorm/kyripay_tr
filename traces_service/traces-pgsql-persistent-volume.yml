@@ -1,0 +1,31 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: traces-postgres-volume
+  labels:
+    type: local
+    app: traces-postgres
+spec:
+  # TODO TBD
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  #This will NOT work in multi-node environment! It is acceptable for dev/test purposes only.
+  hostPath:
+    path: "/mnt/data/traces/pgsql-data"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: traces-postgres-volume-claim
+  labels:
+    app: traces-postgres
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi

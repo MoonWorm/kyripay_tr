@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: traces-postgres-config
+  labels:
+    app: traces-postgres
+data:
+  POSTGRES_DB: traces
+  POSTGRES_USER: admin
+  POSTGRES_PASSWORD: admin

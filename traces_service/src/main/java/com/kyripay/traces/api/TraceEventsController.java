@@ -44,7 +44,7 @@ public class TraceEventsController extends GenericTraceController
   public ResponseEntity<?> listEvents(@PathVariable("id") Long traceId) throws ResourceNotFoundException
   {
     Collection<EventRepresentation> events = service.listEvents(traceId);
-    return events.isEmpty() ? status(HttpStatus.NO_CONTENT) : response(HttpStatus.OK, events);
+    return events.isEmpty() ? status(HttpStatus.NO_CONTENT) : response(HttpStatus.OK, events);//TODO ret notfound
   }
 
 
