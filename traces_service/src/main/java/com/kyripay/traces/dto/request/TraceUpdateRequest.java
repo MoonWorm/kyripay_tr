@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Data
 @NoArgsConstructor
-@ApiModel(value = "Trace creation request")
+@ApiModel(value = "Trace update request")
 public class TraceUpdateRequest
 {
   @ApiModelProperty(value = "Trace headers")

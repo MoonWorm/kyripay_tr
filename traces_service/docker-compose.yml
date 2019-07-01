@@ -6,7 +6,8 @@ services:
     build: .
     image: kyripay/traces:latest
     environment:
-      DB_HOST: postgres
+      spring.profiles.active: postgres
+      POSTGRESQL_HOST: postgres
     ports:
       - 8090:8090
     container_name: traces-service

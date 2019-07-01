@@ -93,3 +93,26 @@ It is to document only headers that are important in the operation context; to r
 [Soring Boot Externalized Configuration](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html)
 [@EnableJpaAuditing](https://springbootdev.com/2018/03/13/spring-data-jpa-auditing-with-createdby-createddate-lastmodifiedby-and-lastmodifieddate/)       
  
+ 
+[Instaling Minikube inside VirtualBox](https://medium.com/@vovaprivalov/setup-minikube-on-virtualbox-7cba363ca3bc) 
+
+[Just released minikube 1.2.0](https://github.com/kubernetes/minikube/releases/tag/v1.2.0)
+
+[Kuber apiVersions explained](https://matthewpalmer.net/kubernetes-app-developer/articles/kubernetes-apiversion-definition-guide.html)
+
+[Kuber concepts, offdocs](https://kubernetes.io/docs/concepts/configuration/overview/)
+
+[Kuber uninstall](https://gist.github.com/robinkraft/a0987b50de8b45e4bdc907d841db8f23)
+
+[Kuber uninstall 2](https://stackoverflow.com/questions/49364619/removing-docker-kubernetes-k8s-images-from-local-machine)
+
+[client / server version discrepancy issues](https://stackoverflow.com/questions/51180147/determine-what-resource-was-not-found-from-error-from-server-notfound-the-se)
+
+[kubectl install](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+
+[dashboard on none: unexpected response code: 503](https://github.com/kubernetes/minikube/issues/4352)
+
+[Postgres in Kubernetes](https://severalnines.com/blog/using-kubernetes-deploy-postgresql)
+
+
+
