@@ -1,0 +1,14 @@
+version: "3"
+services:
+  converter:
+    image: astankevich/kyripay-converter
+    container_name: converter
+    environment:
+      SPRING_DATA_MONGODB_HOST: mongodb
+    ports:
+      - 8080:8080
+  mongodb:
+    image: mongo:3.6
+    container_name: converter-mongodb
+    ports:
+      - 27017:27017
