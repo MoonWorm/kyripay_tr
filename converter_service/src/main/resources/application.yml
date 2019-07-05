@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: converter
+  data:
+    mongodb:
+      database: converter
