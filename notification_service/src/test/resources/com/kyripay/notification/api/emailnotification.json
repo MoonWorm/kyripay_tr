@@ -1,0 +1,9 @@
+{
+  "titleTemplateId": "registration_conf_subj",
+  "bodyTemplateId": "registration_conf_body",
+  "parameters": {
+    "honorific": "Mr",
+    "firstName": "Vasia",
+    "lastName": "Pupkin"
+  }
+}

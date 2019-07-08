@@ -1,0 +1,41 @@
+= Notification Service
+Alexey Talyuk;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+
+Notification Service that is responsible for sending notification messages of different types to customers.
+
+This service contains separate API method per each notification type, e.g. Email, SMS ...
+
+== Send Email notification
+
+To create an email notification, use the next API:
+
+Request sample using cURL:
+
+include::{snippets}/create-email-notification-success/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/create-email-notification-success/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/create-email-notification-success/http-response.adoc[]
+
+== Send SMS notification
+
+To create an SMS notification, use the next API:
+
+Request sample using cURL:
+
+include::{snippets}/create-sms-notification-success/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/create-sms-notification-success/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/create-sms-notification-success/http-response.adoc[]
