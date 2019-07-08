@@ -51,10 +51,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jooq</artifactId>
 		</dependency>
-		<!--<dependency>
+		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-		</dependency>-->
+		</dependency>
 
 		<dependency>
 			<groupId>net.sf.dozer</groupId>
@@ -320,7 +320,7 @@
 			<id>docker</id>
 			<properties>
 				<dockerfile.version>1.4.1</dockerfile.version>
-				<docker.image.prefix>ataliuk</docker.image.prefix>
+				<docker.image.prefix>kyripay</docker.image.prefix>
 			</properties>
 			<build>
 				<plugins>

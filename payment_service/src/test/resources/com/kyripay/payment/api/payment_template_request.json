@@ -1,5 +1,5 @@
 {
-  "name": "Payment Template 1",
+  "name": "<TEMPLATE_NAME>",
   "paymentDetails": {
     "amount": {
       "amount": 50,

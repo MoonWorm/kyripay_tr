@@ -39,7 +39,7 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
  * @author M-ATA
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = DEFINED_PORT)
+@SpringBootTest(webEnvironment = DEFINED_PORT, value = "eureka.client.enabled=false")
 public class NotificationServiceApiTest {
 
     @Rule

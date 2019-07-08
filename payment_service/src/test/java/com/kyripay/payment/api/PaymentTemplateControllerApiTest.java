@@ -8,8 +8,6 @@ package com.kyripay.payment.api;
 import com.kyripay.payment.dto.PaymentTemplateResponse;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,7 +15,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.restdocs.JUnitRestDocumentation;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -28,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
@@ -59,14 +57,14 @@ public class PaymentTemplateControllerApiTest {
                 .addFilter(documentationConfiguration(restDocumentation)).build();
     }
 
-    @Sql(statements = "DELETE FROM TEST.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void createSuccess() throws URISyntaxException, IOException {
+        long userId = 1L;
         PaymentTemplateResponse response = given(this.documentationSpec)
                 .filter(document("payment-template/{method-name}"))
                 .contentType(ContentType.JSON)
-                .header("userId", 1L)
-                .body(readTestResource("/com/kyripay/payment/api/payment_template_request.json"))
+                .header("userId", userId)
+                .body(readPaymentTemplateRequest(UUID.randomUUID().toString()))
                 .when()
                 .post("/api/v1/paymenttemplates")
                 .then()
@@ -95,17 +93,16 @@ public class PaymentTemplateControllerApiTest {
         assertThat(responseModel.getErrors().size(), is(1));
     }
 
-
-    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
-    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (2, 1, 'Template 2', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
-    @Sql(statements = "DELETE FROM TEST.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
-    public void readAllSuccess() {
+    public void readAllSuccess() throws IOException, URISyntaxException {
+        long userId = 1L;
+        createPaymentTemplate(userId, UUID.randomUUID().toString());
+        createPaymentTemplate(userId, UUID.randomUUID().toString());
         List<PaymentTemplateResponse> response = given(this.documentationSpec)
                 .filter(document("payment-template/{method-name}"))
                 .contentType(ContentType.JSON)
-                .header("userId", 1L)
-                .param("limit", 3)
+                .header("userId", userId)
+                .param("limit", 2)
                 .param("offset", 0)
                 .when()
                 .get("/api/v1/paymenttemplates")
@@ -118,18 +115,17 @@ public class PaymentTemplateControllerApiTest {
         assertEquals(2, response.size());
     }
 
-
-    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
-    @Sql(statements = "DELETE FROM TEST.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
-    public void readByIdSuccess() {
+    public void readByIdSuccess() throws IOException, URISyntaxException {
+        long userId = 1L;
+        long paymentTemplateId = createPaymentTemplate(userId, UUID.randomUUID().toString());
         PaymentTemplateResponse response = given(this.documentationSpec)
                 .filter(document("payment-template/{method-name}",
                         pathParameters(parameterWithName("id").description("Payment template unique identifier"))))
                 .contentType(ContentType.JSON)
-                .header("userId", 1L)
+                .header("userId", userId)
                 .when()
-                .get("/api/v1/paymenttemplates/{id}", 1)
+                .get("/api/v1/paymenttemplates/{id}", paymentTemplateId)
                 .then()
                 .assertThat().statusCode(SC_OK)
                 .contentType(ContentType.JSON)
@@ -138,19 +134,19 @@ public class PaymentTemplateControllerApiTest {
         assertNotNull(response);
     }
 
-
-    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
-    @Sql(statements = "DELETE FROM TEST.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     public void updateSuccess() throws URISyntaxException, IOException {
+        long userId = 1L;
+        String templateName = UUID.randomUUID().toString();
+        long paymentTemplateId = createPaymentTemplate(userId, templateName);
         PaymentTemplateResponse response = given(this.documentationSpec)
                 .filter(document("payment-template/{method-name}",
                         pathParameters(parameterWithName("id").description("Payment template unique identifier"))))
                 .contentType(ContentType.JSON)
-                .header("userId", 1L)
-                .body(readTestResource("/com/kyripay/payment/api/payment_template_request.json"))
+                .header("userId", userId)
+                .body(readPaymentTemplateRequest(templateName))
                 .when()
-                .put("/api/v1/paymenttemplates/{id}", 1)
+                .put("/api/v1/paymenttemplates/{id}", paymentTemplateId)
                 .then()
                 .assertThat().statusCode(SC_OK)
                 .contentType(ContentType.JSON)
@@ -180,27 +176,49 @@ public class PaymentTemplateControllerApiTest {
         assertThat(responseModel.getErrors().size(), is(1));
     }
 
-    @Sql(statements = "INSERT INTO TEST.PAYMENT_TEMPLATE (id, user_id, name, bank_id, account_number, recipient_first_name, recipient_last_name, recipient_bank_name, recipient_bank_address, recipient_bank_account, amount, currency) VALUES (1, 1, 'Template 1', 1, '12344IBAN', 'Vasia', 'Pupkin', 'Bank 1', 'Street 1, 1', '3123123IBAN', 1000, 'BYN');")
-    @Sql(statements = "DELETE FROM TEST.PAYMENT_TEMPLATE;", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
-    public void deleteSuccess() {
+    public void deleteSuccess() throws IOException, URISyntaxException {
+        long userId = 1L;
+        long paymentTemplateId = createPaymentTemplate(userId, UUID.randomUUID().toString());
         given(this.documentationSpec)
                 .filter(document("payment-template/{method-name}",
                         pathParameters(parameterWithName("id").description("Payment template unique identifier"))))
                 .contentType(ContentType.JSON)
-                .header("userId", 1L)
+                .header("userId", userId)
                 .when()
-                .delete("/api/v1/paymenttemplates/{id}", 1)
+                .delete("/api/v1/paymenttemplates/{id}", paymentTemplateId)
                 .then()
                 .assertThat().statusCode(SC_OK);
     }
 
+    private String readPaymentTemplateRequest(String templateName) throws URISyntaxException, IOException {
+        String json = readTestResource("/com/kyripay/payment/api/payment_template_request.json");
+        json = json.replaceAll("<TEMPLATE_NAME>", templateName);
+        return json;
+    }
 
     private String readTestResource(String relativePath) throws URISyntaxException, IOException {
         URI uri = PaymentTemplateControllerApiTest.class.getResource(relativePath).toURI();
         Path path = Paths.get(uri);
         String resourceStr = new String(Files.readAllBytes(path), StandardCharsets.UTF_8.name());
         return resourceStr;
+    }
+
+    private long createPaymentTemplate(long userId, String templateName) throws URISyntaxException, IOException {
+        String body = readPaymentTemplateRequest(templateName);
+        PaymentTemplateResponse response = given()
+                .contentType(ContentType.JSON)
+                .header("userId", userId)
+                .body(body)
+                .when()
+                .post("/api/v1/paymenttemplates")
+                .then()
+                .assertThat().statusCode(SC_OK)
+                .contentType(ContentType.JSON)
+                .extract()
+                .as(PaymentTemplateResponse.class);
+        assertNotNull(response);
+        return response.getId();
     }
 
 }
