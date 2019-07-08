@@ -13,8 +13,7 @@ spec:
     spec:
       containers:
         - name: eureka-server
-          image: eureka-server
-          imagePullPolicy: Never # TODO: Change when image is on Docker Hub
+          image: kyripay/eureka
           ports:
             - containerPort: 9090
 ---

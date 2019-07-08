@@ -13,8 +13,7 @@ spec:
     spec:
       containers:
         - name: apigateway
-          image: apigateway
-          imagePullPolicy: Never # TODO: Change when image is on Docker Hub
+          image: kyripay/apigateway
           ports:
             - containerPort: 9090
 

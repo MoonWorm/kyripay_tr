@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: converter
-          image: astankevich/kyripay-converter
+          image: kyripay/converter
           ports:
             - containerPort: 8080
           env:

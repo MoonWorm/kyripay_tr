@@ -74,8 +74,8 @@ bootJar {
 docker {
 	dependsOn build
 	name "kyripay-converter"
-	tag "version", "astankevich/kyripay-converter:${project.version}"
-	tag "latest", "astankevich/kyripay-converter:latest"
+	tag "version", "kyripay/converter:${project.version}"
+	tag "latest", "kyripay/converter:latest"
 	files tasks.bootJar.outputs
 	buildArgs([VERSION: project.version])
 }
