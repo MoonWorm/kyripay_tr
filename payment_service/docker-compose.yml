@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  api:
+    container_name: payment-api
+    depends_on:
+      - db
+    image: ataliuk/payment
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/payments_ms?currentSchema=payments
+  db:
+    container_name: payment-postgres
+    image: postgres:11.3
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=payments_ms
+      - POSTGRES_USER=payments_ms_user
+      - POSTGRES_PASSWORD=12345
