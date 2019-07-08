@@ -11,10 +11,10 @@ import com.kyripay.notification.dto.SmsNotificationRequest;
 import com.kyripay.notification.service.EmailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -24,32 +24,45 @@ import javax.validation.Valid;
  */
 @RestController
 @Api(value = "Notification Service", description = "Sends notification messages to users through different channels " +
-    "(email, sms...)")
-public class NotificationController
-{
+        "(email, sms...)")
+public class NotificationController {
 
-  private EmailService emailService;
+    private EmailService emailService;
+    private UserMicroService userMicroService;
 
-  public NotificationController(EmailService emailService) {
-    this.emailService = emailService;
-  }
+    public NotificationController(EmailService emailService, UserMicroService userMicroService) {
+        this.emailService = emailService;
+        this.userMicroService = userMicroService;
+    }
 
-  @ApiOperation("Sends an email to a user")
-  @PostMapping("/api/v1/emailnotifications")
-  NotificationResponse createEmailNotification(@RequestHeader long userId,
-                                               @Valid @RequestBody EmailNotificationRequest notification)
-  {
-    String to = "aliaksei.taliuk@gmail.com"; // TODO: resolve by userId using UserService by FeignClient
-    return emailService.sendSimpleMessage(to, notification);
-  }
+    @ApiOperation("Sends an email to a user")
+    @PostMapping("/api/v1/emailnotifications")
+    NotificationResponse createEmailNotification(@RequestHeader long userId,
+                                                 @Valid @RequestBody EmailNotificationRequest notification) {
+        String to = userMicroService.getUserContactDetails(userId).getEmail();
+        return emailService.sendSimpleMessage(to, notification);
+    }
 
 
-  @ApiOperation("Sends SMS text message to a user")
-  @PostMapping("/api/v1/smsnotifications")
-  void createSmsNotification(@RequestHeader long userId,
-                             @Valid @RequestBody SmsNotificationRequest notification)
-  {
-    throw new UnsupportedOperationException("SMS notification is not supported yet");
-  }
+    @ApiOperation("Sends SMS text message to a user")
+    @PostMapping("/api/v1/smsnotifications")
+    void createSmsNotification(@RequestHeader long userId,
+                               @Valid @RequestBody SmsNotificationRequest notification) {
+        throw new UnsupportedOperationException("SMS notification is not supported yet");
+    }
+
+    @FeignClient("user-service")
+    interface UserMicroService {
+
+        @RequestMapping(value = "/api/v1/users/{userId}/details", method = RequestMethod.GET)
+        UserContactDetailsResponse getUserContactDetails(@PathVariable long userId);
+
+    }
+
+    @Data
+    @NoArgsConstructor
+    static class UserContactDetailsResponse {
+        private String email;
+    }
 
 }
