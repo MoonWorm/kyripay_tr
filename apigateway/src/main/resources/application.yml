@@ -1,0 +1,30 @@
+server:
+  port: 9091
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: payment
+          uri: lb://payment-service
+          predicates:
+            - 'Path=/api/*/payments/**'
+            - 'Path=/api/*/paymenttemplates/**'
+        - id: converter
+            uri: lb://converter
+            predicates:
+              - 'Path=/api/*/converters'
+        - id: notification
+            uri: lb://notification_service
+            predicates:
+              - 'Path=/api/*/emailnotifications/**'
+eureka:
+  client:
+    service-url:
+      defaultZone: 'http://eureka:9090/eureka/'
