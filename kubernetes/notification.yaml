@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-deployment
+spec:
+  selector:
+    matchLabels:
+      app: notification
+  template:
+    metadata:
+      labels:
+        app: notification
+    spec:
+      containers:
+        - name: notification
+          image: kyripay/notification-service
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_DATA_MONGODB_HOST
+              value: mongodb
