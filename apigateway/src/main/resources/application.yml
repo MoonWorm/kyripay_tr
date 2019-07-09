@@ -14,16 +14,16 @@ spring:
         - id: payment
           uri: lb://payment-service
           predicates:
-            - 'Path=/api/*/payments/**'
-            - 'Path=/api/*/paymenttemplates/**'
+            - Path=/api/*/payments/**
+            - Path=/api/*/paymenttemplates/**
         - id: converter
-            uri: lb://converter
-            predicates:
-              - 'Path=/api/*/converters'
+          uri: lb://converter
+          predicates:
+            - Path=/api/*/converters
         - id: notification
-            uri: lb://notification_service
-            predicates:
-              - 'Path=/api/*/emailnotifications/**'
+          uri: lb://notification_service
+          predicates:
+            - Path=/api/*/emailnotifications/**
 eureka:
   client:
     service-url:
