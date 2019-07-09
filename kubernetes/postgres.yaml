@@ -17,6 +17,13 @@ spec:
           image: postgres:11.3
           ports:
             - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: payments_ms
+            - name: POSTGRES_USER
+              value: payments_ms_user
+            - name: POSTGRES_PASSWORD
+              value: '12345'
 ---
 apiVersion: v1
 kind: Service
@@ -28,10 +35,3 @@ spec:
   ports:
     - port: 5432
       targetPort: 5432
-  env:
-    - name: POSTGRES_DB
-      value: payments_ms
-    - name: POSTGRES_USER
-      value: payments_ms_user
-    - name: POSTGRES_PASSWORD
-      value: 12345

@@ -22,9 +22,8 @@ kind: Service
 metadata:
   name: eureka
 spec:
+  type: NodePort
   selector:
     app: eureka
   ports:
     - port: 9090
-      targetPort: 9090
-
