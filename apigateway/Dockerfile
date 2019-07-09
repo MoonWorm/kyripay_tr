@@ -1,9 +1,5 @@
-FROM openjdk:11-jre-slim
-
-ARG VERSION
-
-COPY target/apigateway-${VERSION}.jar /usr/src/apigateway.jar
-
-CMD java -jar /usr/src/apigateway.jar
-
+FROM openjdk:8u212-jre
+ARG JAR_FILE
+COPY ${JAR_FILE} /usr/local/lib/apigateway.jar
+ENTRYPOINT ["java","-jar","/usr/local/lib/apigateway.jar"]
 EXPOSE 9090
