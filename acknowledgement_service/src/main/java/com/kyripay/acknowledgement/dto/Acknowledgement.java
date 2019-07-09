@@ -1,6 +1,7 @@
 package com.kyripay.acknowledgement.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -23,5 +24,6 @@ public class Acknowledgement {
     @ApiModelProperty(value = "Acknowledgement base64 coded data")
     private String data;
     @Id
+    @JsonIgnore
     private String id;
 }

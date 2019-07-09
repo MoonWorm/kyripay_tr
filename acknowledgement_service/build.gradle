@@ -73,8 +73,8 @@ docker {
 	dependsOn build
 	name "kyripay-acknowledgement"
 //	dockerfile project.file("Dockerfile")
-	tag "version", "sdikovitsky/kyripay-acknowledgement:${project.version}"
-	tag "latest", "sdikovitsky/kyripay-acknowledgement:latest"
+	tag "version", "kyripay/kyripay-acknowledgement:${project.version}"
+	tag "latest", "kyripay/kyripay-acknowledgement:latest"
 	files tasks.bootJar.outputs
 	buildArgs([VERSION: project.version])
 }
