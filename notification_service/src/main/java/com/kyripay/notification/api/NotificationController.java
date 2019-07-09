@@ -51,7 +51,7 @@ public class NotificationController {
         throw new UnsupportedOperationException("SMS notification is not supported yet");
     }
 
-    @FeignClient("user-service")
+    @FeignClient("userservice")
     interface UserMicroService {
 
         @RequestMapping(value = "/api/v1/users/{userId}/details", method = RequestMethod.GET)
