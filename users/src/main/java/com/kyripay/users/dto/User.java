@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -20,6 +21,7 @@ public class User {
     @Id
     @GeneratedValue
     @ApiModelProperty(value = "Unique user id (UUID)", example = "88acc585-dcf6-49ad-ae95-3422a5cdba45")
+    @Type(type = "pg-uuid")
     private UUID id;
     @NotNull(message = "User details should be provided")
     @Valid

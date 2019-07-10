@@ -1,0 +1,14 @@
+version: "3.3"
+services:
+  postgres:
+    container_name: 'postgresdb'
+    image: postgres
+    ports:
+      - 5432:5432
+  users:
+    container_name: 'users-service'
+    image: 'kyripay/users'
+    environment:
+      db.host: "postgres"
+    ports:
+      - 8085:8080

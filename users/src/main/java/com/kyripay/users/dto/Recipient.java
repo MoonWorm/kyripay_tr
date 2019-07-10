@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -19,10 +20,12 @@ public class Recipient {
     @ApiModelProperty(value = "Recipient unique id (UUID)", example = "87acc585-dcf6-49ad-ae95-3422a5cdba46")
     @Id
     @GeneratedValue
+    @Type(type = "pg-uuid")
     private UUID id;
     @ApiModelProperty(value = "User id (UUID)", example = "88acc585-dcf6-49ad-ae95-3422a5cdba45")
     @Column(name = "user_id")
     @JsonIgnore
+    @Type(type = "pg-uuid")
     private UUID userId;
     @NotBlank(message = "First name can't be empty")
     @ApiModelProperty(value = "First name", example = "Dmitry")

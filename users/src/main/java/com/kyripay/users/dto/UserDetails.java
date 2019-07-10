@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -20,6 +21,7 @@ public class UserDetails {
     @Id
     @GeneratedValue
     @JsonIgnore
+    @Type(type = "pg-uuid")
     private UUID id;
     @NotBlank(message = "First name can't be empty")
     @ApiModelProperty(value = "First name", example = "Dmitry")

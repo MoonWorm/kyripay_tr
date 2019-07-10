@@ -19,7 +19,6 @@ public class UserDetailsApi {
         this.userDetailsService = userDetailsServicer;
     }
 
-
     @ApiOperation("Get user's details")
     @GetMapping("/users/{userId}/details")
     UserDetails getUserDetails(@PathVariable String userId) throws UserNotFoundException {
