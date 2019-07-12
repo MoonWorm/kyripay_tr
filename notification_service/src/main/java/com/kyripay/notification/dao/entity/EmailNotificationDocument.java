@@ -3,6 +3,7 @@ package com.kyripay.notification.dao.entity;
 import com.kyripay.notification.domain.vo.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.Email;
@@ -14,17 +15,17 @@ import javax.validation.constraints.NotNull;
 public class EmailNotificationDocument extends GenericNotification {
 
     @Email
-    private String to;
+    private final String to;
     @NotBlank
-    private String subject;
+    private final String subject;
     @NotNull
-    private Status status;
+    private final Status status;
 
     public EmailNotificationDocument(@Email String to,
                                      @NotBlank String subject,
                                      @NotBlank String body,
                                      @NotNull Status status) {
-        super(null, body);
+        super(body);
         this.to = to;
         this.subject = subject;
         this.status = status;

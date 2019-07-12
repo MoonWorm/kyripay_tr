@@ -10,12 +10,19 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.testcontainers.containers.GenericContainer;
 
 import java.io.IOException;
 import java.net.URI;
@@ -39,13 +46,30 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
  * @author M-ATA
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = DEFINED_PORT, value = "eureka.client.enabled=false")
-public class NotificationServiceApiTest {
+@SpringBootTest(webEnvironment = DEFINED_PORT)
+@ActiveProfiles("test")
+@ContextConfiguration(initializers = NotificationEndpointApiTest.Initializer.class)
+public class NotificationEndpointApiTest {
 
     @Rule
     public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("target/generated-snippets");
 
     private RequestSpecification documentationSpec;
+
+    @ClassRule
+    public static final GenericContainer mongo = new GenericContainer<>("mongo:3.6-xenial")
+            .withExposedPorts(27017);
+
+    public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+        @Override
+        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
+            TestPropertyValues values = TestPropertyValues.of(
+                    "spring.data.mongodb.host=" + mongo.getContainerIpAddress(),
+                    "spring.data.mongodb.port=" + mongo.getMappedPort(27017)
+            );
+            values.applyTo(configurableApplicationContext);
+        }
+    }
 
 
     @Before
@@ -84,44 +108,11 @@ public class NotificationServiceApiTest {
         CustomGlobalExceptionHandler.ErrorsInfo responseModel = response.as(CustomGlobalExceptionHandler.ErrorsInfo.class);
 
         assertThat(responseModel.getStatus(), is(400));
-        assertThat(responseModel.getErrors().size(), is(2));
+        assertThat(responseModel.getErrors().size(), is(3));
     }
-
-    /*
-    @Test
-    public void createSmsNotificationSuccess() throws IOException, URISyntaxException {
-        given(this.documentationSpec)
-                .filter(document("{method-name}"))
-                .header("userId", 1L)
-                .contentType(ContentType.JSON)
-                .body(readTestResource("/com/kyripay/notification/api/smsnotification.json"))
-                .when()
-                .post("/api/v1/smsnotifications")
-                .then()
-                .assertThat().statusCode(SC_OK);
-    }
-
-    @Test
-    public void createSmsNotificationInvalid() throws IOException, URISyntaxException {
-        Response response = given()
-                .contentType(ContentType.JSON)
-                .header("userId", 1L)
-                .body(readTestResource("/com/kyripay/notification/api/smsnotification_invalid.json"))
-                .when()
-                .post("/api/v1/smsnotifications")
-                .then()
-                .assertThat().statusCode(SC_BAD_REQUEST)
-                .contentType(ContentType.JSON)
-                .extract()
-                .response();
-        CustomGlobalExceptionHandler.ErrorsInfo responseModel = response.as(CustomGlobalExceptionHandler.ErrorsInfo.class);
-
-        assertThat(responseModel.getStatus(), is(400));
-        assertThat(responseModel.getErrors().size(), is(1));
-    }*/
 
     private String readTestResource(String relativePath) throws URISyntaxException, IOException {
-        URI uri = NotificationServiceApiTest.class.getResource(relativePath).toURI();
+        URI uri = NotificationEndpointApiTest.class.getResource(relativePath).toURI();
         Path path = Paths.get(uri);
         String resourceStr = new String(Files.readAllBytes(path), StandardCharsets.UTF_8.name());
         return resourceStr;

@@ -6,15 +6,22 @@
 package com.kyripay.notification.dto;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
 
 
 /**
  * @author M-ATA
  */
 @Data
-@NoArgsConstructor
-public class SmsNotificationRequest extends GenericNotificationRequest
-{
+public class SmsNotificationRequest extends GenericNotificationRequest {
+
+    @NotBlank
+    private String mobileNumber;
+
+    public SmsNotificationRequest(@NotBlank String bodyTemplateId, @NotBlank String mobileNumber) {
+        super(bodyTemplateId);
+        this.mobileNumber = mobileNumber;
+    }
 
 }

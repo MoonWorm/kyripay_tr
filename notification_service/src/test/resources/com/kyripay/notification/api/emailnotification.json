@@ -1,4 +1,5 @@
 {
+  "to": "2senator@tut.by",
   "titleTemplateId": "registration_conf_subj",
   "bodyTemplateId": "registration_conf_body",
   "parameters": {
