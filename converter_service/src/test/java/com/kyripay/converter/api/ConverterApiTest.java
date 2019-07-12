@@ -2,7 +2,7 @@ package com.kyripay.converter.api;
 
 import com.kyripay.converter.dto.Document;
 import com.kyripay.converter.dto.DocumentStatus;
-import com.kyripay.converter.repository.DocumentRepostiory;
+import com.kyripay.converter.repository.DocumentRepository;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpStatus;
@@ -19,10 +19,12 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.GenericContainer;
 
+import java.io.IOException;
 import java.util.Base64;
 
 import static io.restassured.RestAssured.given;
@@ -37,8 +39,9 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureRestDocs("build/generated-snippets")
-@ContextConfiguration(initializers = ConverterTest.Initializer.class)
-public class ConverterTest
+@ContextConfiguration(initializers = ConverterApiTest.Initializer.class)
+@ActiveProfiles("test")
+public class ConverterApiTest
 {
 
     @ClassRule
@@ -61,7 +64,7 @@ public class ConverterTest
 
     private RequestSpecification spec;
     @Autowired
-    private DocumentRepostiory repostiory;
+    private DocumentRepository repository;
 
     @Before
     public void setUp() {
@@ -71,32 +74,10 @@ public class ConverterTest
     }
 
     @Test
-    public void convertDocument(){
+    public void convertDocument() throws Exception{
         String id = given(this.spec)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .body("{\n" +
-                    "  \"account\": {\n" +
-                    "    \"bankId\": \"Bank 1\",\n" +
-                    "    \"currency\": \"USD\",\n" +
-                    "    \"id\": \"123\",\n" +
-                    "    \"number\": \"ACC123\"\n" +
-                    "  },\n" +
-                    "  \"id\": \"ID\",\n" +
-                    "  \"transactions\": [\n" +
-                    "    {\n" +
-                    "      \"amount\": 999,\n" +
-                    "      \"currency\": \"USD\",\n" +
-                    "      \"recipient\": {\n" +
-                    "        \"accountNumber\": \"ACC321\",\n" +
-                    "        \"bankAddress\": \"some address\",\n" +
-                    "        \"bankName\": \"Bank 2\",\n" +
-                    "        \"firstName\": \"John\",\n" +
-                    "        \"id\": \"321\",\n" +
-                    "        \"lastName\": \"Doe\"\n" +
-                    "      }\n" +
-                    "    }\n" +
-                    "  ]\n" +
-                    "}")
+                .body(getClass().getResourceAsStream("/testdata/okPayment.json").readAllBytes())
                 .filter(document("convert", pathParameters(
                     parameterWithName("formatId").description("Target format id")
                 )))
@@ -109,35 +90,15 @@ public class ConverterTest
                 .jsonPath().get("documentId");
 
         assertNotNull(id);
-        assertNotNull(repostiory.findById(id).orElse(null));
+        assertNotNull(repository.findById(id).orElse(null));
     }
 
     @Test
-    public void convertDocumentWithoutAccountId(){
+    public void convertDocumentWithoutAccountId() throws IOException
+    {
         String errorMessage = (String) given(this.spec)
             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-            .body("{\n" +
-                "  \"account\": {\n" +
-                "    \"bankId\": \"Bank 1\",\n" +
-                "    \"currency\": \"USD\",\n" +
-                "    \"number\": \"ACC123\"\n" +
-                "  },\n" +
-                "  \"id\": \"payment 1\",\n" +
-                "  \"transactions\": [\n" +
-                "    {\n" +
-                "      \"amount\": 999,\n" +
-                "      \"currency\": \"USD\",\n" +
-                "      \"recipient\": {\n" +
-                "        \"accountNumber\": \"ACC321\",\n" +
-                "        \"bankAddress\": \"some address\",\n" +
-                "        \"bankName\": \"Bank 2\",\n" +
-                "        \"firstName\": \"John\",\n" +
-                "        \"id\": \"321\",\n" +
-                "        \"lastName\": \"Doe\"\n" +
-                "      }\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}")
+            .body(getClass().getResourceAsStream("/testdata/paymentWithoutAccountId.json").readAllBytes())
             .when()
             .post("/api/v1/converters/{formatId}/conversion-requests", "FORMAT_1")
             .then()
@@ -167,7 +128,7 @@ public class ConverterTest
     @Test
     public void getDocument(){
 
-        repostiory.save(new Document("ID", "test", DocumentStatus.READY, "test".getBytes()));
+        repository.save(new Document("ID", "test", DocumentStatus.READY, "test".getBytes()));
 
         String data = given(this.spec)
             .body("test data".getBytes())
@@ -182,6 +143,6 @@ public class ConverterTest
             .extract()
             .jsonPath().get("data");
 
-        assertEquals(new String(Base64.getDecoder().decode(data)), "test");
+        assertEquals("test", new String(Base64.getDecoder().decode(data)));
     }
 }
