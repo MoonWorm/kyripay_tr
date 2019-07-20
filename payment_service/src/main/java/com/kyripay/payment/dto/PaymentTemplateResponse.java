@@ -20,4 +20,7 @@ public class PaymentTemplateResponse {
 
     private PaymentDetails paymentDetails;
 
+    @ApiModelProperty(value = "Payment creation time in millis since Epoch in UTC zone", example = "12343252134")
+    private long createdOn;
+
 }

@@ -10,7 +10,7 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import static com.kyripay.payment.dao.impl.jooq.meta.Tables.PAYMENT;
 import static java.util.stream.Collectors.toList;
@@ -62,6 +62,9 @@ public class JooqPaymentRepository implements PaymentRepository {
             PaymentRecord record = ctx.selectFrom(PAYMENT)
                     .where(PAYMENT.ID.eq(paymentId).and(PAYMENT.USER_ID.eq(userId)))
                     .fetchAny();
+            if (record == null) {
+                return null;
+            }
             return mapper.map(record, Payment.class);
         } catch (Exception e) {
             throw new RepositoryException("Can't read a payment from the repository.", e);
@@ -71,11 +74,12 @@ public class JooqPaymentRepository implements PaymentRepository {
     @Override
     public Status getStatus(long userId, long paymentId) throws RepositoryException {
         try {
-            String statusStr = ctx.select(PAYMENT.STATUS).from(PAYMENT)
-                    .where(PAYMENT.ID.eq(paymentId).and(PAYMENT.USER_ID.eq(userId)))
-                    .fetchAny()
-                    .getValue(PAYMENT.STATUS);
-            return Status.valueOf(statusStr);
+            return Optional.ofNullable(
+                    ctx.select(PAYMENT.STATUS)
+                            .from(PAYMENT)
+                            .where(PAYMENT.ID.eq(paymentId).and(PAYMENT.USER_ID.eq(userId)))
+                            .fetchAny()
+            ).map(result -> Status.valueOf(result.getValue(PAYMENT.STATUS))).orElse(null);
         } catch (Exception e) {
             throw new RepositoryException("Can't read a payment status from the repository.", e);
         }
@@ -84,13 +88,15 @@ public class JooqPaymentRepository implements PaymentRepository {
     @Override
     public Status updateStatus(long userId, long paymentId, Status status) throws RepositoryException {
         try {
-            String statusStr = ctx.update(PAYMENT)
-                    .set(PAYMENT.STATUS, status.name())
-                    .where(PAYMENT.ID.eq(paymentId).and(PAYMENT.USER_ID.eq(userId)))
-                    .returning(PAYMENT.STATUS)
-                    .fetchOne()
-                    .get(PAYMENT.STATUS);
-            return Status.valueOf(statusStr);
+            return Optional.ofNullable(
+                    ctx.update(PAYMENT)
+                            .set(PAYMENT.STATUS, status.name())
+                            .where(PAYMENT.ID.eq(paymentId).and(PAYMENT.USER_ID.eq(userId)))
+                            .returning(PAYMENT.STATUS)
+                            .fetchOne()
+            ).map(result -> Status.valueOf(result.get(PAYMENT.STATUS)))
+                    .orElseThrow(() -> new RepositoryException("No payment with id " + paymentId + " for user with id"
+                            + userId + " was found."));
         } catch (Exception e) {
             throw new RepositoryException("Can't update the payment status in the repository.", e);
         }

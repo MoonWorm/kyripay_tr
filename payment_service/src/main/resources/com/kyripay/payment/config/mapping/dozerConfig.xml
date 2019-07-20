@@ -13,6 +13,15 @@
                 <class-a>com.kyripay.payment.domain.Payment</class-a>
                 <class-b>com.kyripay.payment.dto.PaymentResponse</class-b>
             </converter>
+
+            <converter type="com.kyripay.payment.mapping.PaymentTemplateRequestConverter">
+                <class-a>com.kyripay.payment.dto.PaymentTemplateRequest</class-a>
+                <class-b>com.kyripay.payment.domain.PaymentTemplate</class-b>
+            </converter>
+            <converter type="com.kyripay.payment.mapping.PaymentTemplateResponseConverter">
+                <class-a>com.kyripay.payment.domain.PaymentTemplate</class-a>
+                <class-b>com.kyripay.payment.dto.PaymentTemplateResponse</class-b>
+            </converter>
         </custom-converters>
     </configuration>
 </mappings>

@@ -3,11 +3,9 @@ package com.kyripay.payment.dao.impl.jooq.mapping;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.stereotype.Component;
 
 import static java.util.Collections.singletonList;
 
-@Component
 public class JooqDozerConfigurationPostProcessor implements BeanPostProcessor {
 
     @Override

@@ -1,0 +1,5 @@
+<dataset>
+    <payment id="1" status="CREATED" user_id="1" bank_id="1" account_number="IBAN123" recipient_first_name="Vasia"
+             recipient_last_name="Pupkin" recipient_bank_name="Fake Bank Inc" recipient_bank_address="Main str. 1-1"
+             recipient_bank_account="IBAN321" amount="500" currency="USD"/>
+</dataset>

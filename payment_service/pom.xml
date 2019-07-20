@@ -24,14 +24,16 @@
 		<jooq.version>3.11.11</jooq.version>
 		<postgresql.driver.version>42.2.5</postgresql.driver.version>
 		<dozer.version>5.3.1</dozer.version>
+		<testcontainers.version>1.11.3</testcontainers.version>
 
-		<schema.name>payments</schema.name>
+		<schema.name>public</schema.name>
 		<jdbc.user>payments_ms_user</jdbc.user>
 		<jdbc.password>12345</jdbc.password>
 		<jdbc.driver>org.postgresql.Driver</jdbc.driver>
 		<jooq.database>org.jooq.meta.postgres.PostgresDatabase</jooq.database>
 		<flyway.locations>filesystem:src/main/resources/db/migration/tables,filesystem:src/main/resources/db/migration/data</flyway.locations>
-		<jdbc.url>jdbc:postgresql://localhost:5432/payments_ms?currentSchema=${schema.name}</jdbc.url>
+		<jdbc.url>jdbc:postgresql://localhost:5432/payments_ms</jdbc.url>
+		<rider-core.version>1.7.2</rider-core.version>
 	</properties>
 
 	<dependencies>
@@ -132,6 +134,24 @@
 			<groupId>io.rest-assured</groupId>
 			<artifactId>rest-assured</artifactId>
 			<version>${rest-assured.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${testcontainers.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.database-rider</groupId>
+			<artifactId>rider-core</artifactId>
+			<version>${rider-core.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.database-rider</groupId>
+			<artifactId>rider-spring</artifactId>
+			<version>${rider-core.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -262,12 +282,6 @@
 	<profiles>
 		<profile>
 			<id>integration</id>
-			<properties>
-				<!-- Override some properties -->
-				<flyway.locations>filesystem:src/main/resources/db/migration/tables</flyway.locations>
-				<schema.name>test</schema.name>
-				<jdbc.url>jdbc:postgresql://localhost:5432/payments_ms?currentSchema=${schema.name}</jdbc.url>
-			</properties>
 			<build>
 				<plugins>
 					<plugin>

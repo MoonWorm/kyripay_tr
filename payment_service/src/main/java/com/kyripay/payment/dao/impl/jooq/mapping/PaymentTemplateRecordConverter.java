@@ -1,26 +1,25 @@
 package com.kyripay.payment.dao.impl.jooq.mapping;
 
-import com.kyripay.payment.dao.impl.jooq.meta.tables.records.PaymentRecord;
-import com.kyripay.payment.domain.Payment;
+import com.kyripay.payment.dao.impl.jooq.meta.tables.records.PaymentTemplateRecord;
+import com.kyripay.payment.domain.PaymentTemplate;
 import com.kyripay.payment.domain.vo.Amount;
 import com.kyripay.payment.domain.vo.Currency;
-import com.kyripay.payment.domain.vo.Status;
 import org.dozer.DozerConverter;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-public class PaymentRecordConverter extends DozerConverter<PaymentRecord, Payment> {
+public class PaymentTemplateRecordConverter extends DozerConverter<PaymentTemplateRecord, PaymentTemplate> {
 
-    public PaymentRecordConverter() {
-        super(PaymentRecord.class, Payment.class);
+    public PaymentTemplateRecordConverter() {
+        super(PaymentTemplateRecord.class, PaymentTemplate.class);
     }
 
     @Override
-    public Payment convertTo(PaymentRecord source, Payment destination) {
-        return Payment.builder().id(source.getId())
-                .status(Status.valueOf(source.getStatus()))
+    public PaymentTemplate convertTo(PaymentTemplateRecord source, PaymentTemplate destination) {
+        return PaymentTemplate.builder().id(source.getId())
+                .name(source.getName())
                 .createdOn(LocalDateTime.ofInstant(Instant.ofEpochMilli(source.getCreatedOn().getTime()),
                         ZoneId.systemDefault()))
                 .amount(new Amount(source.getAmount(), Currency.valueOf(source.getCurrency())))
@@ -38,8 +37,8 @@ public class PaymentRecordConverter extends DozerConverter<PaymentRecord, Paymen
     }
 
     @Override
-    public PaymentRecord convertFrom(Payment source, PaymentRecord destination) {
-        destination.setStatus(source.getStatus().name());
+    public PaymentTemplateRecord convertFrom(PaymentTemplate source, PaymentTemplateRecord destination) {
+        destination.setName(source.getName());
         destination.setBankId(source.getBankId());
         destination.setAmount(source.getAmount().getAmount());
         destination.setCurrency(source.getAmount().getCurrency().name());
