@@ -17,6 +17,19 @@
                 <class-a>com.kyripay.payment.dao.impl.jooq.meta.tables.records.PaymentRecord</class-a>
                 <class-b>com.kyripay.payment.domain.Payment</class-b>
             </converter>
+
+            <converter type="com.kyripay.payment.mapping.PaymentTemplateRequestConverter">
+                <class-a>com.kyripay.payment.dto.PaymentTemplateRequest</class-a>
+                <class-b>com.kyripay.payment.domain.PaymentTemplate</class-b>
+            </converter>
+            <converter type="com.kyripay.payment.mapping.PaymentTemplateResponseConverter">
+                <class-a>com.kyripay.payment.domain.PaymentTemplate</class-a>
+                <class-b>com.kyripay.payment.dto.PaymentTemplateResponse</class-b>
+            </converter>
+            <converter type="com.kyripay.payment.dao.impl.jooq.mapping.PaymentTemplateRecordConverter">
+                <class-a>com.kyripay.payment.dao.impl.jooq.meta.tables.records.PaymentTemplateRecord</class-a>
+                <class-b>com.kyripay.payment.domain.PaymentTemplate</class-b>
+            </converter>
         </custom-converters>
     </configuration>
 </mappings>

@@ -1,78 +1,87 @@
 package com.kyripay.payment.dao.impl.jooq;
 
 import com.kyripay.payment.dao.exception.RepositoryException;
+import com.kyripay.payment.dao.impl.jooq.meta.tables.records.PaymentRecord;
 import com.kyripay.payment.dao.impl.jooq.meta.tables.records.PaymentTemplateRecord;
-import com.kyripay.payment.dto.PaymentDetails;
-import com.kyripay.payment.dto.PaymentTemplateRequest;
-import com.kyripay.payment.dto.RecipientInfo;
+import com.kyripay.payment.domain.PaymentTemplate;
+import org.dozer.DozerBeanMapper;
 import org.jooq.DSLContext;
-import org.jooq.Result;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
+import static com.kyripay.payment.dao.impl.jooq.meta.Tables.PAYMENT;
 import static com.kyripay.payment.dao.impl.jooq.meta.Tables.PAYMENT_TEMPLATE;
+import static java.util.stream.Collectors.toList;
 
 @Repository
 public class JooqPaymentTemplateRepository {
 
     private DSLContext ctx;
+    private DozerBeanMapper mapper;
 
-    public JooqPaymentTemplateRepository(DSLContext ctx) {
+    public JooqPaymentTemplateRepository(DSLContext ctx, DozerBeanMapper mapper) {
         this.ctx = ctx;
+        this.mapper = mapper;
     }
 
-
-    public PaymentTemplateRecord create(long userId, PaymentTemplateRequest data) throws RepositoryException {
+    public PaymentTemplate create(long userId, PaymentTemplate data) throws RepositoryException {
         try {
             PaymentTemplateRecord record = ctx.newRecord(PAYMENT_TEMPLATE);
+            mapper.map(data, record);
             record.setUserId(userId);
-            populateRecord(record, data);
-            record.store();
-            return record;
+            PaymentTemplateRecord recordCreated = ctx.insertInto(PAYMENT_TEMPLATE).set(record).returning().fetchOne();
+            return mapper.map(recordCreated, PaymentTemplate.class);
         } catch (Exception e) {
             throw new RepositoryException("Can't store a payment template in the repository.", e);
         }
     }
 
-    public Result<PaymentTemplateRecord> readAll(long userId, int limit, int offset) throws RepositoryException {
+    public List<PaymentTemplate> readAll(long userId, int limit, int offset) throws RepositoryException {
         try {
             return ctx.selectFrom(PAYMENT_TEMPLATE)
                     .where(PAYMENT_TEMPLATE.USER_ID.eq(userId))
                     .orderBy(PAYMENT_TEMPLATE.CREATED_ON.asc())
                     .limit(limit)
                     .offset(offset)
-                    .fetch();
+                    .fetch()
+                    .stream()
+                    .map(record -> mapper.map(record, PaymentTemplate.class))
+                    .collect(toList());
         } catch (Exception e) {
             throw new RepositoryException("Can't read payment templates from the repository.", e);
         }
     }
 
-    public PaymentTemplateRecord readById(long userId, long paymentTemplateId) throws RepositoryException {
+    public PaymentTemplate readById(long userId, long paymentTemplateId) throws RepositoryException {
         try {
-            return ctx.selectFrom(PAYMENT_TEMPLATE)
+            PaymentTemplateRecord record = ctx.selectFrom(PAYMENT_TEMPLATE)
                     .where(PAYMENT_TEMPLATE.ID.eq(paymentTemplateId).and(PAYMENT_TEMPLATE.USER_ID.eq(userId)))
                     .fetchAny();
+            if (record == null) {
+                return null;
+            }
+            return mapper.map(record, PaymentTemplate.class);
         } catch (Exception e) {
             throw new RepositoryException("Can't read a payment template from the repository.", e);
         }
     }
 
-    public PaymentTemplateRecord update(long userId, long templateId, PaymentTemplateRequest data) throws RepositoryException {
+    public PaymentTemplate update(long userId, long templateId, PaymentTemplate data) throws RepositoryException {
         try {
-            PaymentDetails paymentDetails = data.getPaymentDetails();
-            RecipientInfo recipientInfo = paymentDetails == null ? null : paymentDetails.getRecipientInfo();
-            return ctx.update(PAYMENT_TEMPLATE)
-                    .set(PAYMENT_TEMPLATE.BANK_ID, paymentDetails == null ? null : paymentDetails.getBankId())
-                    .set(PAYMENT_TEMPLATE.AMOUNT, paymentDetails == null ? null : paymentDetails.getAmount().getAmount())
-                    .set(PAYMENT_TEMPLATE.CURRENCY, paymentDetails == null ? null : paymentDetails.getAmount().getCurrency().name())
-                    .set(PAYMENT_TEMPLATE.ACCOUNT_NUMBER, paymentDetails == null ? null : paymentDetails.getAccountNumber())
-                    .set(PAYMENT_TEMPLATE.RECIPIENT_FIRST_NAME, recipientInfo == null ? null : recipientInfo.getFirstName())
-                    .set(PAYMENT_TEMPLATE.RECIPIENT_LAST_NAME, recipientInfo == null ? null : recipientInfo.getLastName())
-                    .set(PAYMENT_TEMPLATE.RECIPIENT_BANK_NAME, recipientInfo == null ? null : recipientInfo.getBankName())
-                    .set(PAYMENT_TEMPLATE.RECIPIENT_BANK_ADDRESS, recipientInfo == null ? null : recipientInfo.getBankAddress())
-                    .set(PAYMENT_TEMPLATE.RECIPIENT_BANK_ACCOUNT, recipientInfo == null ? null : recipientInfo.getAccountNumber())
+            PaymentTemplateRecord paymentTemplateRecord = ctx.newRecord(PAYMENT_TEMPLATE);
+            mapper.map(data, paymentTemplateRecord);
+            paymentTemplateRecord.setId(templateId);
+            paymentTemplateRecord.setUserId(userId);
+            return Optional.ofNullable(ctx.update(PAYMENT_TEMPLATE)
+                    .set(paymentTemplateRecord)
                     .where(PAYMENT_TEMPLATE.ID.eq(templateId).and(PAYMENT_TEMPLATE.USER_ID.eq(userId)))
                     .returning()
-                    .fetchOne();
+                    .fetchOne()
+            ).map(pt -> mapper.map(pt, PaymentTemplate.class))
+                    .orElseThrow(() -> new RepositoryException("No payment template with id " + templateId + " for user " +
+                            "with id" + userId + " was found."));
         } catch (Exception e) {
             throw new RepositoryException("Can't update the payment template in the repository.", e);
         }
@@ -88,22 +97,4 @@ public class JooqPaymentTemplateRepository {
         }
     }
 
-    private void populateRecord(PaymentTemplateRecord record, PaymentTemplateRequest data) {
-        record.setName(data.getName());
-        if (data.getPaymentDetails() != null) {
-            PaymentDetails paymentDetails = data.getPaymentDetails();
-            record.setBankId(paymentDetails.getBankId());
-            record.setAmount(paymentDetails.getAmount().getAmount());
-            record.setCurrency(paymentDetails.getAmount().getCurrency().name());
-            record.setAccountNumber(paymentDetails.getAccountNumber());
-            if (paymentDetails.getRecipientInfo() != null) {
-                RecipientInfo recipientInfo = paymentDetails.getRecipientInfo();
-                record.setRecipientFirstName(recipientInfo.getFirstName());
-                record.setRecipientLastName(recipientInfo.getLastName());
-                record.setRecipientBankName(recipientInfo.getBankName());
-                record.setRecipientBankAddress(recipientInfo.getBankAddress());
-                record.setRecipientBankAccount(recipientInfo.getAccountNumber());
-            }
-        }
-    }
 }

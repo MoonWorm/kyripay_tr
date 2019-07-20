@@ -1,12 +1,12 @@
 package com.kyripay.payment.service.impl;
 
 import com.kyripay.payment.dao.impl.jooq.JooqPaymentTemplateRepository;
-import com.kyripay.payment.domain.vo.Amount;
-import com.kyripay.payment.domain.vo.Currency;
-import com.kyripay.payment.service.exception.ServiceException;
-import com.kyripay.payment.dao.impl.jooq.meta.tables.records.PaymentTemplateRecord;
-import com.kyripay.payment.dto.*;
+import com.kyripay.payment.domain.PaymentTemplate;
+import com.kyripay.payment.dto.PaymentTemplateRequest;
+import com.kyripay.payment.dto.PaymentTemplateResponse;
 import com.kyripay.payment.service.PaymentTemplateService;
+import com.kyripay.payment.service.exception.ServiceException;
+import org.dozer.DozerBeanMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,17 +16,25 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class PaymentTemplateServiceImpl implements PaymentTemplateService {
 
-    private JooqPaymentTemplateRepository paymentTemplateRepository;
+    private JooqPaymentTemplateRepository repository;
+    private DozerBeanMapper mapper;
+    private PaymentTemplateValidator validator;
 
-    public PaymentTemplateServiceImpl(JooqPaymentTemplateRepository paymentTemplateRepository) {
-        this.paymentTemplateRepository = paymentTemplateRepository;
+    public PaymentTemplateServiceImpl(JooqPaymentTemplateRepository repository,
+                                      DozerBeanMapper mapper,
+                                      PaymentTemplateValidator validator) {
+        this.repository = repository;
+        this.mapper = mapper;
+        this.validator = validator;
     }
 
     @Override
-    public PaymentTemplateResponse create(long userId, PaymentTemplateRequest paymentTemplate) throws ServiceException {
+    public PaymentTemplateResponse create(long userId, PaymentTemplateRequest paymentTemplateRequest) throws ServiceException {
         try {
-            PaymentTemplateRecord record = paymentTemplateRepository.create(userId, paymentTemplate);
-            return toPaymentTemplateResponse(record);
+            PaymentTemplate paymentTemplate = mapper.map(paymentTemplateRequest, PaymentTemplate.class);
+            validator.validatePayment(paymentTemplate);
+            PaymentTemplate paymentTemplateCreated = repository.create(userId, paymentTemplate);
+            return mapper.map(paymentTemplateCreated, PaymentTemplateResponse.class);
         } catch (Exception e) {
             throw new ServiceException("Can't create a new payment template.", e);
         }
@@ -35,8 +43,10 @@ public class PaymentTemplateServiceImpl implements PaymentTemplateService {
     @Override
     public List<PaymentTemplateResponse> readAll(long userId, int limit, int offset) throws ServiceException {
         try {
-            return paymentTemplateRepository.readAll(userId, limit, offset)
-                    .stream().map(this::toPaymentTemplateResponse).collect(toList());
+            return repository.readAll(userId, limit, offset)
+                    .stream()
+                    .map(paymentTemplate -> mapper.map(paymentTemplate, PaymentTemplateResponse.class))
+                    .collect(toList());
         } catch (Exception e) {
             throw new ServiceException("Can't read payment templates.", e);
         }
@@ -45,8 +55,8 @@ public class PaymentTemplateServiceImpl implements PaymentTemplateService {
     @Override
     public PaymentTemplateResponse readById(long userId, long paymentTemplateId) throws ServiceException {
         try {
-            PaymentTemplateRecord record = paymentTemplateRepository.readById(userId, paymentTemplateId);
-            return toPaymentTemplateResponse(record);
+            PaymentTemplate paymentTemplate = repository.readById(userId, paymentTemplateId);
+            return mapper.map(paymentTemplate, PaymentTemplateResponse.class);
         } catch (Exception e) {
             throw new ServiceException("Can't read the payment template.", e);
         }
@@ -55,8 +65,9 @@ public class PaymentTemplateServiceImpl implements PaymentTemplateService {
     @Override
     public PaymentTemplateResponse update(long userId, long paymentTemplateId, PaymentTemplateRequest data) throws ServiceException {
         try {
-            PaymentTemplateRecord recordUpdated = paymentTemplateRepository.update(userId, paymentTemplateId, data);
-            return toPaymentTemplateResponse(recordUpdated);
+            PaymentTemplate paymentTemplate = mapper.map(data, PaymentTemplate.class);
+            PaymentTemplate paymentTemplateUpdated = repository.update(userId, paymentTemplateId, paymentTemplate);
+            return mapper.map(paymentTemplateUpdated, PaymentTemplateResponse.class);
         } catch (Exception e) {
             throw new ServiceException("Can't update the payment template.", e);
         }
@@ -65,32 +76,10 @@ public class PaymentTemplateServiceImpl implements PaymentTemplateService {
     @Override
     public void delete(long userId, long paymentTemplateId) throws ServiceException {
         try {
-            paymentTemplateRepository.delete(userId, paymentTemplateId);
+            repository.delete(userId, paymentTemplateId);
         } catch (Exception e) {
             throw new ServiceException("Can't delete the payment template.", e);
         }
-    }
-
-    private PaymentTemplateResponse toPaymentTemplateResponse(PaymentTemplateRecord record) {
-        return PaymentTemplateResponse.builder()
-                .id(record.getId())
-                .name(record.getName())
-                .paymentDetails(
-                        PaymentDetails.builder()
-                                .amount(new Amount(record.getAmount(), Currency.valueOf(record.getCurrency())))
-                                .bankId(record.getBankId())
-                                .accountNumber(record.getAccountNumber())
-                                .recipientInfo(
-                                        RecipientInfo.builder()
-                                                .firstName(record.getRecipientFirstName())
-                                                .lastName(record.getRecipientLastName())
-                                                .bankName(record.getRecipientBankName())
-                                                .bankAddress(record.getRecipientBankAddress())
-                                                .accountNumber(record.getRecipientBankAccount())
-                                                .build()
-                                )
-                                .build())
-                .build();
     }
 
 }

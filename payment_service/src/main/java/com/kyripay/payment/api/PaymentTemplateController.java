@@ -41,8 +41,8 @@ public class PaymentTemplateController extends GenericController {
     @ApiOperation("Reads all the existing payment templates")
     @GetMapping("/paymenttemplates")
     List<PaymentTemplateResponse> readAll(@RequestHeader long userId,
-                                          @RequestParam int limit,
-                                          @RequestParam int offset) {
+                                          @RequestParam(defaultValue = "10") int limit,
+                                          @RequestParam(defaultValue = "0") int offset) {
         return paymentTemplateService.readAll(userId, limit, offset);
     }
 

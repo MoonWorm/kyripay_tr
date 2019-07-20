@@ -1,31 +1,20 @@
 package com.kyripay.payment.dto;
 
-import javax.validation.Valid;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+import javax.validation.Valid;
+
+@Data
 public class PaymentRequest {
 
     @Valid
-    private PaymentDetails paymentDetails;
+    private final PaymentDetails paymentDetails;
 
-    public PaymentDetails getPaymentDetails() {
-        return paymentDetails;
-    }
-
-    public void setPaymentDetails(PaymentDetails paymentDetails) {
+    @JsonCreator
+    public PaymentRequest(@JsonProperty("paymentDetails") PaymentDetails paymentDetails) {
         this.paymentDetails = paymentDetails;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PaymentRequest that = (PaymentRequest) o;
-        return Objects.equals(paymentDetails, that.paymentDetails);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(paymentDetails);
-    }
 }

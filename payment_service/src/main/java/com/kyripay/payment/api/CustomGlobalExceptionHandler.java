@@ -6,8 +6,8 @@
 package com.kyripay.payment.api;
 
 import com.kyripay.payment.service.exception.ServiceException;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
@@ -55,11 +54,11 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @Data
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     public static class ErrorsInfo {
-        private Date timestamp;
-        private int status;
-        private List<String> errors;
+        private final Date timestamp;
+        private final int status;
+        private final List<String> errors;
     }
 
 }
