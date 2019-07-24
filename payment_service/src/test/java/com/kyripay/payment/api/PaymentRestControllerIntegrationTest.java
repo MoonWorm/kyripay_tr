@@ -45,18 +45,12 @@ public class PaymentRestControllerIntegrationTest {
 
     @Test
     public void create_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
-        PaymentRecipientInfo recipientInfo = new PaymentRecipientInfo("Vasia", "Pupkin",
-                "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+        PaymentRequest pr = createPaymentRequest1();
 
-        PaymentDetails paymentDetails = new PaymentDetails(new Amount(100L, Currency.BYN), 1L,
-                "IBAN123", recipientInfo);
-
-        PaymentRequest paymentRequest = new PaymentRequest(paymentDetails);
-
-        PaymentResponse expectedResponse = new PaymentResponse(1L, Status.CREATED, paymentDetails,
+        PaymentResponse expectedResponse = new PaymentResponse(1L, Status.CREATED, pr.getPaymentDetails(),
                 System.currentTimeMillis());
 
-        when(paymentService.create(USER_ID, paymentRequest)).thenReturn(expectedResponse);
+        when(paymentService.create(USER_ID, pr)).thenReturn(expectedResponse);
 
         ResultActions ra = mockMvc.perform(post("/api/v1/payments")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -108,13 +102,7 @@ public class PaymentRestControllerIntegrationTest {
 
     @Test
     public void create_sendValidRequestButServiceThrowException_shouldReturnErrorResponse() throws Exception {
-        PaymentRecipientInfo recipientInfo = new PaymentRecipientInfo("Vasia", "Pupkin",
-                "Super Bank Inc.", "Main str. 1-1", "IBAN321");
-
-        PaymentDetails paymentDetails = new PaymentDetails(new Amount(100L, Currency.BYN), 1L,
-                "IBAN123", recipientInfo);
-
-        PaymentRequest paymentRequest = new PaymentRequest(paymentDetails);
+        PaymentRequest paymentRequest = createPaymentRequest1();
 
         Throwable e = new ServiceException("");
 
@@ -152,15 +140,9 @@ public class PaymentRestControllerIntegrationTest {
 
     @Test
     public void readAll_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
-        PaymentRecipientInfo recipientInfo1 = new PaymentRecipientInfo("Vasia", "Pupkin",
-                "Super Bank Inc.", "Main str. 1-1", "IBAN321");
-        PaymentDetails paymentDetails1 = new PaymentDetails(new Amount(100L, Currency.BYN), 1L,
-                "IBAN123", recipientInfo1);
+        PaymentDetails paymentDetails1 = createPaymentDetails1();
 
-        PaymentRecipientInfo recipientInfo2 = new PaymentRecipientInfo("Ivan", "Ivanov",
-                "Super Bank 2 Inc.", "Main str. 1-2", "IBAN432");
-        PaymentDetails paymentDetails2 = new PaymentDetails(new Amount(200L, Currency.USD), 2L,
-                "IBAN234", recipientInfo2);
+        PaymentDetails paymentDetails2 = createPaymentDetails2();
 
         PaymentResponse expectedResponse1 = new PaymentResponse(1L, Status.CREATED, paymentDetails1,
                 System.currentTimeMillis());
@@ -194,10 +176,7 @@ public class PaymentRestControllerIntegrationTest {
     @Test
     public void readById_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
         long paymentId = 1L;
-        PaymentRecipientInfo recipientInfo = new PaymentRecipientInfo("Vasia", "Pupkin",
-                "Super Bank Inc.", "Main str. 1-1", "IBAN321");
-        PaymentDetails paymentDetails = new PaymentDetails(new Amount(100L, Currency.BYN), 1L,
-                "IBAN123", recipientInfo);
+        PaymentDetails paymentDetails = createPaymentDetails1();
 
         PaymentResponse expectedResponse = new PaymentResponse(paymentId, Status.CREATED, paymentDetails,
                 System.currentTimeMillis());
@@ -277,6 +256,25 @@ public class PaymentRestControllerIntegrationTest {
                         "  }\n" +
                         "}"))
                 .andExpect(status().isBadRequest());
+    }
+
+    private PaymentRequest createPaymentRequest1() {
+        PaymentDetails paymentDetails = createPaymentDetails1();
+        return new PaymentRequest(paymentDetails);
+    }
+
+    private PaymentDetails createPaymentDetails1() {
+        PaymentRecipientInfo recipientInfo1 = new PaymentRecipientInfo("Vasia", "Pupkin",
+                "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+        return new PaymentDetails(new Amount(100L, Currency.BYN), 1L,
+                "IBAN123", recipientInfo1);
+    }
+
+    private PaymentDetails createPaymentDetails2() {
+        PaymentRecipientInfo recipientInfo2 = new PaymentRecipientInfo("Ivan", "Ivanov",
+                "Super Bank 2 Inc.", "Main str. 1-2", "IBAN432");
+        return new PaymentDetails(new Amount(200L, Currency.USD), 2L,
+                "IBAN234", recipientInfo2);
     }
 
     private void assertPaymentResponse(ResultActions ra, PaymentResponse expectedResponse) throws Exception {

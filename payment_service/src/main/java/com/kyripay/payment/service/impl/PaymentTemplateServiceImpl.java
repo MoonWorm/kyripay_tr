@@ -1,6 +1,6 @@
 package com.kyripay.payment.service.impl;
 
-import com.kyripay.payment.dao.impl.jooq.JooqPaymentTemplateRepository;
+import com.kyripay.payment.dao.PaymentTemplateRepository;
 import com.kyripay.payment.domain.PaymentTemplate;
 import com.kyripay.payment.dto.PaymentTemplateRequest;
 import com.kyripay.payment.dto.PaymentTemplateResponse;
@@ -16,11 +16,11 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class PaymentTemplateServiceImpl implements PaymentTemplateService {
 
-    private JooqPaymentTemplateRepository repository;
+    private PaymentTemplateRepository repository;
     private DozerBeanMapper mapper;
     private PaymentTemplateValidator validator;
 
-    public PaymentTemplateServiceImpl(JooqPaymentTemplateRepository repository,
+    public PaymentTemplateServiceImpl(PaymentTemplateRepository repository,
                                       DozerBeanMapper mapper,
                                       PaymentTemplateValidator validator) {
         this.repository = repository;

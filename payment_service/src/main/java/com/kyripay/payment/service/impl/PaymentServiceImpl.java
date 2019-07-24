@@ -1,6 +1,6 @@
 package com.kyripay.payment.service.impl;
 
-import com.kyripay.payment.dao.impl.jooq.JooqPaymentRepository;
+import com.kyripay.payment.dao.PaymentRepository;
 import com.kyripay.payment.domain.Payment;
 import com.kyripay.payment.domain.vo.Status;
 import com.kyripay.payment.dto.PaymentRequest;
@@ -19,11 +19,11 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-    private JooqPaymentRepository repository;
+    private PaymentRepository repository;
     private DozerBeanMapper mapper;
     private PaymentValidator validator;
 
-    public PaymentServiceImpl(JooqPaymentRepository repository, DozerBeanMapper mapper,
+    public PaymentServiceImpl(PaymentRepository repository, DozerBeanMapper mapper,
                               PaymentValidator validator) {
         this.repository = repository;
         this.mapper = mapper;
@@ -55,9 +55,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentResponse readById(long userId, long paymentTemplateId) throws ServiceException {
+    public PaymentResponse readById(long userId, long paymentId) throws ServiceException {
         try {
-            Payment payment = repository.readById(userId, paymentTemplateId);
+            Payment payment = repository.readById(userId, paymentId);
             return mapper.map(payment, PaymentResponse.class);
         } catch (Exception e) {
             throw new ServiceException("Can't read the payment by its id.", e);
@@ -65,19 +65,19 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Status updateStatus(long userId, long paymentTemplateId, Status status) throws ServiceException {
+    public Status updateStatus(long userId, long paymentId, Status status) throws ServiceException {
         try {
             validator.validatePaymentStatus(status);
-            return repository.updateStatus(userId, paymentTemplateId, status);
+            return repository.updateStatus(userId, paymentId, status);
         } catch (Exception e) {
             throw new ServiceException("Can't update the payment.status", e);
         }
     }
 
     @Override
-    public Status getStatus(long userId, long paymentTemplateId) throws ServiceException {
+    public Status getStatus(long userId, long paymentId) throws ServiceException {
         try {
-            return repository.getStatus(userId, paymentTemplateId);
+            return repository.getStatus(userId, paymentId);
         } catch (Exception e) {
             throw new ServiceException("Can't read the payment status.", e);
         }

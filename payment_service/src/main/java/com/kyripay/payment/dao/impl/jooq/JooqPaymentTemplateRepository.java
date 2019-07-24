@@ -1,7 +1,7 @@
 package com.kyripay.payment.dao.impl.jooq;
 
+import com.kyripay.payment.dao.PaymentTemplateRepository;
 import com.kyripay.payment.dao.exception.RepositoryException;
-import com.kyripay.payment.dao.impl.jooq.meta.tables.records.PaymentRecord;
 import com.kyripay.payment.dao.impl.jooq.meta.tables.records.PaymentTemplateRecord;
 import com.kyripay.payment.domain.PaymentTemplate;
 import org.dozer.DozerBeanMapper;
@@ -11,12 +11,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static com.kyripay.payment.dao.impl.jooq.meta.Tables.PAYMENT;
 import static com.kyripay.payment.dao.impl.jooq.meta.Tables.PAYMENT_TEMPLATE;
 import static java.util.stream.Collectors.toList;
 
 @Repository
-public class JooqPaymentTemplateRepository {
+public class JooqPaymentTemplateRepository implements PaymentTemplateRepository {
 
     private DSLContext ctx;
     private DozerBeanMapper mapper;
@@ -26,6 +25,7 @@ public class JooqPaymentTemplateRepository {
         this.mapper = mapper;
     }
 
+    @Override
     public PaymentTemplate create(long userId, PaymentTemplate data) throws RepositoryException {
         try {
             PaymentTemplateRecord record = ctx.newRecord(PAYMENT_TEMPLATE);
@@ -38,6 +38,7 @@ public class JooqPaymentTemplateRepository {
         }
     }
 
+    @Override
     public List<PaymentTemplate> readAll(long userId, int limit, int offset) throws RepositoryException {
         try {
             return ctx.selectFrom(PAYMENT_TEMPLATE)
@@ -54,6 +55,7 @@ public class JooqPaymentTemplateRepository {
         }
     }
 
+    @Override
     public PaymentTemplate readById(long userId, long paymentTemplateId) throws RepositoryException {
         try {
             PaymentTemplateRecord record = ctx.selectFrom(PAYMENT_TEMPLATE)
@@ -68,6 +70,7 @@ public class JooqPaymentTemplateRepository {
         }
     }
 
+    @Override
     public PaymentTemplate update(long userId, long templateId, PaymentTemplate data) throws RepositoryException {
         try {
             PaymentTemplateRecord paymentTemplateRecord = ctx.newRecord(PAYMENT_TEMPLATE);
@@ -87,6 +90,7 @@ public class JooqPaymentTemplateRepository {
         }
     }
 
+    @Override
     public void delete(long userId, long paymentTemplateId) throws RepositoryException {
         try {
             ctx.delete(PAYMENT_TEMPLATE)
