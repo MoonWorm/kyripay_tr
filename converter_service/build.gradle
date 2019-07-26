@@ -41,6 +41,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testCompile 'io.rest-assured:rest-assured:3.3.0'
 	testCompile "org.testcontainers:testcontainers:1.11.3"
+	testCompile "com.lordofthejars:nosqlunit-mongodb:1.0.0"
+	testCompile "com.github.fakemongo:fongo:2.1.0"
 }
 
 ext {

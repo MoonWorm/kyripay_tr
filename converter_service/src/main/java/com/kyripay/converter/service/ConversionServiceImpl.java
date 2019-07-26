@@ -7,7 +7,7 @@ import com.kyripay.converter.dto.FormatDetails;
 import com.kyripay.converter.dto.Payment;
 import com.kyripay.converter.exceptions.DocumentNotFoundException;
 import com.kyripay.converter.exceptions.WrongFormatException;
-import com.kyripay.converter.repository.DocumentRepostiory;
+import com.kyripay.converter.repository.DocumentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ConversionServiceImpl implements ConversionService, ConversionRequestListener
 {
-  private final DocumentRepostiory repostiory;
+  private final DocumentRepository repostiory;
   private final Map<String, Converter> availableConverters;
   private final ApplicationEventPublisher eventPublisher;
 

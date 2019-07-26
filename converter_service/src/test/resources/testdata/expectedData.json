@@ -1,0 +1,11 @@
+{
+  "document": [
+    {
+      "_id" : "1",
+      "format" : "IDENTITY",
+      "status" : "READY",
+      "data" : { "$binary" : "dGVzdA==", "$type" : "00" },
+      "_class" : "com.kyripay.converter.dto.Document"
+    }
+  ]
+}
