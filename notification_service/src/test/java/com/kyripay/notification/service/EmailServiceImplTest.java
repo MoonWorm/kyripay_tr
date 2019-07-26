@@ -5,6 +5,7 @@ import com.kyripay.notification.dao.repository.EmailNotificationRepository;
 import com.kyripay.notification.domain.vo.Status;
 import com.kyripay.notification.dto.EmailNotificationRequest;
 import com.kyripay.notification.dto.NotificationResponse;
+import com.kyripay.notification.exception.ServiceException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -19,6 +20,7 @@ import static com.kyripay.notification.domain.vo.Status.FAILED;
 import static com.kyripay.notification.domain.vo.Status.SENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -26,25 +28,27 @@ import static org.mockito.Mockito.when;
 public class EmailServiceImplTest {
 
     @Mock
-    private TemplateResolver templateResolverMock;
+    private TemplateResolver templateResolver;
     @Mock
-    private JavaMailSender mailSenderMock;
+    private JavaMailSender mailSender;
     @Mock
-    private EmailNotificationRepository repositoryMock;
+    private EmailNotificationRepository repository;
+    @Mock
+    private EmailNotificationValidator validator;
     @InjectMocks
     private EmailServiceImpl sut;
 
     @Test
-    public void emailIsSentSuccessfully() {
+    public void sendEmail_emailIsSentSuccessfully_assertResultResponse() {
         // given
         String to = "vasia@pupkin.com";
         String subjTemplate = "subj_template";
         String bodyTemplate = "body_template";
         EmailNotificationRequest request = new EmailNotificationRequest(to, subjTemplate, bodyTemplate);
         String emailSubject = "Subj";
-        when(templateResolverMock.resolveText(subjTemplate, null)).thenReturn(emailSubject);
+        when(templateResolver.resolveText(subjTemplate, null)).thenReturn(emailSubject);
         String emailBody = "Body";
-        when(templateResolverMock.resolveText(bodyTemplate, null)).thenReturn(emailBody);
+        when(templateResolver.resolveText(bodyTemplate, null)).thenReturn(emailBody);
 
         Status status = SENT;
         EmailNotificationDocument email = new EmailNotificationDocument(to, emailSubject, emailBody, status);
@@ -52,7 +56,7 @@ public class EmailServiceImplTest {
                 email.getBody(), status);
         String emailId = "aaa-bbb-ccc";
         emailSaved.setId(emailId);
-        when(repositoryMock.save(email)).thenReturn(emailSaved);
+        when(repository.save(email)).thenReturn(emailSaved);
 
         // when
         NotificationResponse response = sut.sendEmail(request);
@@ -65,25 +69,25 @@ public class EmailServiceImplTest {
     }
 
     @Test
-    public void emailIsNotSent() {
+    public void sendEmail_emailIsNotSent_assertResultResponse() {
         // given
         String to = "vasia@pupkin.com";
         String subjTemplate = "subj_template";
         String bodyTemplate = "body_template";
         EmailNotificationRequest request = new EmailNotificationRequest(to, subjTemplate, bodyTemplate);
         String emailSubject = "Subj";
-        when(templateResolverMock.resolveText(subjTemplate, null)).thenReturn(emailSubject);
+        when(templateResolver.resolveText(subjTemplate, null)).thenReturn(emailSubject);
         String emailBody = "Body";
-        when(templateResolverMock.resolveText(bodyTemplate, null)).thenReturn(emailBody);
+        when(templateResolver.resolveText(bodyTemplate, null)).thenReturn(emailBody);
 
         doThrow(new MailAuthenticationException("Email sending error"))
-                .when(mailSenderMock).send(any(SimpleMailMessage.class));
+                .when(mailSender).send(any(SimpleMailMessage.class));
         ArgumentCaptor<EmailNotificationDocument> emailDocumentCaptor =
                 ArgumentCaptor.forClass(EmailNotificationDocument.class);
         EmailNotificationDocument emailSaved = new EmailNotificationDocument(to, emailSubject, emailBody, FAILED);
         String emailId = "aaa-bbb-ccc";
         emailSaved.setId(emailId);
-        when(repositoryMock.save(emailDocumentCaptor.capture())).thenReturn(emailSaved);
+        when(repository.save(emailDocumentCaptor.capture())).thenReturn(emailSaved);
 
         // when
         NotificationResponse response = sut.sendEmail(request);
@@ -96,6 +100,21 @@ public class EmailServiceImplTest {
                 .isNotNull()
                 .hasFieldOrPropertyWithValue("id", emailId)
                 .hasFieldOrPropertyWithValue("status", emailSaved.getStatus());
+    }
+
+    @Test(expected = ServiceException.class)
+    public void sendEmail_unexpectedErrorHappened_shouldThrowException() {
+        // given
+        String to = "vasia@pupkin.com";
+        String subjTemplate = "subj_template";
+        String bodyTemplate = "body_template";
+        EmailNotificationRequest request = new EmailNotificationRequest(to, subjTemplate, bodyTemplate);
+        when(templateResolver.resolveText(anyString(), any())).thenThrow(new RuntimeException(""));
+
+        // when
+        sut.sendEmail(request);
+
+        // then exception is thrown
     }
 
 }
