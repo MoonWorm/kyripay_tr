@@ -27,7 +27,7 @@ public class EmailNotificationRepositoryTest {
     private static final int PORT = 27017;
 
     @ClassRule
-    public static GenericContainer mongodb = new GenericContainer("mongo:3.6").withExposedPorts(PORT);
+    public static GenericContainer mongodb = new GenericContainer("mongo:3.6-xenial").withExposedPorts(PORT);
     public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext>
     {
         @Override
