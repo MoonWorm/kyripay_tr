@@ -1,4 +1,4 @@
-package com.kyripay.paymentworkflow.confiduration;
+package com.kyripay.paymentworkflow.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

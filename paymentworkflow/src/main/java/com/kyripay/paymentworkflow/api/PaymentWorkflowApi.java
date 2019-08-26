@@ -1,15 +1,16 @@
 package com.kyripay.paymentworkflow.api;
 
-import com.kyripay.paymentworkflow.dto.PaymentTransfer;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import com.kyripay.paymentworkflow.dto.Payment;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.messaging.handler.annotation.SendTo;
 
-@RestController
-@RequestMapping("/api/v1")
-public class PaymentWorkflowApi {
-    @ApiOperation("Transfer payment to a bank")
-    @PostMapping("/payment-transfers")
-    @ResponseStatus(HttpStatus.OK)
-    void transferPayment(@RequestBody PaymentTransfer paymentTransfer) { }
+@EnableBinding({AcknowledgmentStreams.class, ConverterStreams.class, PaymentStreams.class})
+class PaymentWorkflowApi {
+
+    @StreamListener(PaymentStreams.PAYMENT_PROCESS)
+    @SendTo(ConverterStreams.CONVERTER_PROCESS)
+    private Payment processPayment(Payment payment) {
+        return payment;
+    }
 }
