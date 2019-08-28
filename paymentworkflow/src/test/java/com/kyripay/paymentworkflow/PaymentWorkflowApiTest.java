@@ -34,7 +34,7 @@ public class PaymentWorkflowApiTest {
     public void processPayment() {
         Payment payment = new Payment(1, UUID.randomUUID(), Payment.Status.CREATED, null, 111);
         paymentStreams.process().send(MessageBuilder.withPayload(payment).build());
-        Object payload = messageCollector.forChannel(converterStreams.convertPayment()).poll().getPayload();
+        Object payload = messageCollector.forChannel(converterStreams.convertPayment()).poll().getPayload().toString();
     }
 
 
