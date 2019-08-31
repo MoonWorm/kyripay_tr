@@ -1,4 +1,4 @@
-package com.kyripay.paymentworkflow.api;
+package com.kyripay.paymentworkflow.stream;
 
 import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.cloud.stream.annotation.Output;

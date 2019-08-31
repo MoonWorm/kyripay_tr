@@ -1,4 +1,4 @@
-package com.kyripay.paymentworkflow.dto;
+package com.kyripay.paymentworkflow.domain.dto.payment;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,6 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 public class Payment {
-
     @ApiModelProperty(value = "Unique identifier", example = "4")
     private long id;
 

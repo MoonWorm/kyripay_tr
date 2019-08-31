@@ -1,5 +1,6 @@
-package com.kyripay.paymentworkflow.api;
+package com.kyripay.paymentworkflow.stream;
 
+import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;
 
@@ -11,6 +12,6 @@ public interface ConverterStreams {
     @Output(CONVERTER_PROCESS)
     MessageChannel convertPayment();
 
-    @Output(CONVERTER_NOTIFICATIONS)
+    @Input(CONVERTER_NOTIFICATIONS)
     MessageChannel convertNotifications();
 }

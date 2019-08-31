@@ -1,4 +1,4 @@
-package com.kyripay.paymentworkflow.dto;
+package com.kyripay.paymentworkflow.domain.dto.payment;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

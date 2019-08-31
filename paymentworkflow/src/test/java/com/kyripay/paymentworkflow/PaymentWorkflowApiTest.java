@@ -1,8 +1,8 @@
 package com.kyripay.paymentworkflow;
 
-import com.kyripay.paymentworkflow.api.ConverterStreams;
-import com.kyripay.paymentworkflow.api.PaymentStreams;
-import com.kyripay.paymentworkflow.dto.Payment;
+import com.kyripay.paymentworkflow.stream.ConverterStreams;
+import com.kyripay.paymentworkflow.stream.PaymentStreams;
+import com.kyripay.paymentworkflow.domain.dto.payment.Payment;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
