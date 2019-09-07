@@ -19,3 +19,11 @@ spec:
           env:
             - name: SPRING_DATA_MONGODB_HOST
               value: mongodb
+            - name: KAFKA_HOST
+              value: kafka
+            - name: EUREKA_HOST
+              value: eureka
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health

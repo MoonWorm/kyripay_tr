@@ -7,13 +7,15 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 
 @Data
 @NoArgsConstructor
 @ApiModel(value = "Transaction", description = "Single transaction description")
-public class Transaction {
+public class Transaction implements Serializable
+{
   @ApiModelProperty("Transaction currency. If empty, account currency is used")
   String currency;
   @Positive(message = "Transaction amount should be more than 0")

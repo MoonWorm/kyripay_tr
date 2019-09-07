@@ -5,6 +5,8 @@ import com.kyripay.converter.dto.Document;
 import com.kyripay.converter.dto.DocumentStatus;
 import com.kyripay.converter.dto.FormatDetails;
 import com.kyripay.converter.dto.Payment;
+import com.kyripay.converter.dto.events.ConversionFinishedEvent;
+import com.kyripay.converter.dto.events.ConversionRequestEvent;
 import com.kyripay.converter.exceptions.DocumentNotFoundException;
 import com.kyripay.converter.exceptions.WrongFormatException;
 import com.kyripay.converter.repository.DocumentRepository;
@@ -13,7 +15,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Validated
 public class ConversionServiceImpl implements ConversionService, ConversionRequestListener
 {
   private final DocumentRepository repostiory;
@@ -73,6 +78,8 @@ public class ConversionServiceImpl implements ConversionService, ConversionReque
       repostiory.save(document);
     } catch (RuntimeException e){
       repostiory.save(new Document(request.getDocumentId(), request.getFormat(), DocumentStatus.CONVERSION_FAILED, null));
+    } finally {
+      eventPublisher.publishEvent(new ConversionFinishedEvent(this, request.getDocumentId()));
     }
   }
 }

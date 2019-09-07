@@ -1,6 +1,7 @@
 package com.kyripay.converter.api;
 
 
+import com.kyripay.converter.api.rest.ConverterController;
 import com.kyripay.converter.dto.Payment;
 import com.kyripay.converter.exceptions.DocumentNotFoundException;
 import com.kyripay.converter.exceptions.WrongFormatException;
@@ -49,33 +50,13 @@ public class ConverterControllerTest
   public void convertCorrectPayment() throws Exception
   {
     this.mockMvc.perform(
-        post("/api/v1/converters/IDENTITY/conversion-requests")
+        post("/api/v1/converters/conversion-requests")
         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
         .content(getClass().getResourceAsStream("/testdata/okPayment.json").readAllBytes()))
         .andExpect(status().isAccepted())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
         .andExpect(jsonPath("documentId", is("id"))
     );
-  }
-
-  @Test
-  public void accountIdIsRequired() throws Exception
-  {
-    this.mockMvc.perform(
-        post("/api/v1/converters/IDENTITY/conversion-requests")
-            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-            .content(getClass().getResourceAsStream("/testdata/paymentWithoutAccountId.json").readAllBytes()))
-        .andExpect(status().isBadRequest());
-  }
-
-  @Test
-  public void formatShouldBeCorrect() throws Exception
-  {
-    this.mockMvc.perform(
-        post("/api/v1/converters/BAD_FORMAT/conversion-requests")
-            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-            .content(getClass().getResourceAsStream("/testdata/okPayment.json").readAllBytes()))
-        .andExpect(status().isBadRequest());
   }
 
   @Test

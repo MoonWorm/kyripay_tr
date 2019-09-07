@@ -1,4 +1,6 @@
 {
+  "format": "IDENTITY",
+  "payment": {
   "account": {
     "bankId": "Bank 1",
     "currency": "USD",
@@ -18,5 +20,5 @@
         "lastName": "Doe"
       }
     }
-  ]
+  ]}
 }

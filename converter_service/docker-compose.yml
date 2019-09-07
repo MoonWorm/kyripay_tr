@@ -5,6 +5,8 @@ services:
     container_name: converter
     environment:
       SPRING_DATA_MONGODB_HOST: mongodb
+      EUREKA_CLIENT_ENABLED: "false"
+      KAFKA_HOST: kafka
     ports:
       - 8080:8080
   mongodb:
@@ -12,3 +14,6 @@ services:
     container_name: converter-mongodb
     ports:
       - 27017:27017
+  kafka:
+    image: johnnypark/kafka-zookeeper
+    container_name: kafka

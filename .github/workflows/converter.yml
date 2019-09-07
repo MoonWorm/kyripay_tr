@@ -1,0 +1,21 @@
+name: Converter service build
+on:
+  push:
+    paths:
+      - '.github/workflows/converter.yml'
+      - 'converter_service/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v1
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Build
+        run: |
+          cd converter_service
+          ./gradlew build --info

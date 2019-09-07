@@ -6,12 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 
 @Data
 @NoArgsConstructor
 @ApiModel(value = "Recipient", description = "Payment recipient")
-public class Recipient {
+public class Recipient  implements Serializable
+{
   @NotBlank(message = "Recipient id can't be empty")
   @ApiModelProperty(value = "Recipient unique id")
   private String id;

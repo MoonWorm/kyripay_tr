@@ -8,7 +8,7 @@ plugins {
 apply plugin: 'io.spring.dependency-management'
 
 group = 'com.kyripay'
-version = '0.0.4-SNAPSHOT'
+version = '0.1.0-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
@@ -29,9 +29,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	implementation 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
+	testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
+
 	asciidoctor    'org.springframework.restdocs:spring-restdocs-asciidoctor'
 	testCompile    'org.springframework.restdocs:spring-restdocs-restassured'
-
 
 	implementation 'io.springfox:springfox-swagger2:2.9.2'
 	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
@@ -40,9 +42,11 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testCompile 'io.rest-assured:rest-assured:3.3.0'
-	testCompile "org.testcontainers:testcontainers:1.11.3"
+	testCompile "org.testcontainers:testcontainers:1.12.0"
+	testCompile "org.testcontainers:kafka:1.12.0"
 	testCompile "com.lordofthejars:nosqlunit-mongodb:1.0.0"
 	testCompile "com.github.fakemongo:fongo:2.1.0"
+	testCompile "org.skyscreamer:jsonassert:1.5.0"
 }
 
 ext {

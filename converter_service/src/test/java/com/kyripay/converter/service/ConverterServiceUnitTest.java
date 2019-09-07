@@ -1,9 +1,11 @@
 package com.kyripay.converter.service;
 
+import com.kyripay.converter.api.dto.ConversionRequest;
 import com.kyripay.converter.converters.Converter;
 import com.kyripay.converter.dto.Document;
 import com.kyripay.converter.dto.FormatDetails;
 import com.kyripay.converter.dto.Payment;
+import com.kyripay.converter.dto.events.ConversionRequestEvent;
 import com.kyripay.converter.exceptions.DocumentNotFoundException;
 import com.kyripay.converter.exceptions.WrongFormatException;
 import com.kyripay.converter.repository.DocumentRepository;
@@ -30,7 +32,7 @@ import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConverterServiceTest
+public class ConverterServiceUnitTest
 {
   @Mock
   private DocumentRepository documentRepository;
@@ -53,9 +55,9 @@ public class ConverterServiceTest
   @Test
   public void convertCorrectPayment() throws IOException
   {
-    Payment payment = objectMapper.readValue(getClass().getResource("/okPayment.json"), Payment.class);
+    ConversionRequest request = objectMapper.readValue(getClass().getResource("/testdata/okPayment.json"), ConversionRequest.class);
 
-    conversionService.convert(payment, "IDENTITY");
+    conversionService.convert(request.getPayment(), "IDENTITY");
 
     verify(documentRepository).save(argThat((Document d) ->  d.getFormat().equals("IDENTITY")));
     verify(eventPublisher).publishEvent(any(ConversionRequestEvent.class));
@@ -64,9 +66,9 @@ public class ConverterServiceTest
   @Test(expected = WrongFormatException.class)
   public void wrongFormatThrowsException() throws IOException
   {
-    Payment payment = objectMapper.readValue(getClass().getResource("/okPayment.json"), Payment.class);
+    ConversionRequest request = objectMapper.readValue(getClass().getResource("/testdata/okPayment.json"), ConversionRequest.class);
 
-    conversionService.convert(payment, "BAD_FORMAT");
+    conversionService.convert(request.getPayment(), "BAD_FORMAT");
   }
 
   @Test

@@ -1,5 +1,6 @@
 package com.kyripay.converter.service;
 
+import com.kyripay.converter.dto.events.ConversionRequestEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
