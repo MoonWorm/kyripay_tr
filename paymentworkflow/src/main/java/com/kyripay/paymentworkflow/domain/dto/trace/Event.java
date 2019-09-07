@@ -17,5 +17,4 @@ public class Event {
     private Type type;
     private String comment;
     private LocalDateTime created;
-
 }

@@ -1,9 +1,9 @@
 package com.kyripay.paymentworkflow.adapter;
 
 import com.kyripay.paymentworkflow.domain.dto.payment.Payment;
-import com.kyripay.paymentworkflow.domain.service.port.out.ConverterAdapter;
+import com.kyripay.paymentworkflow.domain.port.out.Converter;
 
-public class ConverterAdapterImpl implements ConverterAdapter {
+public class ConverterImpl implements Converter {
     @Override
     public void convert(Payment payment) {
 
