@@ -1,23 +1,22 @@
 package com.kyripay.payment.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
+import lombok.RequiredArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@Builder
+@RequiredArgsConstructor
 public class PaymentTemplateResponse {
 
     @ApiModelProperty(value = "Unique identifier", example = "4")
-    private long id;
+    private final long id;
 
     @ApiModelProperty(value = "Template name", example = "My payment for the apartment rental")
-    private String name;
+    private final String name;
 
-    private PaymentDetails paymentDetails;
+    private final PaymentTemplateDetails paymentDetails;
+
+    @ApiModelProperty(value = "Payment creation time in millis since Epoch in UTC zone", example = "12343252134")
+    private final long createdOn;
 
 }

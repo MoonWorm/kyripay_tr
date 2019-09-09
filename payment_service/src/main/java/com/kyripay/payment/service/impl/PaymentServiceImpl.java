@@ -1,6 +1,6 @@
 package com.kyripay.payment.service.impl;
 
-import com.kyripay.payment.dao.impl.jooq.JooqPaymentRepository;
+import com.kyripay.payment.dao.PaymentRepository;
 import com.kyripay.payment.domain.Payment;
 import com.kyripay.payment.domain.vo.Status;
 import com.kyripay.payment.dto.PaymentRequest;
@@ -19,24 +19,23 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
-    private JooqPaymentRepository paymentRepository;
+    private PaymentRepository repository;
     private DozerBeanMapper mapper;
-    private PaymentValidator paymentValidator;
+    private PaymentValidator validator;
 
-    public PaymentServiceImpl(JooqPaymentRepository paymentRepository, DozerBeanMapper mapper,
-                              PaymentValidator paymentValidator) {
-        this.paymentRepository = paymentRepository;
+    public PaymentServiceImpl(PaymentRepository repository, DozerBeanMapper mapper,
+                              PaymentValidator validator) {
+        this.repository = repository;
         this.mapper = mapper;
-        this.paymentValidator = paymentValidator;
+        this.validator = validator;
     }
 
     @Override
     public PaymentResponse create(long userId, PaymentRequest paymentRequest) throws ServiceException {
         try {
             Payment payment = mapper.map(paymentRequest, Payment.class);
-            payment.setStatus(Status.CREATED);
-            paymentValidator.validatePayment(payment);
-            Payment paymentCreated = paymentRepository.create(userId, payment);
+            validator.validatePayment(payment);
+            Payment paymentCreated = repository.create(userId, payment);
             return mapper.map(paymentCreated, PaymentResponse.class);
         } catch (Exception e) {
             throw new ServiceException("Can't create a new payment.", e);
@@ -46,7 +45,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<PaymentResponse> readAll(long userId, int limit, int offset) throws ServiceException {
         try {
-            return paymentRepository.readAll(userId, limit, offset)
+            return repository.readAll(userId, limit, offset)
                     .stream()
                     .map(payment -> mapper.map(payment, PaymentResponse.class))
                     .collect(toList());
@@ -56,9 +55,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentResponse readById(long userId, long paymentTemplateId) throws ServiceException {
+    public PaymentResponse readById(long userId, long paymentId) throws ServiceException {
         try {
-            Payment payment = paymentRepository.readById(userId, paymentTemplateId);
+            Payment payment = repository.readById(userId, paymentId);
             return mapper.map(payment, PaymentResponse.class);
         } catch (Exception e) {
             throw new ServiceException("Can't read the payment by its id.", e);
@@ -66,19 +65,19 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Status updateStatus(long userId, long paymentTemplateId, Status status) throws ServiceException {
+    public Status updateStatus(long userId, long paymentId, Status status) throws ServiceException {
         try {
-            paymentValidator.validatePaymentStatus(status);
-            return paymentRepository.updateStatus(userId, paymentTemplateId, status);
+            validator.validatePaymentStatus(status);
+            return repository.updateStatus(userId, paymentId, status);
         } catch (Exception e) {
             throw new ServiceException("Can't update the payment.status", e);
         }
     }
 
     @Override
-    public Status getStatus(long userId, long paymentTemplateId) throws ServiceException {
+    public Status getStatus(long userId, long paymentId) throws ServiceException {
         try {
-            return paymentRepository.getStatus(userId, paymentTemplateId);
+            return repository.getStatus(userId, paymentId);
         } catch (Exception e) {
             throw new ServiceException("Can't read the payment status.", e);
         }

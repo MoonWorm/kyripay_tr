@@ -10,26 +10,25 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 
 /**
  * @author M-ATA
  */
 @Data
-@AllArgsConstructor
-@Builder
-public class PaymentResponse
-{
+@RequiredArgsConstructor
+public class PaymentResponse {
 
-  @ApiModelProperty(value = "Unique identifier", example = "4")
-  private long id;
+    @ApiModelProperty(value = "Unique identifier", example = "4")
+    private final long id;
 
-  @ApiModelProperty(value = "Payment status", example = "COMPLETED")
-  private Status status;
+    @ApiModelProperty(value = "Payment status", example = "COMPLETED")
+    private final Status status;
 
-  private PaymentDetails paymentDetails;
+    private final PaymentDetails paymentDetails;
 
-  @ApiModelProperty(value = "Payment creation time in millis since Epoch in UTC zone", example = "12343252134")
-  private long createdOn;
+    @ApiModelProperty(value = "Payment creation time in millis since Epoch in UTC zone", example = "12343252134")
+    private final long createdOn;
 
 }

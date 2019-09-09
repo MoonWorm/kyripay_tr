@@ -2,7 +2,9 @@ package com.kyripay.payment.mapping;
 
 import com.kyripay.payment.domain.Payment;
 import com.kyripay.payment.domain.vo.Amount;
+import com.kyripay.payment.domain.vo.Status;
 import com.kyripay.payment.dto.PaymentDetails;
+import com.kyripay.payment.dto.PaymentRecipientInfo;
 import com.kyripay.payment.dto.PaymentRequest;
 import org.dozer.DozerConverter;
 
@@ -13,31 +15,28 @@ public class PaymentRequestConverter extends DozerConverter<PaymentRequest, Paym
     }
 
     @Override
-    public Payment convertTo(PaymentRequest source, Payment destination) {
-        if (source == null) {
-            return null;
-        }
-        PaymentDetails paymentRequestDetails = source.getPaymentDetails();
-        Amount paymentRequestAmount = source.getPaymentDetails().getAmount();
-        com.kyripay.payment.dto.RecipientInfo paymentRequestRecipientInfo = paymentRequestDetails.getRecipientInfo();
-        return Payment.builder()
-                .bankId(paymentRequestDetails.getBankId())
-                .accountNumber(paymentRequestDetails.getAccountNumber())
-                .amount(new Amount(paymentRequestAmount.getAmount(), paymentRequestAmount.getCurrency()))
-                .recipientInfo(
-                        com.kyripay.payment.domain.RecipientInfo.builder()
-                                .firstName(paymentRequestRecipientInfo.getFirstName())
-                                .lastName(paymentRequestRecipientInfo.getLastName())
-                                .bankName(paymentRequestRecipientInfo.getBankName())
-                                .bankAddress(paymentRequestRecipientInfo.getBankAddress())
-                                .accountNumber(paymentRequestRecipientInfo.getAccountNumber())
-                                .build()
-                )
-                .build();
+    public Payment convertTo(PaymentRequest src, Payment dest) {
+        PaymentDetails pd = src.getPaymentDetails();
+        Amount amount = src.getPaymentDetails().getAmount();
+        PaymentRecipientInfo ri = pd.getRecipientInfo();
+        return new Payment(
+                amount,
+                pd.getBankId(),
+                pd.getAccountNumber(),
+                Status.CREATED,
+                new com.kyripay.payment.domain.PaymentRecipientInfo(
+                        ri.getFirstName(),
+                        ri.getLastName(),
+                        ri.getBankName(),
+                        ri.getBankAddress(),
+                        ri.getAccountNumber()
+                ),
+                null
+        );
     }
 
     @Override
-    public PaymentRequest convertFrom(Payment source, PaymentRequest destination) {
+    public PaymentRequest convertFrom(Payment src, PaymentRequest dest) {
         throw new UnsupportedOperationException("This kind of conversion is not supported!");
     }
 }

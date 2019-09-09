@@ -7,10 +7,7 @@ package com.kyripay.payment.dto;
 
 import com.kyripay.payment.domain.vo.Amount;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -21,26 +18,23 @@ import javax.validation.constraints.NotNull;
  * @author M-ATA
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder(toBuilder = true)
-public class PaymentDetails
-{
+@RequiredArgsConstructor
+public class PaymentDetails {
 
-  @Valid
-  @NotNull(message = "Payment amount must be specified")
-  private Amount amount;
+    @Valid
+    @NotNull(message = "Payment amount must be specified")
+    private final Amount amount;
 
-  @NotNull(message = "Customer bank must be specified")
-  @ApiModelProperty(value = "Bank name that will be used for the payment", example = "General Bank Inc.")
-  private Long bankId;
+    @NotNull(message = "Customer bank must be specified")
+    @ApiModelProperty(value = "Bank name that will be used for the payment", example = "General Bank Inc.")
+    private final Long bankId;
 
-  @NotBlank(message = "Account number must be specified")
-  @ApiModelProperty(value = "Account number of the mentioned bank that will be used for the payment", example = "12345")
-  private String accountNumber;
+    @NotBlank(message = "Account number must be specified")
+    @ApiModelProperty(value = "Account number of the mentioned bank that will be used for the payment", example = "12345")
+    private final String accountNumber;
 
-  @Valid
-  @NotNull(message = "Recipient info must be specified")
-  private RecipientInfo recipientInfo;
+    @Valid
+    @NotNull(message = "Recipient info must be specified")
+    private final PaymentRecipientInfo recipientInfo;
 
 }

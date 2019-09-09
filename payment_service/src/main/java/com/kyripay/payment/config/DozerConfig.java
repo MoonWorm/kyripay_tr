@@ -6,8 +6,10 @@ import org.springframework.context.annotation.Configuration;
 
 import static java.util.Collections.singletonList;
 
-@Configuration
-public class DozerConfiguration {
+@Configuration(DozerConfig.CONFIG_NAME)
+public class DozerConfig {
+
+    public static final String CONFIG_NAME = "rootDozerConfiguration";
 
     @Bean
     public DozerBeanMapper mapper() {

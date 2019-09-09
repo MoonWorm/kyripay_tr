@@ -5,22 +5,19 @@ import lombok.*;
 import javax.validation.constraints.NotBlank;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode
-@Builder
-public class RecipientInfo
+@RequiredArgsConstructor
+public class PaymentRecipientInfo
 {
 
     @NotBlank(message = "First name must be specified")
-    private String firstName;
+    private final String firstName;
     @NotBlank(message = "Last name must be specified")
-    private String lastName;
+    private final String lastName;
     @NotBlank(message = "Recipient bank name must be specified")
-    private String bankName;
+    private final String bankName;
     @NotBlank(message = "Recipient bank address must be specified")
-    private String bankAddress;
+    private final String bankAddress;
     @NotBlank(message = "Recipient account number must be specified")
-    private String accountNumber;
+    private final String accountNumber;
 
 }

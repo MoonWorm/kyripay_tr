@@ -3,7 +3,7 @@
 ## Development
 1.) Run docker container for Postgres database:
 <pre>
-docker run --name postgres_payments_ms -e POSTGRES_PASSWORD=12345 -e POSTGRES_USER=payments_ms_user -e POSTGRES_DB=payments_ms -d -p 5432:5432 postgres:11.3
+docker run --name postgres_payments_ms -e POSTGRES_PASSWORD=12345 -e POSTGRES_USER=payments_ms_user -e POSTGRES_DB=payments_ms -d -p 5432:5432 postgres:9.6.12
 </pre>
 2.) Execute Maven command under default profile:
 <pre>
@@ -14,7 +14,7 @@ mvn clean install
 ## Integration tests
 1.) Run docker container for Postgres database:
 <pre>
-docker run --name postgres_payments_ms -e POSTGRES_PASSWORD=12345 -e POSTGRES_USER=payments_ms_user -e POSTGRES_DB=payments_ms -d -p 5432:5432 postgres:11.3
+docker run --name postgres_payments_ms -e POSTGRES_PASSWORD=12345 -e POSTGRES_USER=payments_ms_user -e POSTGRES_DB=payments_ms -d -p 5432:5432 postgres:9.6.12
 </pre>
 2.) Execute Maven command under **integration** profile:
 <pre>
@@ -24,7 +24,7 @@ mvn clean install -Pintegration
 ## Docker compose
 1.) Run docker container for Postgres database:
 <pre>
-docker run --name postgres_payments_ms -e POSTGRES_PASSWORD=12345 -e POSTGRES_USER=payments_ms_user -e POSTGRES_DB=payments_ms -d -p 5432:5432 postgres:11.3
+docker run --name postgres_payments_ms -e POSTGRES_PASSWORD=12345 -e POSTGRES_USER=payments_ms_user -e POSTGRES_DB=payments_ms -d -p 5432:5432 postgres:9.6.12
 </pre>
 2.) Execute Maven command under default profile:
 <pre>

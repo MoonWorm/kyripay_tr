@@ -5,19 +5,20 @@
  *******************************************************************************/
 package com.kyripay.payment.api;
 
-import com.kyripay.payment.api.dto.PaymentStatus;
-import com.kyripay.payment.domain.vo.Status;
-import com.kyripay.payment.dto.PaymentResponse;
+import com.kyripay.payment.dto.PaymentTemplateResponse;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.io.IOException;
 import java.net.URI;
@@ -27,13 +28,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -45,14 +46,17 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
  * @author M-ATA
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = DEFINED_PORT, value = "eureka.client.enabled=false")
-public class PaymentControllerApiTest {
+@SpringBootTest(webEnvironment = DEFINED_PORT)
+@ActiveProfiles("test")
+public class PaymentTemplateEndpointApiTest {
+
+    @ClassRule
+    public static final PostgreSQLContainer postgres = new PostgreSQLContainer();
 
     @Rule
     public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("target/generated-snippets");
 
     private RequestSpecification documentationSpec;
-
 
     @Before
     public void setUp() {
@@ -61,19 +65,20 @@ public class PaymentControllerApiTest {
     }
 
     @Test
-    public void createSuccess() throws URISyntaxException, IOException {
-        PaymentResponse response = given(this.documentationSpec)
-                .filter(document("payment/{method-name}"))
+    public void createSuccess() {
+        long userId = 1L;
+        PaymentTemplateResponse response = given(this.documentationSpec)
+                .filter(document("payment-template/{method-name}"))
                 .contentType(ContentType.JSON)
-                .header("userId", 1L)
-                .body(readTestResource("/com/kyripay/payment/api/payment_request.json"))
+                .header("userId", userId)
+                .body(getPaymentTemplateRequest(UUID.randomUUID().toString()))
                 .when()
-                .post("/api/v1/payments")
+                .post("/api/v1/paymenttemplates")
                 .then()
                 .assertThat().statusCode(SC_OK)
                 .contentType(ContentType.JSON)
                 .extract()
-                .as(PaymentResponse.class);
+                .as(PaymentTemplateResponse.class);
         assertNotNull(response);
     }
 
@@ -82,111 +87,94 @@ public class PaymentControllerApiTest {
         CustomGlobalExceptionHandler.ErrorsInfo responseModel = given()
                 .contentType(ContentType.JSON)
                 .header("userId", 1L)
-                .body(readTestResource("/com/kyripay/payment/api/payment_request_invalid.json"))
+                .body(readTestResource("/com/kyripay/payment/api/payment_template_request_invalid.json"))
                 .when()
-                .post("/api/v1/payments")
+                .post("/api/v1/paymenttemplates")
                 .then()
                 .assertThat().statusCode(SC_BAD_REQUEST)
                 .contentType(ContentType.JSON)
                 .extract()
                 .response()
                 .as(CustomGlobalExceptionHandler.ErrorsInfo.class);
-
         assertThat(responseModel.getStatus(), is(400));
-        assertThat(responseModel.getErrors().size(), is(9));
+        assertThat(responseModel.getErrors().size(), is(1));
     }
 
     @Test
-    public void readAllSuccess() throws IOException, URISyntaxException {
+    public void readAllSuccess() {
         long userId = 1L;
-        createPayment(userId);
-        createPayment(userId);
-        List<PaymentResponse> response = given(this.documentationSpec)
-                .filter(document("payment/{method-name}"))
+        createPaymentTemplate(userId, UUID.randomUUID().toString());
+        createPaymentTemplate(userId, UUID.randomUUID().toString());
+        List<PaymentTemplateResponse> response = given(this.documentationSpec)
+                .filter(document("payment-template/{method-name}"))
                 .contentType(ContentType.JSON)
                 .header("userId", userId)
                 .param("limit", 2)
                 .param("offset", 0)
                 .when()
-                .get("/api/v1/payments")
+                .get("/api/v1/paymenttemplates")
                 .then()
                 .assertThat().statusCode(SC_OK)
                 .contentType(ContentType.JSON)
                 .extract()
                 .as(List.class);
         assertNotNull(response);
-        assertThat(response.size(), is(2));
+        assertEquals(2, response.size());
     }
 
     @Test
     public void readByIdSuccess() throws IOException, URISyntaxException {
         long userId = 1L;
-        long paymentId = createPayment(userId);
-        PaymentResponse response = given(this.documentationSpec)
-                .filter(document("payment/{method-name}",
-                        pathParameters(parameterWithName("id").description("Payment unique identifier"))))
+        long paymentTemplateId = createPaymentTemplate(userId, UUID.randomUUID().toString());
+        PaymentTemplateResponse response = given(this.documentationSpec)
+                .filter(document("payment-template/{method-name}",
+                        pathParameters(parameterWithName("id").description("Payment template unique identifier"))))
                 .contentType(ContentType.JSON)
                 .header("userId", userId)
                 .when()
-                .get("/api/v1/payments/{id}", paymentId)
+                .get("/api/v1/paymenttemplates/{id}", paymentTemplateId)
                 .then()
                 .assertThat().statusCode(SC_OK)
                 .contentType(ContentType.JSON)
                 .extract()
-                .as(PaymentResponse.class);
+                .as(PaymentTemplateResponse.class);
         assertNotNull(response);
     }
 
     @Test
-    public void getStatusSuccess() throws IOException, URISyntaxException {
+    public void updateSuccess() {
         long userId = 1L;
-        long paymentId = createPayment(userId);
-        PaymentStatus responseStatus = given(this.documentationSpec)
-                .filter(document("payment/{method-name}",
-                        pathParameters(parameterWithName("id").description("Payment unique identifier"))))
+        String templateName = UUID.randomUUID().toString();
+        long paymentTemplateId = createPaymentTemplate(userId, templateName);
+        PaymentTemplateResponse response = given(this.documentationSpec)
+                .filter(document("payment-template/{method-name}",
+                        pathParameters(parameterWithName("id").description("Payment template unique identifier"))))
                 .contentType(ContentType.JSON)
                 .header("userId", userId)
+                .body(getPaymentTemplateRequest(templateName))
                 .when()
-                .get("/api/v1/payments/{id}/status", paymentId)
+                .put("/api/v1/paymenttemplates/{id}", paymentTemplateId)
                 .then()
                 .assertThat().statusCode(SC_OK)
                 .contentType(ContentType.JSON)
                 .extract()
-                .as(PaymentStatus.class);
-        assertThat(responseStatus.getStatus(), is(Status.CREATED));
-    }
-
-    @Test
-    public void updateStatusSuccess() throws URISyntaxException, IOException {
-        long userId = 1L;
-        long paymentId = createPayment(userId);
-        PaymentStatus responseStatus = given(this.documentationSpec)
-                .filter(document("payment/{method-name}",
-                        pathParameters(parameterWithName("id").description("Payment unique identifier"))))
-                .contentType(ContentType.JSON)
-                .header("userId", userId)
-                .body(readTestResource("/com/kyripay/payment/api/payment_status.json"))
-                .when()
-                .put("/api/v1/payments/{id}/status", paymentId)
-                .then()
-                .assertThat()
-                .statusCode(SC_OK)
-                .extract()
-                .as(PaymentStatus.class);
-        assertThat(responseStatus.getStatus(), is(Status.COMPLETED));
+                .response()
+                .as(PaymentTemplateResponse.class);
+        assertNotNull(response);
     }
 
 
     @Test
-    public void updateStatusInvalid() throws URISyntaxException, IOException {
+    public void updateInvalid() throws IOException, URISyntaxException {
         CustomGlobalExceptionHandler.ErrorsInfo responseModel = given()
                 .contentType(ContentType.JSON)
                 .header("userId", 1L)
-                .body(readTestResource("/com/kyripay/payment/api/payment_status_invalid.json"))
+                .body(readTestResource("/com/kyripay/payment/api/payment_template_request_invalid.json"))
                 .when()
-                .put("/api/v1/payments/{id}/status", 1)
+                .put("/api/v1/paymenttemplates/{id}", 1)
                 .then()
                 .assertThat().statusCode(SC_BAD_REQUEST)
+                .contentType(ContentType.JSON)
                 .extract()
                 .response()
                 .as(CustomGlobalExceptionHandler.ErrorsInfo.class);
@@ -195,27 +183,65 @@ public class PaymentControllerApiTest {
         assertThat(responseModel.getErrors().size(), is(1));
     }
 
+    @Test
+    public void deleteSuccess() {
+        long userId = 1L;
+        long paymentTemplateId = createPaymentTemplate(userId, UUID.randomUUID().toString());
+        given(this.documentationSpec)
+                .filter(document("payment-template/{method-name}",
+                        pathParameters(parameterWithName("id").description("Payment template unique identifier"))))
+                .contentType(ContentType.JSON)
+                .header("userId", userId)
+                .when()
+                .delete("/api/v1/paymenttemplates/{id}", paymentTemplateId)
+                .then()
+                .assertThat().statusCode(SC_OK);
+    }
+
     private String readTestResource(String relativePath) throws URISyntaxException, IOException {
-        URI uri = PaymentControllerApiTest.class.getResource(relativePath).toURI();
+        URI uri = PaymentTemplateEndpointApiTest.class.getResource(relativePath).toURI();
         Path path = Paths.get(uri);
         String resourceStr = new String(Files.readAllBytes(path), StandardCharsets.UTF_8.name());
         return resourceStr;
     }
 
-    private long createPayment(long userId) throws IOException, URISyntaxException {
-        PaymentResponse response = given()
+    private long createPaymentTemplate(long userId, String templateName) {
+        String body = getPaymentTemplateRequest(templateName);
+        PaymentTemplateResponse response = given()
                 .contentType(ContentType.JSON)
                 .header("userId", userId)
-                .body(readTestResource("/com/kyripay/payment/api/payment_request.json"))
+                .body(body)
                 .when()
-                .post("/api/v1/payments")
+                .post("/api/v1/paymenttemplates")
                 .then()
                 .assertThat().statusCode(SC_OK)
                 .contentType(ContentType.JSON)
                 .extract()
-                .as(PaymentResponse.class);
+                .as(PaymentTemplateResponse.class);
         assertNotNull(response);
         return response.getId();
+    }
+
+    private String getPaymentTemplateRequest(String templateName) {
+        String result = "{\n" +
+                "  \"name\": \"" + templateName + "\",\n" +
+                "  \"paymentDetails\": {\n" +
+                "    \"amount\": {\n" +
+                "      \"amount\": 50,\n" +
+                "      \"currency\": \"USD\"\n" +
+                "    },\n" +
+                "    \"bankId\": 123,\n" +
+                "    \"accountNumber\": \"12345AN\",\n" +
+                "    \"recipientInfo\": {\n" +
+                "      \"firstName\": \"Vasia\",\n" +
+                "      \"lastName\": \"Pupkin\",\n" +
+                "      \"bankName\": \"Cool Bank and Partners\",\n" +
+                "      \"bankAddress\": \"Paris, Main str., 1-2\",\n" +
+                "      \"accountNumber\": \"54321TTU\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+        return result;
     }
 
 }
