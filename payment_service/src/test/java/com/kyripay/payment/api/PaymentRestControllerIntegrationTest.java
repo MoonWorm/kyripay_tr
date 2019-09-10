@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Date;
+import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.when;
@@ -35,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public class PaymentRestControllerIntegrationTest {
 
-    private static final long USER_ID = 1L;
+    private static final UUID USER_ID = UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11");
 
     @Autowired
     private MockMvc mockMvc;

@@ -10,6 +10,7 @@ import org.dozer.DozerBeanMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
 
@@ -29,7 +30,7 @@ public class PaymentTemplateServiceImpl implements PaymentTemplateService {
     }
 
     @Override
-    public PaymentTemplateResponse create(long userId, PaymentTemplateRequest paymentTemplateRequest) throws ServiceException {
+    public PaymentTemplateResponse create(UUID userId, PaymentTemplateRequest paymentTemplateRequest) throws ServiceException {
         try {
             PaymentTemplate paymentTemplate = mapper.map(paymentTemplateRequest, PaymentTemplate.class);
             validator.validatePayment(paymentTemplate);
@@ -41,7 +42,7 @@ public class PaymentTemplateServiceImpl implements PaymentTemplateService {
     }
 
     @Override
-    public List<PaymentTemplateResponse> readAll(long userId, int limit, int offset) throws ServiceException {
+    public List<PaymentTemplateResponse> readAll(UUID userId, int limit, int offset) throws ServiceException {
         try {
             return repository.readAll(userId, limit, offset)
                     .stream()
@@ -53,7 +54,7 @@ public class PaymentTemplateServiceImpl implements PaymentTemplateService {
     }
 
     @Override
-    public PaymentTemplateResponse readById(long userId, long paymentTemplateId) throws ServiceException {
+    public PaymentTemplateResponse readById(UUID userId, long paymentTemplateId) throws ServiceException {
         try {
             PaymentTemplate paymentTemplate = repository.readById(userId, paymentTemplateId);
             return mapper.map(paymentTemplate, PaymentTemplateResponse.class);
@@ -63,7 +64,7 @@ public class PaymentTemplateServiceImpl implements PaymentTemplateService {
     }
 
     @Override
-    public PaymentTemplateResponse update(long userId, long paymentTemplateId, PaymentTemplateRequest data) throws ServiceException {
+    public PaymentTemplateResponse update(UUID userId, long paymentTemplateId, PaymentTemplateRequest data) throws ServiceException {
         try {
             PaymentTemplate paymentTemplate = mapper.map(data, PaymentTemplate.class);
             PaymentTemplate paymentTemplateUpdated = repository.update(userId, paymentTemplateId, paymentTemplate);
@@ -74,7 +75,7 @@ public class PaymentTemplateServiceImpl implements PaymentTemplateService {
     }
 
     @Override
-    public void delete(long userId, long paymentTemplateId) throws ServiceException {
+    public void delete(UUID userId, long paymentTemplateId) throws ServiceException {
         try {
             repository.delete(userId, paymentTemplateId);
         } catch (Exception e) {

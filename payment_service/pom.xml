@@ -59,6 +59,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>io.opentracing.contrib</groupId>
+			<artifactId>opentracing-spring-web-autoconfigure</artifactId>
+			<version>0.3.2</version>
+		</dependency>
+
+		<dependency>
 			<groupId>net.sf.dozer</groupId>
 			<artifactId>dozer</artifactId>
 			<version>${dozer.version}</version>
@@ -272,7 +278,8 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<excludes>
-						<exclude>../api/*.java</exclude>
+						<exclude>../api/*Test.java</exclude>
+						<exclude>../dao/*Test.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
@@ -320,6 +327,7 @@
 						<configuration>
 							<excludes>
 								<exclude>../service/*Test.java</exclude>
+								<exclude>../dao/*Test.java</exclude>
 							</excludes>
 							<includes>
 								<include>../api/*Test.java</include>

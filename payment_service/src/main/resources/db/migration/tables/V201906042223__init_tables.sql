@@ -1,7 +1,7 @@
 CREATE TABLE payment_template(
   id BIGSERIAL PRIMARY KEY,
   name VARCHAR (256) UNIQUE NOT NULL,
-  user_id BIGINT NOT NULL,
+  user_id UUID NOT NULL,
   bank_id BIGINT NULL ,
   account_number VARCHAR(256) NULL ,
   recipient_first_name VARCHAR(256) NULL,
@@ -18,7 +18,7 @@ CREATE TABLE payment_template(
 CREATE TABLE payment(
   id BIGSERIAL PRIMARY KEY,
   status VARCHAR (32) NOT NULL,
-  user_id BIGINT NOT NULL,
+  user_id UUID NOT NULL,
   bank_id BIGINT NOT NULL ,
   account_number VARCHAR(256) NOT NULL ,
   recipient_first_name VARCHAR(256) NOT NULL,

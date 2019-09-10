@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.kyripay.payment.dao.impl.jooq.meta.Tables.PAYMENT_TEMPLATE;
 import static java.util.stream.Collectors.toList;
@@ -26,7 +27,7 @@ public class JooqPaymentTemplateRepository implements PaymentTemplateRepository 
     }
 
     @Override
-    public PaymentTemplate create(long userId, PaymentTemplate data) throws RepositoryException {
+    public PaymentTemplate create(UUID userId, PaymentTemplate data) throws RepositoryException {
         try {
             PaymentTemplateRecord record = ctx.newRecord(PAYMENT_TEMPLATE);
             mapper.map(data, record);
@@ -39,7 +40,7 @@ public class JooqPaymentTemplateRepository implements PaymentTemplateRepository 
     }
 
     @Override
-    public List<PaymentTemplate> readAll(long userId, int limit, int offset) throws RepositoryException {
+    public List<PaymentTemplate> readAll(UUID userId, int limit, int offset) throws RepositoryException {
         try {
             return ctx.selectFrom(PAYMENT_TEMPLATE)
                     .where(PAYMENT_TEMPLATE.USER_ID.eq(userId))
@@ -56,7 +57,7 @@ public class JooqPaymentTemplateRepository implements PaymentTemplateRepository 
     }
 
     @Override
-    public PaymentTemplate readById(long userId, long paymentTemplateId) throws RepositoryException {
+    public PaymentTemplate readById(UUID userId, long paymentTemplateId) throws RepositoryException {
         try {
             PaymentTemplateRecord record = ctx.selectFrom(PAYMENT_TEMPLATE)
                     .where(PAYMENT_TEMPLATE.ID.eq(paymentTemplateId).and(PAYMENT_TEMPLATE.USER_ID.eq(userId)))
@@ -71,7 +72,7 @@ public class JooqPaymentTemplateRepository implements PaymentTemplateRepository 
     }
 
     @Override
-    public PaymentTemplate update(long userId, long templateId, PaymentTemplate data) throws RepositoryException {
+    public PaymentTemplate update(UUID userId, long templateId, PaymentTemplate data) throws RepositoryException {
         try {
             PaymentTemplateRecord paymentTemplateRecord = ctx.newRecord(PAYMENT_TEMPLATE);
             mapper.map(data, paymentTemplateRecord);
@@ -91,7 +92,7 @@ public class JooqPaymentTemplateRepository implements PaymentTemplateRepository 
     }
 
     @Override
-    public void delete(long userId, long paymentTemplateId) throws RepositoryException {
+    public void delete(UUID userId, long paymentTemplateId) throws RepositoryException {
         try {
             ctx.delete(PAYMENT_TEMPLATE)
                     .where(PAYMENT_TEMPLATE.ID.eq(paymentTemplateId).and(PAYMENT_TEMPLATE.USER_ID.eq(userId)))

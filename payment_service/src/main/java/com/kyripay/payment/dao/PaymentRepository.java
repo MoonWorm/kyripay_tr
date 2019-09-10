@@ -5,17 +5,18 @@ import com.kyripay.payment.domain.Payment;
 import com.kyripay.payment.domain.vo.Status;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface PaymentRepository {
 
-    Payment create(long userId, Payment payment) throws RepositoryException;
+    Payment create(UUID userId, Payment payment) throws RepositoryException;
 
-    List<Payment> readAll(long userId, int limit, int offset) throws RepositoryException;
+    List<Payment> readAll(UUID userId, int limit, int offset) throws RepositoryException;
 
-    Payment readById(long userId, long paymentId) throws RepositoryException;
+    Payment readById(UUID userId, long paymentId) throws RepositoryException;
 
-    Status getStatus(long userId, long paymentId) throws RepositoryException;
+    Status getStatus(UUID userId, long paymentId) throws RepositoryException;
 
-    Status updateStatus(long userId, long paymentId, Status status) throws RepositoryException;
+    Status updateStatus(UUID userId, long paymentId, Status status) throws RepositoryException;
 
 }

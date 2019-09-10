@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -32,7 +33,7 @@ public class PaymentController extends GenericController {
 
     @ApiOperation("Creates a passed payment")
     @PostMapping("/payments")
-    PaymentResponse create(@RequestHeader long userId,
+    PaymentResponse create(@RequestHeader UUID userId,
                            @Valid @RequestBody PaymentRequest payment) {
         return paymentService.create(userId, payment);
     }
@@ -40,7 +41,7 @@ public class PaymentController extends GenericController {
 
     @ApiOperation("Reads all existing payments")
     @GetMapping("/payments")
-    List<PaymentResponse> readAll(@RequestHeader long userId,
+    List<PaymentResponse> readAll(@RequestHeader UUID userId,
                                   @RequestParam(defaultValue = "10") int limit,
                                   @RequestParam(defaultValue = "0") int offset) {
         return paymentService.readAll(userId, limit, offset);
@@ -48,7 +49,7 @@ public class PaymentController extends GenericController {
 
     @ApiOperation("Reads an existing payment template by id")
     @GetMapping("/payments/{paymentId}")
-    PaymentResponse readById(@RequestHeader long userId,
+    PaymentResponse readById(@RequestHeader UUID userId,
                              @PathVariable long paymentId) {
         return paymentService.readById(userId, paymentId);
     }
@@ -56,7 +57,7 @@ public class PaymentController extends GenericController {
 
     @ApiOperation("Reads an existing payment template by id")
     @GetMapping("/payments/{paymentId}/status")
-    PaymentStatus getPaymentStatus(@RequestHeader long userId,
+    PaymentStatus getPaymentStatus(@RequestHeader UUID userId,
                                    @PathVariable long paymentId) {
         return new PaymentStatus(paymentService.getStatus(userId, paymentId));
     }
@@ -64,7 +65,7 @@ public class PaymentController extends GenericController {
 
     @ApiOperation("Updates a status for an existing payment")
     @PutMapping(value = "/payments/{paymentId}/status")
-    PaymentStatus updateStatus(@RequestHeader long userId,
+    PaymentStatus updateStatus(@RequestHeader UUID userId,
                       @PathVariable long paymentId,
                       @Valid @RequestBody PaymentStatus status) {
         return new PaymentStatus(paymentService.updateStatus(userId, paymentId, status.getStatus()));

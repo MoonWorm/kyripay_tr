@@ -6,24 +6,25 @@ import com.kyripay.payment.service.exception.ServiceException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface PaymentService {
 
     @Transactional
-    PaymentResponse create(long userId,
+    PaymentResponse create(UUID userId,
                            PaymentRequest paymentTemplate) throws ServiceException;
 
     @Transactional(readOnly = true)
-    List<PaymentResponse> readAll(long userId, int limit, int offset) throws ServiceException;
+    List<PaymentResponse> readAll(UUID userId, int limit, int offset) throws ServiceException;
 
 
     @Transactional(readOnly = true)
-    PaymentResponse readById(long userId, long paymentId) throws ServiceException;
+    PaymentResponse readById(UUID userId, long paymentId) throws ServiceException;
 
     @Transactional
-    Status getStatus(long userId, long paymentId) throws ServiceException;
+    Status getStatus(UUID userId, long paymentId) throws ServiceException;
 
     @Transactional
-    Status updateStatus(long userId, long paymentId, Status status) throws ServiceException;
+    Status updateStatus(UUID userId, long paymentId, Status status) throws ServiceException;
 
 }

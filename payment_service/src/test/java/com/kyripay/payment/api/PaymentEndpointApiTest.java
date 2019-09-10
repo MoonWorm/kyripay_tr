@@ -30,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
@@ -52,6 +53,8 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 @ActiveProfiles("test")
 public class PaymentEndpointApiTest {
 
+    private static final UUID USER_ID = UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11");
+
     @ClassRule
     public static final PostgreSQLContainer postgres = new PostgreSQLContainer();
 
@@ -71,7 +74,7 @@ public class PaymentEndpointApiTest {
         PaymentResponse response = given(this.documentationSpec)
                 .filter(document("payment/{method-name}"))
                 .contentType(ContentType.JSON)
-                .header("userId", 1L)
+                .header("userId", USER_ID)
                 .body(readTestResource("/com/kyripay/payment/api/payment_request.json"))
                 .when()
                 .post("/api/v1/payments")
@@ -87,7 +90,7 @@ public class PaymentEndpointApiTest {
     public void createInvalid() throws IOException, URISyntaxException {
         CustomGlobalExceptionHandler.ErrorsInfo responseModel = given()
                 .contentType(ContentType.JSON)
-                .header("userId", 1L)
+                .header("userId", USER_ID)
                 .body(readTestResource("/com/kyripay/payment/api/payment_request_invalid.json"))
                 .when()
                 .post("/api/v1/payments")
@@ -104,13 +107,12 @@ public class PaymentEndpointApiTest {
 
     @Test
     public void readAllSuccess() throws IOException, URISyntaxException {
-        long userId = 1L;
-        createPayment(userId);
-        createPayment(userId);
+        createPayment(USER_ID);
+        createPayment(USER_ID);
         List<PaymentResponse> response = given(this.documentationSpec)
                 .filter(document("payment/{method-name}"))
                 .contentType(ContentType.JSON)
-                .header("userId", userId)
+                .header("userId", USER_ID)
                 .param("limit", 2)
                 .param("offset", 0)
                 .when()
@@ -126,13 +128,12 @@ public class PaymentEndpointApiTest {
 
     @Test
     public void readByIdSuccess() throws IOException, URISyntaxException {
-        long userId = 1L;
-        long paymentId = createPayment(userId);
+        long paymentId = createPayment(USER_ID);
         PaymentResponse response = given(this.documentationSpec)
                 .filter(document("payment/{method-name}",
                         pathParameters(parameterWithName("id").description("Payment unique identifier"))))
                 .contentType(ContentType.JSON)
-                .header("userId", userId)
+                .header("userId", USER_ID)
                 .when()
                 .get("/api/v1/payments/{id}", paymentId)
                 .then()
@@ -145,13 +146,12 @@ public class PaymentEndpointApiTest {
 
     @Test
     public void getStatusSuccess() throws IOException, URISyntaxException {
-        long userId = 1L;
-        long paymentId = createPayment(userId);
+        long paymentId = createPayment(USER_ID);
         PaymentStatus responseStatus = given(this.documentationSpec)
                 .filter(document("payment/{method-name}",
                         pathParameters(parameterWithName("id").description("Payment unique identifier"))))
                 .contentType(ContentType.JSON)
-                .header("userId", userId)
+                .header("userId", USER_ID)
                 .when()
                 .get("/api/v1/payments/{id}/status", paymentId)
                 .then()
@@ -164,13 +164,12 @@ public class PaymentEndpointApiTest {
 
     @Test
     public void updateStatusSuccess() throws URISyntaxException, IOException {
-        long userId = 1L;
-        long paymentId = createPayment(userId);
+        long paymentId = createPayment(USER_ID);
         PaymentStatus responseStatus = given(this.documentationSpec)
                 .filter(document("payment/{method-name}",
                         pathParameters(parameterWithName("id").description("Payment unique identifier"))))
                 .contentType(ContentType.JSON)
-                .header("userId", userId)
+                .header("userId", USER_ID)
                 .body(readTestResource("/com/kyripay/payment/api/payment_status.json"))
                 .when()
                 .put("/api/v1/payments/{id}/status", paymentId)
@@ -187,7 +186,7 @@ public class PaymentEndpointApiTest {
     public void updateStatusInvalid() throws URISyntaxException, IOException {
         CustomGlobalExceptionHandler.ErrorsInfo responseModel = given()
                 .contentType(ContentType.JSON)
-                .header("userId", 1L)
+                .header("userId", USER_ID)
                 .body(readTestResource("/com/kyripay/payment/api/payment_status_invalid.json"))
                 .when()
                 .put("/api/v1/payments/{id}/status", 1)
@@ -208,7 +207,7 @@ public class PaymentEndpointApiTest {
         return resourceStr;
     }
 
-    private long createPayment(long userId) throws IOException, URISyntaxException {
+    private long createPayment(UUID userId) throws IOException, URISyntaxException {
         PaymentResponse response = given()
                 .contentType(ContentType.JSON)
                 .header("userId", userId)

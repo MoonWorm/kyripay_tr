@@ -50,6 +50,8 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 @ActiveProfiles("test")
 public class PaymentTemplateEndpointApiTest {
 
+    private static final UUID USER_ID = UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11");
+
     @ClassRule
     public static final PostgreSQLContainer postgres = new PostgreSQLContainer();
 
@@ -66,11 +68,10 @@ public class PaymentTemplateEndpointApiTest {
 
     @Test
     public void createSuccess() {
-        long userId = 1L;
         PaymentTemplateResponse response = given(this.documentationSpec)
                 .filter(document("payment-template/{method-name}"))
                 .contentType(ContentType.JSON)
-                .header("userId", userId)
+                .header("userId", USER_ID)
                 .body(getPaymentTemplateRequest(UUID.randomUUID().toString()))
                 .when()
                 .post("/api/v1/paymenttemplates")
@@ -86,7 +87,7 @@ public class PaymentTemplateEndpointApiTest {
     public void createInvalid() throws IOException, URISyntaxException {
         CustomGlobalExceptionHandler.ErrorsInfo responseModel = given()
                 .contentType(ContentType.JSON)
-                .header("userId", 1L)
+                .header("userId", USER_ID)
                 .body(readTestResource("/com/kyripay/payment/api/payment_template_request_invalid.json"))
                 .when()
                 .post("/api/v1/paymenttemplates")
@@ -102,13 +103,12 @@ public class PaymentTemplateEndpointApiTest {
 
     @Test
     public void readAllSuccess() {
-        long userId = 1L;
-        createPaymentTemplate(userId, UUID.randomUUID().toString());
-        createPaymentTemplate(userId, UUID.randomUUID().toString());
+        createPaymentTemplate(USER_ID, UUID.randomUUID().toString());
+        createPaymentTemplate(USER_ID, UUID.randomUUID().toString());
         List<PaymentTemplateResponse> response = given(this.documentationSpec)
                 .filter(document("payment-template/{method-name}"))
                 .contentType(ContentType.JSON)
-                .header("userId", userId)
+                .header("userId", USER_ID)
                 .param("limit", 2)
                 .param("offset", 0)
                 .when()
@@ -124,13 +124,12 @@ public class PaymentTemplateEndpointApiTest {
 
     @Test
     public void readByIdSuccess() throws IOException, URISyntaxException {
-        long userId = 1L;
-        long paymentTemplateId = createPaymentTemplate(userId, UUID.randomUUID().toString());
+        long paymentTemplateId = createPaymentTemplate(USER_ID, UUID.randomUUID().toString());
         PaymentTemplateResponse response = given(this.documentationSpec)
                 .filter(document("payment-template/{method-name}",
                         pathParameters(parameterWithName("id").description("Payment template unique identifier"))))
                 .contentType(ContentType.JSON)
-                .header("userId", userId)
+                .header("userId", USER_ID)
                 .when()
                 .get("/api/v1/paymenttemplates/{id}", paymentTemplateId)
                 .then()
@@ -143,14 +142,13 @@ public class PaymentTemplateEndpointApiTest {
 
     @Test
     public void updateSuccess() {
-        long userId = 1L;
         String templateName = UUID.randomUUID().toString();
-        long paymentTemplateId = createPaymentTemplate(userId, templateName);
+        long paymentTemplateId = createPaymentTemplate(USER_ID, templateName);
         PaymentTemplateResponse response = given(this.documentationSpec)
                 .filter(document("payment-template/{method-name}",
                         pathParameters(parameterWithName("id").description("Payment template unique identifier"))))
                 .contentType(ContentType.JSON)
-                .header("userId", userId)
+                .header("userId", USER_ID)
                 .body(getPaymentTemplateRequest(templateName))
                 .when()
                 .put("/api/v1/paymenttemplates/{id}", paymentTemplateId)
@@ -168,7 +166,7 @@ public class PaymentTemplateEndpointApiTest {
     public void updateInvalid() throws IOException, URISyntaxException {
         CustomGlobalExceptionHandler.ErrorsInfo responseModel = given()
                 .contentType(ContentType.JSON)
-                .header("userId", 1L)
+                .header("userId", USER_ID)
                 .body(readTestResource("/com/kyripay/payment/api/payment_template_request_invalid.json"))
                 .when()
                 .put("/api/v1/paymenttemplates/{id}", 1)
@@ -185,13 +183,12 @@ public class PaymentTemplateEndpointApiTest {
 
     @Test
     public void deleteSuccess() {
-        long userId = 1L;
-        long paymentTemplateId = createPaymentTemplate(userId, UUID.randomUUID().toString());
+        long paymentTemplateId = createPaymentTemplate(USER_ID, UUID.randomUUID().toString());
         given(this.documentationSpec)
                 .filter(document("payment-template/{method-name}",
                         pathParameters(parameterWithName("id").description("Payment template unique identifier"))))
                 .contentType(ContentType.JSON)
-                .header("userId", userId)
+                .header("userId", USER_ID)
                 .when()
                 .delete("/api/v1/paymenttemplates/{id}", paymentTemplateId)
                 .then()
@@ -205,7 +202,7 @@ public class PaymentTemplateEndpointApiTest {
         return resourceStr;
     }
 
-    private long createPaymentTemplate(long userId, String templateName) {
+    private long createPaymentTemplate(UUID userId, String templateName) {
         String body = getPaymentTemplateRequest(templateName);
         PaymentTemplateResponse response = given()
                 .contentType(ContentType.JSON)

@@ -23,6 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 public class PaymentRepositoryTest {
 
-    private static final long USER_ID = 1L;
+    private static final UUID USER_ID = UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11");
     private static final long FIRST_PAYMENT_SCRIPT_ID = 1L;
     private static final long SECOND_PAYMENT_SCRIPT_ID = 2L;
 
@@ -80,7 +81,7 @@ public class PaymentRepositoryTest {
     @Test
     @DataSet(value = {"datasets/clear_payments.xml"})
     public void readById_noRecordsInDB_shouldReturnNull() {
-        assertThat(sut.readById(-1L, -1L)).isNull();
+        assertThat(sut.readById(UUID.fromString("aaeeaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), -1L)).isNull();
     }
 
     @Test
@@ -93,7 +94,7 @@ public class PaymentRepositoryTest {
     @Test
     @DataSet(value = {"datasets/clear_payments.xml"})
     public void getStatus_noRecordsInDB_shouldReturnNull() {
-        assertThat(sut.getStatus(-1L, -1L)).isNull();
+        assertThat(sut.getStatus(UUID.fromString("aaeeaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), -1L)).isNull();
     }
 
     @Test
@@ -106,7 +107,7 @@ public class PaymentRepositoryTest {
     @Test(expected = RepositoryException.class)
     @DataSet(value = {"datasets/clear_payments.xml"})
     public void updateStatus_noRecordsInDB_shouldThrownException() {
-        assertThat(sut.updateStatus(-1L, -1L, Status.PROCESSING));
+        assertThat(sut.updateStatus(UUID.fromString("aaeeaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), -1L, Status.PROCESSING));
     }
 
     @Test

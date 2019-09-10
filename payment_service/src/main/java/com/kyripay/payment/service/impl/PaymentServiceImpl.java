@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
 
@@ -31,7 +32,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentResponse create(long userId, PaymentRequest paymentRequest) throws ServiceException {
+    public PaymentResponse create(UUID userId, PaymentRequest paymentRequest) throws ServiceException {
         try {
             Payment payment = mapper.map(paymentRequest, Payment.class);
             validator.validatePayment(payment);
@@ -43,7 +44,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public List<PaymentResponse> readAll(long userId, int limit, int offset) throws ServiceException {
+    public List<PaymentResponse> readAll(UUID userId, int limit, int offset) throws ServiceException {
         try {
             return repository.readAll(userId, limit, offset)
                     .stream()
@@ -55,7 +56,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentResponse readById(long userId, long paymentId) throws ServiceException {
+    public PaymentResponse readById(UUID userId, long paymentId) throws ServiceException {
         try {
             Payment payment = repository.readById(userId, paymentId);
             return mapper.map(payment, PaymentResponse.class);
@@ -65,7 +66,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Status updateStatus(long userId, long paymentId, Status status) throws ServiceException {
+    public Status updateStatus(UUID userId, long paymentId, Status status) throws ServiceException {
         try {
             validator.validatePaymentStatus(status);
             return repository.updateStatus(userId, paymentId, status);
@@ -75,7 +76,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Status getStatus(long userId, long paymentId) throws ServiceException {
+    public Status getStatus(UUID userId, long paymentId) throws ServiceException {
         try {
             return repository.getStatus(userId, paymentId);
         } catch (Exception e) {

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.kyripay.payment.dao.impl.jooq.meta.Tables.PAYMENT;
 import static java.util.stream.Collectors.toList;
@@ -27,7 +28,7 @@ public class JooqPaymentRepository implements PaymentRepository {
     }
 
     @Override
-    public Payment create(long userId, Payment payment) throws RepositoryException {
+    public Payment create(UUID userId, Payment payment) throws RepositoryException {
         try {
             PaymentRecord record = ctx.newRecord(PAYMENT);
             mapper.map(payment, record);
@@ -40,7 +41,7 @@ public class JooqPaymentRepository implements PaymentRepository {
     }
 
     @Override
-    public List<Payment> readAll(long userId, int limit, int offset) throws RepositoryException {
+    public List<Payment> readAll(UUID userId, int limit, int offset) throws RepositoryException {
         try {
             return ctx.selectFrom(PAYMENT)
                     .where(PAYMENT.USER_ID.eq(userId))
@@ -57,7 +58,7 @@ public class JooqPaymentRepository implements PaymentRepository {
     }
 
     @Override
-    public Payment readById(long userId, long paymentId) throws RepositoryException {
+    public Payment readById(UUID userId, long paymentId) throws RepositoryException {
         try {
             PaymentRecord record = ctx.selectFrom(PAYMENT)
                     .where(PAYMENT.ID.eq(paymentId).and(PAYMENT.USER_ID.eq(userId)))
@@ -72,7 +73,7 @@ public class JooqPaymentRepository implements PaymentRepository {
     }
 
     @Override
-    public Status getStatus(long userId, long paymentId) throws RepositoryException {
+    public Status getStatus(UUID userId, long paymentId) throws RepositoryException {
         try {
             return Optional.ofNullable(
                     ctx.select(PAYMENT.STATUS)
@@ -86,7 +87,7 @@ public class JooqPaymentRepository implements PaymentRepository {
     }
 
     @Override
-    public Status updateStatus(long userId, long paymentId, Status status) throws RepositoryException {
+    public Status updateStatus(UUID userId, long paymentId, Status status) throws RepositoryException {
         try {
             return Optional.ofNullable(
                     ctx.update(PAYMENT)
