@@ -44,7 +44,7 @@ public class PaymentTemplateRestControllerIntegrationTest {
     @Test
     public void create_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
         PaymentTemplateRecipientInfo recipientInfo = new PaymentTemplateRecipientInfo("Vasia", "Pupkin",
-                "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
 
         PaymentTemplateDetails paymentTemplateDetails = new PaymentTemplateDetails(new Amount(100L, Currency.BYN), 1L,
                 "IBAN123", recipientInfo);
@@ -71,6 +71,7 @@ public class PaymentTemplateRestControllerIntegrationTest {
                         "    \"recipientInfo\": {\n" +
                         "      \"firstName\": \"Vasia\",\n" +
                         "      \"lastName\": \"Pupkin\",\n" +
+                        "      \"bankUrn\": \"0000/00222/0XXXX\",\n" +
                         "      \"bankName\": \"Super Bank Inc.\",\n" +
                         "      \"bankAddress\": \"Main str. 1-1\",\n" +
                         "      \"accountNumber\": \"IBAN321\"\n" +
@@ -109,7 +110,7 @@ public class PaymentTemplateRestControllerIntegrationTest {
     @Test
     public void create_sendValidRequestButServiceThrowException_shouldReturnErrorResponse() throws Exception {
         PaymentTemplateRecipientInfo recipientInfo = new PaymentTemplateRecipientInfo("Vasia", "Pupkin",
-                "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
 
         PaymentTemplateDetails paymentTemplateDetails = new PaymentTemplateDetails(new Amount(100L, Currency.BYN), 1L,
                 "IBAN123", recipientInfo);
@@ -139,6 +140,7 @@ public class PaymentTemplateRestControllerIntegrationTest {
                         "    \"recipientInfo\": {\n" +
                         "      \"firstName\": \"Vasia\",\n" +
                         "      \"lastName\": \"Pupkin\",\n" +
+                        "      \"bankUrn\": \"0000/00222/0XXXX\",\n" +
                         "      \"bankName\": \"Super Bank Inc.\",\n" +
                         "      \"bankAddress\": \"Main str. 1-1\",\n" +
                         "      \"accountNumber\": \"IBAN321\"\n" +
@@ -154,12 +156,12 @@ public class PaymentTemplateRestControllerIntegrationTest {
     @Test
     public void readAll_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
         PaymentTemplateRecipientInfo recipientInfo1 = new PaymentTemplateRecipientInfo("Vasia", "Pupkin",
-                "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
         PaymentTemplateDetails paymentDetails1 = new PaymentTemplateDetails(new Amount(100L, Currency.BYN), 1L,
                 "IBAN123", recipientInfo1);
 
         PaymentTemplateRecipientInfo recipientInfo2 = new PaymentTemplateRecipientInfo("Ivan", "Ivanov",
-                "Super Bank 2 Inc.", "Main str. 1-2", "IBAN432");
+                "0000/00222/0XXXX", "Super Bank 2 Inc.", "Main str. 1-2", "IBAN432");
         PaymentTemplateDetails paymentDetails2 = new PaymentTemplateDetails(new Amount(200L, Currency.USD), 2L,
                 "IBAN234", recipientInfo2);
 
@@ -196,7 +198,7 @@ public class PaymentTemplateRestControllerIntegrationTest {
     public void readById_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
         long paymentTemplateId = 1L;
         PaymentTemplateRecipientInfo recipientInfo = new PaymentTemplateRecipientInfo("Vasia", "Pupkin",
-                "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
         PaymentTemplateDetails paymentDetails = new PaymentTemplateDetails(new Amount(100L, Currency.BYN), 1L,
                 "IBAN123", recipientInfo);
 
@@ -225,7 +227,7 @@ public class PaymentTemplateRestControllerIntegrationTest {
         long paymentTemplateId = 1L;
         
         PaymentTemplateRecipientInfo recipientInfo = new PaymentTemplateRecipientInfo("Vasia", "Pupkin",
-                "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
 
         PaymentTemplateDetails paymentTemplateDetails = new PaymentTemplateDetails(new Amount(100L, Currency.BYN), 1L,
                 "IBAN123", recipientInfo);
@@ -252,6 +254,7 @@ public class PaymentTemplateRestControllerIntegrationTest {
                         "    \"recipientInfo\": {\n" +
                         "      \"firstName\": \"Vasia\",\n" +
                         "      \"lastName\": \"Pupkin\",\n" +
+                        "      \"bankUrn\": \"0000/00222/0XXXX\",\n" +
                         "      \"bankName\": \"Super Bank Inc.\",\n" +
                         "      \"bankAddress\": \"Main str. 1-1\",\n" +
                         "      \"accountNumber\": \"IBAN321\"\n" +
@@ -315,6 +318,7 @@ public class PaymentTemplateRestControllerIntegrationTest {
                 .andExpect(jsonPath("$.paymentDetails.accountNumber").value(pd.getAccountNumber()))
                 .andExpect(jsonPath("$.paymentDetails.recipientInfo.firstName").value(ri.getFirstName()))
                 .andExpect(jsonPath("$.paymentDetails.recipientInfo.lastName").value(ri.getLastName()))
+                .andExpect(jsonPath("$.paymentDetails.recipientInfo.bankUrn").value(ri.getBankUrn()))
                 .andExpect(jsonPath("$.paymentDetails.recipientInfo.bankName").value(ri.getBankName()))
                 .andExpect(jsonPath("$.paymentDetails.recipientInfo.bankAddress").value(ri.getBankAddress()))
                 .andExpect(jsonPath("$.paymentDetails.recipientInfo.accountNumber").value(ri.getAccountNumber()))
@@ -333,6 +337,7 @@ public class PaymentTemplateRestControllerIntegrationTest {
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.accountNumber").value(ptd.getAccountNumber()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.firstName").value(ri.getFirstName()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.lastName").value(ri.getLastName()))
+                .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.bankUrn").value(ri.getBankUrn()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.bankName").value(ri.getBankName()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.bankAddress").value(ri.getBankAddress()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.accountNumber").value(ri.getAccountNumber()))

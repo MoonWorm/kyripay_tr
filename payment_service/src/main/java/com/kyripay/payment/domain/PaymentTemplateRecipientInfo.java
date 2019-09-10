@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class PaymentTemplateRecipientInfo {
     private String firstName;
     private String lastName;
+    private String bankUrn;
     private String bankName;
     private String bankAddress;
     private String accountNumber;

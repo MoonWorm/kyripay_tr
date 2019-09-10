@@ -51,8 +51,8 @@ public class PaymentServiceTest {
         PaymentRecipientInfo riDto = pdDto.getRecipientInfo();
 
         com.kyripay.payment.domain.PaymentRecipientInfo riDomain = new com.kyripay.payment.domain.PaymentRecipientInfo(
-                riDto.getFirstName(), riDto.getLastName(), riDto.getBankName(), riDto.getBankAddress(),
-                riDto.getAccountNumber());
+                riDto.getFirstName(), riDto.getLastName(), riDto.getBankUrn(), riDto.getBankName(),
+                riDto.getBankAddress(), riDto.getAccountNumber());
         Payment pDomain = new Payment(pdDto.getAmount(), pdDto.getBankId(), pdDto.getAccountNumber(), Status.CREATED,
                 riDomain, null);
         Payment pDomainCreated = new Payment(1L, pdDto.getAmount(), pdDto.getBankId(), pdDto.getAccountNumber(),
@@ -218,6 +218,7 @@ public class PaymentServiceTest {
                         new PaymentRecipientInfo(
                                 ri.getFirstName(),
                                 ri.getLastName(),
+                                ri.getBankUrn(),
                                 ri.getBankName(),
                                 ri.getBankAddress(),
                                 ri.getAccountNumber()
@@ -229,7 +230,7 @@ public class PaymentServiceTest {
     private Payment createPayment1() {
         com.kyripay.payment.domain.PaymentRecipientInfo recipientInfo1
                 = new com.kyripay.payment.domain.PaymentRecipientInfo("Vasia", "Pupkin",
-                "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
         return new Payment(1L, new Amount(100L, Currency.BYN), 1L,
                 "IBAN123", Status.CREATED, recipientInfo1, LocalDateTime.now());
     }
@@ -237,7 +238,7 @@ public class PaymentServiceTest {
     private Payment createPayment2() {
         com.kyripay.payment.domain.PaymentRecipientInfo recipientInfo2
                 = new com.kyripay.payment.domain.PaymentRecipientInfo("Ivan", "Ivanov",
-                "Super Bank 2 Inc.", "Main str. 1-2", "IBAN432");
+                "0000/00222/0XXXY", "Super Bank 2 Inc.", "Main str. 1-2", "IBAN432");
         return new Payment(2L, new Amount(200L, Currency.USD), 2L,
                 "IBAN234", Status.CREATED, recipientInfo2, LocalDateTime.now());
     }
@@ -249,7 +250,7 @@ public class PaymentServiceTest {
 
     private PaymentDetails createPaymentDetails1() {
         PaymentRecipientInfo recipientInfo1 = new PaymentRecipientInfo("Vasia", "Pupkin",
-                "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
         return new PaymentDetails(new Amount(100L, Currency.BYN), 1L,
                 "IBAN123", recipientInfo1);
     }

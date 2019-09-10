@@ -29,6 +29,7 @@ public class PaymentRecordConverter extends DozerConverter<PaymentRecord, Paymen
                 new PaymentRecipientInfo(
                         src.getRecipientFirstName(),
                         src.getRecipientLastName(),
+                        src.getRecipientBankUrn(),
                         src.getRecipientBankName(),
                         src.getRecipientBankAddress(),
                         src.getRecipientBankAccount()
@@ -48,6 +49,7 @@ public class PaymentRecordConverter extends DozerConverter<PaymentRecord, Paymen
         PaymentRecipientInfo ri = src.getRecipientInfo();
         dest.setRecipientFirstName(ri.getFirstName());
         dest.setRecipientLastName(ri.getLastName());
+        dest.setRecipientBankUrn(ri.getBankUrn());
         dest.setRecipientBankName(ri.getBankName());
         dest.setRecipientBankAddress(ri.getBankAddress());
         dest.setRecipientBankAccount(ri.getAccountNumber());

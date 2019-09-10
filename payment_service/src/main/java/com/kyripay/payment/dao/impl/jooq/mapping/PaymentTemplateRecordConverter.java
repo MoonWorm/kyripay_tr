@@ -28,6 +28,7 @@ public class PaymentTemplateRecordConverter extends DozerConverter<PaymentTempla
                 new PaymentTemplateRecipientInfo(
                         src.getRecipientFirstName(),
                         src.getRecipientLastName(),
+                        src.getRecipientBankUrn(),
                         src.getRecipientBankName(),
                         src.getRecipientBankAddress(),
                         src.getRecipientBankAccount()
@@ -45,12 +46,13 @@ public class PaymentTemplateRecordConverter extends DozerConverter<PaymentTempla
         dest.setCurrency(src.getAmount().getCurrency().name());
         dest.setAccountNumber(src.getAccountNumber());
         if (src.getRecipientInfo() != null) {
-            PaymentTemplateRecipientInfo recipientInfo = src.getRecipientInfo();
-            dest.setRecipientFirstName(recipientInfo.getFirstName());
-            dest.setRecipientLastName(recipientInfo.getLastName());
-            dest.setRecipientBankName(recipientInfo.getBankName());
-            dest.setRecipientBankAddress(recipientInfo.getBankAddress());
-            dest.setRecipientBankAccount(recipientInfo.getAccountNumber());
+            PaymentTemplateRecipientInfo ri = src.getRecipientInfo();
+            dest.setRecipientFirstName(ri.getFirstName());
+            dest.setRecipientLastName(ri.getLastName());
+            dest.setRecipientBankUrn(ri.getBankUrn());
+            dest.setRecipientBankName(ri.getBankName());
+            dest.setRecipientBankAddress(ri.getBankAddress());
+            dest.setRecipientBankAccount(ri.getAccountNumber());
         }
         return dest;
     }

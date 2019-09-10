@@ -67,6 +67,7 @@ public class PaymentRestControllerIntegrationTest {
                         "    \"recipientInfo\": {\n" +
                         "      \"firstName\": \"Vasia\",\n" +
                         "      \"lastName\": \"Pupkin\",\n" +
+                        "      \"bankUrn\": \"0000/00222/0XXXX\",\n" +
                         "      \"bankName\": \"Super Bank Inc.\",\n" +
                         "      \"bankAddress\": \"Main str. 1-1\",\n" +
                         "      \"accountNumber\": \"IBAN321\"\n" +
@@ -127,6 +128,7 @@ public class PaymentRestControllerIntegrationTest {
                         "    \"recipientInfo\": {\n" +
                         "      \"firstName\": \"Vasia\",\n" +
                         "      \"lastName\": \"Pupkin\",\n" +
+                        "      \"bankUrn\": \"0000/00222/0XXXX\",\n" +
                         "      \"bankName\": \"Super Bank Inc.\",\n" +
                         "      \"bankAddress\": \"Main str. 1-1\",\n" +
                         "      \"accountNumber\": \"IBAN321\"\n" +
@@ -266,14 +268,14 @@ public class PaymentRestControllerIntegrationTest {
 
     private PaymentDetails createPaymentDetails1() {
         PaymentRecipientInfo recipientInfo1 = new PaymentRecipientInfo("Vasia", "Pupkin",
-                "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
         return new PaymentDetails(new Amount(100L, Currency.BYN), 1L,
                 "IBAN123", recipientInfo1);
     }
 
     private PaymentDetails createPaymentDetails2() {
         PaymentRecipientInfo recipientInfo2 = new PaymentRecipientInfo("Ivan", "Ivanov",
-                "Super Bank 2 Inc.", "Main str. 1-2", "IBAN432");
+                "0000/00222/0XXXX", "Super Bank 2 Inc.", "Main str. 1-2", "IBAN432");
         return new PaymentDetails(new Amount(200L, Currency.USD), 2L,
                 "IBAN234", recipientInfo2);
     }
@@ -290,6 +292,7 @@ public class PaymentRestControllerIntegrationTest {
                 .andExpect(jsonPath("$.paymentDetails.accountNumber").value(pd.getAccountNumber()))
                 .andExpect(jsonPath("$.paymentDetails.recipientInfo.firstName").value(ri.getFirstName()))
                 .andExpect(jsonPath("$.paymentDetails.recipientInfo.lastName").value(ri.getLastName()))
+                .andExpect(jsonPath("$.paymentDetails.recipientInfo.bankUrn").value(ri.getBankUrn()))
                 .andExpect(jsonPath("$.paymentDetails.recipientInfo.bankName").value(ri.getBankName()))
                 .andExpect(jsonPath("$.paymentDetails.recipientInfo.bankAddress").value(ri.getBankAddress()))
                 .andExpect(jsonPath("$.paymentDetails.recipientInfo.accountNumber").value(ri.getAccountNumber()))
@@ -308,6 +311,7 @@ public class PaymentRestControllerIntegrationTest {
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.accountNumber").value(pd.getAccountNumber()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.firstName").value(ri.getFirstName()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.lastName").value(ri.getLastName()))
+                .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.bankUrn").value(ri.getBankUrn()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.bankName").value(ri.getBankName()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.bankAddress").value(ri.getBankAddress()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.accountNumber").value(ri.getAccountNumber()))

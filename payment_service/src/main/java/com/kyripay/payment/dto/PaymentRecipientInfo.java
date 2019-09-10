@@ -26,6 +26,10 @@ public class PaymentRecipientInfo {
     @ApiModelProperty(value = "Recipient last name", example = "Pupkin")
     private final String lastName;
 
+    @NotBlank(message = "Bank URN must be specified")
+    @ApiModelProperty(value = "Bank URN", example = "0000/00222/0XXXX")
+    private final String bankUrn;
+
     @NotBlank(message = "Recipient bank name must be specified")
     @ApiModelProperty(value = "Recipient bank name", example = "Foo&Bar and Co Bank")
     private final String bankName;

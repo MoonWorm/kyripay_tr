@@ -51,7 +51,7 @@ public class PaymentTemplateServiceTest {
 
         com.kyripay.payment.domain.PaymentTemplateRecipientInfo riDomain
                 = new com.kyripay.payment.domain.PaymentTemplateRecipientInfo(riDto.getFirstName(), riDto.getLastName(),
-                riDto.getBankName(), riDto.getBankAddress(), riDto.getAccountNumber());
+                riDto.getBankUrn(), riDto.getBankName(), riDto.getBankAddress(), riDto.getAccountNumber());
         PaymentTemplate ptDomain = new PaymentTemplate(null, request.getName(), pdDto.getAmount(), pdDto.getBankId(),
                 pdDto.getAccountNumber(), riDomain, null);
         PaymentTemplate ptDomainCreated = new PaymentTemplate(1L, request.getName(), pdDto.getAmount(),
@@ -159,7 +159,7 @@ public class PaymentTemplateServiceTest {
 
         com.kyripay.payment.domain.PaymentTemplateRecipientInfo riDomain
                 = new com.kyripay.payment.domain.PaymentTemplateRecipientInfo(riDto.getFirstName(), riDto.getLastName(),
-                riDto.getBankName(), riDto.getBankAddress(), riDto.getAccountNumber());
+                riDto.getBankUrn(), riDto.getBankName(), riDto.getBankAddress(), riDto.getAccountNumber());
         PaymentTemplate ptDomain = new PaymentTemplate(ptId, request.getName(), pdDto.getAmount(), pdDto.getBankId(),
                 pdDto.getAccountNumber(), riDomain, null);
         PaymentTemplate ptDomainUpdated = new PaymentTemplate(ptId, request.getName(), pdDto.getAmount(),
@@ -231,6 +231,7 @@ public class PaymentTemplateServiceTest {
                         new PaymentTemplateRecipientInfo(
                                 ri.getFirstName(),
                                 ri.getLastName(),
+                                ri.getBankUrn(),
                                 ri.getBankName(),
                                 ri.getBankAddress(),
                                 ri.getAccountNumber()
@@ -242,7 +243,7 @@ public class PaymentTemplateServiceTest {
     private PaymentTemplate createPaymentTemplate1() {
         com.kyripay.payment.domain.PaymentTemplateRecipientInfo recipientInfo1
                 = new com.kyripay.payment.domain.PaymentTemplateRecipientInfo("Vasia", "Pupkin",
-                "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
         return new PaymentTemplate(1L, "Template 1", new Amount(100L, Currency.BYN), 1L,
                 "IBAN123", recipientInfo1, LocalDateTime.now());
     }
@@ -250,7 +251,7 @@ public class PaymentTemplateServiceTest {
     private PaymentTemplate createPaymentTemplate2() {
         com.kyripay.payment.domain.PaymentTemplateRecipientInfo recipientInfo2
                 = new com.kyripay.payment.domain.PaymentTemplateRecipientInfo("Ivan", "Ivanov",
-                "Super Bank 2 Inc.", "Main str. 1-2", "IBAN432");
+                "0000/00222/0XXXY", "Super Bank 2 Inc.", "Main str. 1-2", "IBAN432");
         return new PaymentTemplate(2L, "Template 2", new Amount(200L, Currency.USD), 2L,
                 "IBAN234", recipientInfo2, LocalDateTime.now());
     }
@@ -262,7 +263,7 @@ public class PaymentTemplateServiceTest {
 
     private PaymentTemplateDetails createPaymentTemplateDetails1() {
         PaymentTemplateRecipientInfo recipientInfo1 = new PaymentTemplateRecipientInfo("Vasia", "Pupkin",
-                "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
         return new PaymentTemplateDetails(new Amount(100L, Currency.BYN), 1L,
                 "IBAN123", recipientInfo1);
     }

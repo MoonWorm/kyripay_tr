@@ -232,6 +232,7 @@ public class PaymentTemplateEndpointApiTest {
                 "    \"recipientInfo\": {\n" +
                 "      \"firstName\": \"Vasia\",\n" +
                 "      \"lastName\": \"Pupkin\",\n" +
+                "      \"bankUrn\": \"0000/00222/0XXXX\",\n" +
                 "      \"bankName\": \"Cool Bank and Partners\",\n" +
                 "      \"bankAddress\": \"Paris, Main str., 1-2\",\n" +
                 "      \"accountNumber\": \"54321TTU\"\n" +

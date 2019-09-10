@@ -26,6 +26,7 @@ public class PaymentTemplateRequestConverter extends DozerConverter<PaymentTempl
                 new com.kyripay.payment.domain.PaymentTemplateRecipientInfo(
                         ri.getFirstName(),
                         ri.getLastName(),
+                        ri.getBankUrn(),
                         ri.getBankName(),
                         ri.getBankAddress(),
                         ri.getAccountNumber()

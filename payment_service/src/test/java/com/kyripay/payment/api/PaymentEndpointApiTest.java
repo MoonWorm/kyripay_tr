@@ -102,7 +102,7 @@ public class PaymentEndpointApiTest {
                 .as(CustomGlobalExceptionHandler.ErrorsInfo.class);
 
         assertThat(responseModel.getStatus(), is(400));
-        assertThat(responseModel.getErrors().size(), is(8));
+        assertThat(responseModel.getErrors().size(), is(9));
     }
 
     @Test

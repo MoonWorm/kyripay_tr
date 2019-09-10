@@ -13,6 +13,8 @@ public class PaymentRecipientInfo
     private final String firstName;
     @NotBlank(message = "Last name must be specified")
     private final String lastName;
+    @NotBlank(message = "Recipient bank URN must be specified")
+    private final String bankUrn;
     @NotBlank(message = "Recipient bank name must be specified")
     private final String bankName;
     @NotBlank(message = "Recipient bank address must be specified")

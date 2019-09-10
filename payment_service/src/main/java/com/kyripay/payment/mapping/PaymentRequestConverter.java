@@ -27,6 +27,7 @@ public class PaymentRequestConverter extends DozerConverter<PaymentRequest, Paym
                 new com.kyripay.payment.domain.PaymentRecipientInfo(
                         ri.getFirstName(),
                         ri.getLastName(),
+                        ri.getBankUrn(),
                         ri.getBankName(),
                         ri.getBankAddress(),
                         ri.getAccountNumber()

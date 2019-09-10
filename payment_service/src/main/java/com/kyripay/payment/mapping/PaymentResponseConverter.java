@@ -18,7 +18,7 @@ public class PaymentResponseConverter extends DozerConverter<Payment, PaymentRes
     public PaymentResponse convertTo(Payment src, PaymentResponse dest) {
         com.kyripay.payment.domain.PaymentRecipientInfo sri = src.getRecipientInfo();
         PaymentRecipientInfo recipientInfo = new PaymentRecipientInfo(sri.getFirstName(),
-                sri.getLastName(), sri.getBankName(), sri.getBankAddress(), sri.getAccountNumber());
+                sri.getLastName(), sri.getBankUrn(), sri.getBankName(), sri.getBankAddress(), sri.getAccountNumber());
         long createdOn = src.getCreatedOn().toInstant(ZoneOffset.UTC).toEpochMilli();
         PaymentDetails paymentDetails = new PaymentDetails(src.getAmount(), src.getBankId(),
                 src.getAccountNumber(), recipientInfo);

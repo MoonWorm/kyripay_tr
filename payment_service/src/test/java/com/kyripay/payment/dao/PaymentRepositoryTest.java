@@ -159,6 +159,7 @@ public class PaymentRepositoryTest {
                 new PaymentRecipientInfo(
                         "Vasia",
                         "Pupkin",
+                        "0000/00222/0XXXX",
                         "Fake Bank Inc",
                         "Main str. 1-1",
                         "IBAN321"
@@ -181,6 +182,7 @@ public class PaymentRepositoryTest {
                 .hasFieldOrPropertyWithValue("amount.currency", Currency.USD)
                 .hasFieldOrPropertyWithValue("recipientInfo.firstName", "Vasia")
                 .hasFieldOrPropertyWithValue("recipientInfo.lastName", "Pupkin")
+                .hasFieldOrPropertyWithValue("recipientInfo.bankUrn", "0000/00222/0XXXX")
                 .hasFieldOrPropertyWithValue("recipientInfo.bankName", "Fake Bank Inc")
                 .hasFieldOrPropertyWithValue("recipientInfo.bankAddress", "Main str. 1-1")
                 .hasFieldOrPropertyWithValue("recipientInfo.accountNumber", "IBAN321")
@@ -197,8 +199,9 @@ public class PaymentRepositoryTest {
                 .hasFieldOrPropertyWithValue("amount.amount", 300L)
                 .hasFieldOrPropertyWithValue("amount.currency", Currency.EUR)
                 .hasFieldOrPropertyWithValue("recipientInfo.firstName", "Vasia2")
-                .hasFieldOrPropertyWithValue("recipientInfo.bankName", "Fake Bank Inc 2")
                 .hasFieldOrPropertyWithValue("recipientInfo.lastName", "Pupkin2")
+                .hasFieldOrPropertyWithValue("recipientInfo.bankUrn", "0000/00222/0XXXY")
+                .hasFieldOrPropertyWithValue("recipientInfo.bankName", "Fake Bank Inc 2")
                 .hasFieldOrPropertyWithValue("recipientInfo.bankAddress", "Main str. 1-2")
                 .hasFieldOrPropertyWithValue("recipientInfo.accountNumber", "IBAN432")
                 .hasFieldOrPropertyWithValue("id", SECOND_PAYMENT_SCRIPT_ID);

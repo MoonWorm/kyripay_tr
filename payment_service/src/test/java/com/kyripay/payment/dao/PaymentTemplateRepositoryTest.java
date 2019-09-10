@@ -174,6 +174,7 @@ public class PaymentTemplateRepositoryTest {
         PaymentTemplateRecipientInfo ri = new PaymentTemplateRecipientInfo();
         ri.setFirstName("Vasia");
         ri.setLastName("Pupkin");
+        ri.setBankUrn("0000/00222/0XXXX");
         ri.setBankName("Fake Bank Inc");
         ri.setBankAddress("Main str. 1-1");
         ri.setAccountNumber("IBAN321");
@@ -191,6 +192,7 @@ public class PaymentTemplateRepositoryTest {
         PaymentTemplateRecipientInfo ri = new PaymentTemplateRecipientInfo();
         ri.setFirstName("Ivan");
         ri.setLastName("Ivanov");
+        ri.setBankUrn("0000/00222/0XXXZ");
         ri.setBankName("Fake Bank Inc 2");
         ri.setBankAddress("Main str. 1-3");
         ri.setAccountNumber("IBAN543");
@@ -214,6 +216,7 @@ public class PaymentTemplateRepositoryTest {
                 .hasFieldOrPropertyWithValue("amount.currency", Currency.USD)
                 .hasFieldOrPropertyWithValue("recipientInfo.firstName", "Vasia")
                 .hasFieldOrPropertyWithValue("recipientInfo.lastName", "Pupkin")
+                .hasFieldOrPropertyWithValue("recipientInfo.bankUrn", "0000/00222/0XXXX")
                 .hasFieldOrPropertyWithValue("recipientInfo.bankName", "Fake Bank Inc")
                 .hasFieldOrPropertyWithValue("recipientInfo.bankAddress", "Main str. 1-1")
                 .hasFieldOrPropertyWithValue("recipientInfo.accountNumber", "IBAN321")
@@ -231,6 +234,7 @@ public class PaymentTemplateRepositoryTest {
                 .hasFieldOrPropertyWithValue("amount.currency", Currency.EUR)
                 .hasFieldOrPropertyWithValue("recipientInfo.firstName", "Vasia2")
                 .hasFieldOrPropertyWithValue("recipientInfo.bankName", "Fake Bank Inc 2")
+                .hasFieldOrPropertyWithValue("recipientInfo.bankUrn", "0000/00222/0XXXY")
                 .hasFieldOrPropertyWithValue("recipientInfo.lastName", "Pupkin2")
                 .hasFieldOrPropertyWithValue("recipientInfo.bankAddress", "Main str. 1-2")
                 .hasFieldOrPropertyWithValue("recipientInfo.accountNumber", "IBAN432")
