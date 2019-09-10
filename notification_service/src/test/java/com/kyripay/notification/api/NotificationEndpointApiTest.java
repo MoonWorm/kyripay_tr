@@ -86,7 +86,6 @@ public class NotificationEndpointApiTest {
         given(this.documentationSpec)
                 .filter(document("{method-name}"))
                 .contentType(ContentType.JSON)
-                .header("userId", 1L)
                 .body(readTestResource("/com/kyripay/notification/api/emailnotification.json"))
                 .when()
                 .post("/api/v1/emailnotifications")
@@ -98,7 +97,6 @@ public class NotificationEndpointApiTest {
     public void createEmailNotificationInvalid() throws IOException, URISyntaxException {
         Response response = given()
                 .contentType(ContentType.JSON)
-                .header("userId", 1L)
                 .body(readTestResource("/com/kyripay/notification/api/emailnotification_invalid.json"))
                 .when()
                 .post("/api/v1/emailnotifications")
