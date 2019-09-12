@@ -3,10 +3,7 @@ package com.kyripay.payment.api;
 import com.kyripay.payment.domain.vo.Amount;
 import com.kyripay.payment.domain.vo.Currency;
 import com.kyripay.payment.domain.vo.Status;
-import com.kyripay.payment.dto.PaymentDetails;
-import com.kyripay.payment.dto.PaymentRecipientInfo;
-import com.kyripay.payment.dto.PaymentRequest;
-import com.kyripay.payment.dto.PaymentResponse;
+import com.kyripay.payment.dto.*;
 import com.kyripay.payment.service.exception.ServiceException;
 import com.kyripay.payment.service.impl.PaymentServiceImpl;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -177,6 +174,39 @@ public class PaymentRestControllerIntegrationTest {
     }
 
     @Test
+    public void search_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
+        PaymentDetails paymentDetails1 = createPaymentDetails1();
+
+        PaymentWithUserIdResponse expectedResponse = new PaymentWithUserIdResponse(1L, USER_ID, Status.PROCESSING, paymentDetails1,
+                System.currentTimeMillis());
+
+        int limit = 2;
+        int offset = 0;
+
+        SearchCriterias sc = new SearchCriterias();
+        sc.setStatus(Status.PROCESSING);
+
+        when(paymentService.search(sc, limit, offset)).thenReturn(asList(expectedResponse));
+
+        ResultActions ra = mockMvc.perform(get("/api/v1/payments/search/result")
+                .param("status", sc.getStatus().name())
+                .param("limit", String.valueOf(limit))
+                .param("offset", String.valueOf(offset))
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk());
+        assertPaymentResponse(ra, expectedResponse, 0);
+    }
+
+    @Test
+    public void search_sendInvalidRequestWithoutMandatoryRequestParam_shouldReturn400() throws Exception {
+        mockMvc.perform(get("/api/v1/payments/search/result")
+                .param("limit", String.valueOf(2))
+                .param("offset", "abc")
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void readById_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
         long paymentId = 1L;
         PaymentDetails paymentDetails = createPaymentDetails1();
@@ -304,6 +334,26 @@ public class PaymentRestControllerIntegrationTest {
         Amount a = pd.getAmount();
         PaymentRecipientInfo ri = pd.getRecipientInfo();
         ra.andExpect(jsonPath("$[" + index + "].id").value(expectedResponse.getId()))
+                .andExpect(jsonPath("$[" + index + "].status").value(expectedResponse.getStatus().name()))
+                .andExpect(jsonPath("$[" + index + "].paymentDetails.amount.amount").value(a.getAmount()))
+                .andExpect(jsonPath("$[" + index + "].paymentDetails.amount.currency").value(a.getCurrency().name()))
+                .andExpect(jsonPath("$[" + index + "].paymentDetails.bankId").value(pd.getBankId()))
+                .andExpect(jsonPath("$[" + index + "].paymentDetails.accountNumber").value(pd.getAccountNumber()))
+                .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.firstName").value(ri.getFirstName()))
+                .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.lastName").value(ri.getLastName()))
+                .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.bankUrn").value(ri.getBankUrn()))
+                .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.bankName").value(ri.getBankName()))
+                .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.bankAddress").value(ri.getBankAddress()))
+                .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.accountNumber").value(ri.getAccountNumber()))
+                .andExpect(jsonPath("$[" + index + "].createdOn").value(expectedResponse.getCreatedOn()));
+    }
+
+    private void assertPaymentResponse(ResultActions ra, PaymentWithUserIdResponse expectedResponse, int index) throws Exception {
+        PaymentDetails pd = expectedResponse.getPaymentDetails();
+        Amount a = pd.getAmount();
+        PaymentRecipientInfo ri = pd.getRecipientInfo();
+        ra.andExpect(jsonPath("$[" + index + "].id").value(expectedResponse.getId()))
+                .andExpect(jsonPath("$[" + index + "].userId").value(expectedResponse.getUserId().toString()))
                 .andExpect(jsonPath("$[" + index + "].status").value(expectedResponse.getStatus().name()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.amount.amount").value(a.getAmount()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.amount.currency").value(a.getCurrency().name()))

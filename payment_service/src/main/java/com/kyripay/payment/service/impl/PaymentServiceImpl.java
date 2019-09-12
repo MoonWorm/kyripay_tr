@@ -5,6 +5,8 @@ import com.kyripay.payment.domain.Payment;
 import com.kyripay.payment.domain.vo.Status;
 import com.kyripay.payment.dto.PaymentRequest;
 import com.kyripay.payment.dto.PaymentResponse;
+import com.kyripay.payment.dto.PaymentWithUserIdResponse;
+import com.kyripay.payment.dto.SearchCriterias;
 import com.kyripay.payment.service.PaymentService;
 import com.kyripay.payment.service.exception.ServiceException;
 import org.dozer.DozerBeanMapper;
@@ -35,6 +37,7 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponse create(UUID userId, PaymentRequest paymentRequest) throws ServiceException {
         try {
             Payment payment = mapper.map(paymentRequest, Payment.class);
+            payment.setUserId(userId);
             validator.validatePayment(payment);
             Payment paymentCreated = repository.create(userId, payment);
             return mapper.map(paymentCreated, PaymentResponse.class);
@@ -52,6 +55,18 @@ public class PaymentServiceImpl implements PaymentService {
                     .collect(toList());
         } catch (Exception e) {
             throw new ServiceException("Can't read payments.", e);
+        }
+    }
+
+    @Override
+    public List<PaymentWithUserIdResponse> search(SearchCriterias searchCriterias, int limit, int offset) {
+        try {
+            return repository.search(searchCriterias, limit, offset)
+                    .stream()
+                    .map(payment -> mapper.map(payment, PaymentWithUserIdResponse.class))
+                    .collect(toList());
+        } catch (Exception e) {
+            throw new ServiceException("Can't search for payments.", e);
         }
     }
 

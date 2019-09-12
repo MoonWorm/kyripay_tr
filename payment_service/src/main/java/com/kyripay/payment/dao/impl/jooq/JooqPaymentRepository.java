@@ -5,8 +5,10 @@ import com.kyripay.payment.dao.exception.RepositoryException;
 import com.kyripay.payment.dao.impl.jooq.meta.tables.records.PaymentRecord;
 import com.kyripay.payment.domain.Payment;
 import com.kyripay.payment.domain.vo.Status;
+import com.kyripay.payment.dto.SearchCriterias;
 import org.dozer.DozerBeanMapper;
 import org.jooq.DSLContext;
+import org.jooq.SelectWhereStep;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -54,6 +56,27 @@ public class JooqPaymentRepository implements PaymentRepository {
                     .collect(toList());
         } catch (Exception e) {
             throw new RepositoryException("Can't read payments from the repository.", e);
+        }
+    }
+
+    @Override
+    public List<Payment> search(SearchCriterias searchCriterias, int limit, int offset) throws RepositoryException {
+        try {
+            SelectWhereStep<PaymentRecord> select = ctx.selectFrom(PAYMENT);
+            if (searchCriterias != null) {
+                if (searchCriterias.getStatus() != null) {
+                    select.where(PAYMENT.STATUS.eq(searchCriterias.getStatus().name()));
+                }
+            }
+            return select.orderBy(PAYMENT.CREATED_ON.asc())
+                    .limit(limit)
+                    .offset(offset)
+                    .fetch()
+                    .stream()
+                    .map(record -> mapper.map(record, Payment.class))
+                    .collect(toList());
+        } catch (Exception e) {
+            throw new RepositoryException("Can't search for payments.", e);
         }
     }
 

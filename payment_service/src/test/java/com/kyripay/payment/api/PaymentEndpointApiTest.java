@@ -8,6 +8,7 @@ package com.kyripay.payment.api;
 import com.kyripay.payment.api.dto.PaymentStatus;
 import com.kyripay.payment.domain.vo.Status;
 import com.kyripay.payment.dto.PaymentResponse;
+import com.kyripay.payment.dto.PaymentWithUserIdResponse;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
@@ -127,6 +128,29 @@ public class PaymentEndpointApiTest {
     }
 
     @Test
+    public void searchSuccess() throws IOException, URISyntaxException {
+        long payment1Id = createPayment(USER_ID);
+        long payment2Id = createPayment(USER_ID);
+        updateStatus(USER_ID, payment1Id, Status.PROCESSING);
+        updateStatus(USER_ID, payment2Id, Status.COMPLETED);
+        List<PaymentWithUserIdResponse> processing = given(this.documentationSpec)
+                .filter(document("payment/{method-name}"))
+                .contentType(ContentType.JSON)
+                .param("limit", 2)
+                .param("offset", 0)
+                .param("status", Status.PROCESSING)
+                .when()
+                .get("/api/v1/payments/search/result")
+                .then()
+                .assertThat().statusCode(SC_OK)
+                .contentType(ContentType.JSON)
+                .extract()
+                .as(List.class);
+        assertNotNull(processing);
+        assertThat(processing.size(), is(1));
+    }
+
+    @Test
     public void readByIdSuccess() throws IOException, URISyntaxException {
         long paymentId = createPayment(USER_ID);
         PaymentResponse response = given(this.documentationSpec)
@@ -221,6 +245,24 @@ public class PaymentEndpointApiTest {
                 .as(PaymentResponse.class);
         assertNotNull(response);
         return response.getId();
+    }
+
+    private Status updateStatus(UUID userId, long payment1Id, Status status) {
+        PaymentStatus response = given()
+                .contentType(ContentType.JSON)
+                .header("userId", userId)
+                .body("{\"status\": \"" + status.name() + "\"}")
+                .when()
+                .put("/api/v1/payments/{paymentId}/status", payment1Id)
+                .then()
+                .assertThat()
+                .statusCode(SC_OK)
+                .contentType(ContentType.JSON)
+                .extract()
+                .as(PaymentStatus.class);
+        assertNotNull(response);
+        return response.getStatus();
+
     }
 
 }

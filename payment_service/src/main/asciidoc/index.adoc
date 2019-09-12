@@ -38,6 +38,20 @@ And one showing the HTTP response:
 
 include::{snippets}/payment/read-all-success/http-response.adoc[]
 
+=== Search for payments:
+
+Request sample using cURL:
+
+include::{snippets}/payment/search-success/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/payment/search-success/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/payment/search-success/http-response.adoc[]
+
 === Read an existing payment by id:
 
 Path parameters should looks like:

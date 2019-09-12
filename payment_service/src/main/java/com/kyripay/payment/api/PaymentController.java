@@ -8,6 +8,8 @@ package com.kyripay.payment.api;
 import com.kyripay.payment.dto.PaymentRequest;
 import com.kyripay.payment.dto.PaymentResponse;
 import com.kyripay.payment.api.dto.PaymentStatus;
+import com.kyripay.payment.dto.PaymentWithUserIdResponse;
+import com.kyripay.payment.dto.SearchCriterias;
 import com.kyripay.payment.service.PaymentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,6 +47,14 @@ public class PaymentController extends GenericController {
                                   @RequestParam(defaultValue = "10") int limit,
                                   @RequestParam(defaultValue = "0") int offset) {
         return paymentService.readAll(userId, limit, offset);
+    }
+
+    @ApiOperation("Search payments that are relevant to passed filter criterias")
+    @GetMapping("/payments/search/result")
+    List<PaymentWithUserIdResponse> search(SearchCriterias searchCriterias,
+                                           @RequestParam(defaultValue = "10") int limit,
+                                           @RequestParam(defaultValue = "0") int offset) {
+        return paymentService.search(searchCriterias, limit, offset);
     }
 
     @ApiOperation("Reads an existing payment template by id")

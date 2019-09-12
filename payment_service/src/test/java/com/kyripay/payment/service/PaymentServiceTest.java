@@ -6,10 +6,7 @@ import com.kyripay.payment.domain.Payment;
 import com.kyripay.payment.domain.vo.Amount;
 import com.kyripay.payment.domain.vo.Currency;
 import com.kyripay.payment.domain.vo.Status;
-import com.kyripay.payment.dto.PaymentDetails;
-import com.kyripay.payment.dto.PaymentRecipientInfo;
-import com.kyripay.payment.dto.PaymentRequest;
-import com.kyripay.payment.dto.PaymentResponse;
+import com.kyripay.payment.dto.*;
 import com.kyripay.payment.service.exception.ServiceException;
 import com.kyripay.payment.service.impl.PaymentServiceImpl;
 import com.kyripay.payment.service.impl.PaymentValidator;
@@ -55,7 +52,7 @@ public class PaymentServiceTest {
                 riDto.getBankAddress(), riDto.getAccountNumber());
         Payment pDomain = new Payment(pdDto.getAmount(), pdDto.getBankId(), pdDto.getAccountNumber(), Status.CREATED,
                 riDomain, null);
-        Payment pDomainCreated = new Payment(1L, pdDto.getAmount(), pdDto.getBankId(), pdDto.getAccountNumber(),
+        Payment pDomainCreated = new Payment(1L, USER_ID, pdDto.getAmount(), pdDto.getBankId(), pdDto.getAccountNumber(),
                 Status.CREATED, riDomain, LocalDateTime.now());
 
         PaymentResponse expectedResponse = new PaymentResponse(pDomainCreated.getId(), pDomainCreated.getStatus(), pdDto,
@@ -117,6 +114,43 @@ public class PaymentServiceTest {
 
         // when
         sut.readAll(USER_ID, limit, offset);
+
+        // then assert expected exception
+    }
+
+    @Test
+    public void search_setupSuccessScenario_checkAllInvocationsAndResult() {
+        // given
+        int limit = 2;
+        int offset = 0;
+        Payment payment1 = createPayment1();
+        PaymentWithUserIdResponse paymentResponse1 = createPaymentResponse(USER_ID, payment1);
+        SearchCriterias sc = new SearchCriterias();
+        sc.setStatus(Status.CREATED);
+        when(repository.search(sc, limit, offset)).thenReturn(asList(payment1));
+        when(mapper.map(payment1, PaymentWithUserIdResponse.class)).thenReturn(paymentResponse1);
+
+        // when
+        List<PaymentWithUserIdResponse> actualResponse = sut.search(sc, limit, offset);
+
+        // then
+        assertThat(actualResponse).isNotNull().doesNotContainNull().size().isEqualTo(1);
+        assertThat(actualResponse.get(0)).isEqualTo(paymentResponse1);
+    }
+
+    @Test(expected = ServiceException.class)
+    public void search_setupFailureScenario_checkExceptionIsThrown() {
+        // given
+        int limit = 3;
+        int offset = 0;
+
+        SearchCriterias sc = new SearchCriterias();
+        sc.setStatus(Status.CREATED);
+
+        when(repository.search(sc, limit, offset)).thenThrow(new RepositoryException(""));
+
+        // when
+        sut.search(sc, limit, offset);
 
         // then assert expected exception
     }
@@ -227,11 +261,34 @@ public class PaymentServiceTest {
                 createdOn);
     }
 
+    private PaymentWithUserIdResponse createPaymentResponse(UUID userId, Payment payment) {
+        com.kyripay.payment.domain.PaymentRecipientInfo ri = payment.getRecipientInfo();
+        long createdOn = payment.getCreatedOn().toInstant(ZoneOffset.UTC).toEpochMilli();
+        return new PaymentWithUserIdResponse(
+                payment.getId(),
+                userId,
+                payment.getStatus(),
+                new PaymentDetails(
+                        payment.getAmount(),
+                        payment.getBankId(),
+                        payment.getAccountNumber(),
+                        new PaymentRecipientInfo(
+                                ri.getFirstName(),
+                                ri.getLastName(),
+                                ri.getBankUrn(),
+                                ri.getBankName(),
+                                ri.getBankAddress(),
+                                ri.getAccountNumber()
+                        )
+                ),
+                createdOn);
+    }
+
     private Payment createPayment1() {
         com.kyripay.payment.domain.PaymentRecipientInfo recipientInfo1
                 = new com.kyripay.payment.domain.PaymentRecipientInfo("Vasia", "Pupkin",
                 "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
-        return new Payment(1L, new Amount(100L, Currency.BYN), 1L,
+        return new Payment(1L, USER_ID, new Amount(100L, Currency.BYN), 1L,
                 "IBAN123", Status.CREATED, recipientInfo1, LocalDateTime.now());
     }
 
@@ -239,7 +296,7 @@ public class PaymentServiceTest {
         com.kyripay.payment.domain.PaymentRecipientInfo recipientInfo2
                 = new com.kyripay.payment.domain.PaymentRecipientInfo("Ivan", "Ivanov",
                 "0000/00222/0XXXY", "Super Bank 2 Inc.", "Main str. 1-2", "IBAN432");
-        return new Payment(2L, new Amount(200L, Currency.USD), 2L,
+        return new Payment(2L, USER_ID, new Amount(200L, Currency.USD), 2L,
                 "IBAN234", Status.CREATED, recipientInfo2, LocalDateTime.now());
     }
 

@@ -11,6 +11,7 @@ import com.kyripay.payment.domain.PaymentRecipientInfo;
 import com.kyripay.payment.domain.vo.Amount;
 import com.kyripay.payment.domain.vo.Currency;
 import com.kyripay.payment.domain.vo.Status;
+import com.kyripay.payment.dto.SearchCriterias;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,7 +67,7 @@ public class PaymentRepositoryTest {
     }
 
     @Test
-    @DataSet(value = {"datasets/insert_first_payment.xml", "datasets/insert_second_payment.xml"})
+    @DataSet(value = {"datasets/insert_first_payment.xml", "datasets/insert_second_payment.xml", "datasets/clear_payments.xml"})
     public void readAll_recordsExistInDB_shouldReturnAllRecords() {
         List<Payment> payments = sut.readAll(USER_ID, 3, 0);
 
@@ -80,12 +81,38 @@ public class PaymentRepositoryTest {
 
     @Test
     @DataSet(value = {"datasets/clear_payments.xml"})
+    public void search_noRecordsInDB_shouldReturnEmptyList() {
+        SearchCriterias sc = new SearchCriterias();
+        sc.setStatus(Status.PROCESSING);
+
+        List<Payment> payments = sut.search(sc, 1, 0);
+
+        assertThat(payments).isNotNull().isEmpty();
+    }
+
+    @Test
+    @DataSet(value = {"datasets/insert_first_payment.xml", "datasets/insert_second_payment.xml", "datasets/clear_payments.xml"})
+    public void search_recordsExistInDB_shouldReturnAllRecords() {
+        SearchCriterias sc = new SearchCriterias();
+        sc.setStatus(Status.COMPLETED);
+
+        List<Payment> payments = sut.search(sc, 2, 0);
+
+        assertThat(payments)
+                .isNotNull()
+                .size()
+                .isEqualTo(1);
+        assertSecondPayment(payments.stream().filter(p -> p.getId().equals(SECOND_PAYMENT_SCRIPT_ID)).findFirst().get());
+    }
+
+    @Test
+    @DataSet(value = {"datasets/clear_payments.xml"})
     public void readById_noRecordsInDB_shouldReturnNull() {
         assertThat(sut.readById(UUID.fromString("aaeeaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), -1L)).isNull();
     }
 
     @Test
-    @DataSet(value = {"datasets/insert_first_payment.xml", "datasets/insert_second_payment.xml"})
+    @DataSet(value = {"datasets/insert_first_payment.xml", "datasets/insert_second_payment.xml", "datasets/clear_payments.xml"})
     public void readById_recordsExistInDB_shouldReturnRecords() {
         assertFirstPayment(sut.readById(USER_ID, FIRST_PAYMENT_SCRIPT_ID));
         assertSecondPayment(sut.readById(USER_ID, SECOND_PAYMENT_SCRIPT_ID));
@@ -98,7 +125,7 @@ public class PaymentRepositoryTest {
     }
 
     @Test
-    @DataSet(value = {"datasets/insert_first_payment.xml", "datasets/insert_second_payment.xml"})
+    @DataSet(value = {"datasets/insert_first_payment.xml", "datasets/insert_second_payment.xml", "datasets/clear_payments.xml"})
     public void getStatus_recordsExistInDB_shouldReturnValidStatuses() {
         assertThat(sut.getStatus(USER_ID, FIRST_PAYMENT_SCRIPT_ID)).isNotNull().isEqualTo(Status.CREATED);
         assertThat(sut.getStatus(USER_ID, SECOND_PAYMENT_SCRIPT_ID)).isNotNull().isEqualTo(Status.COMPLETED);
@@ -111,7 +138,7 @@ public class PaymentRepositoryTest {
     }
 
     @Test
-    @DataSet(value = {"datasets/insert_first_payment.xml"})
+    @DataSet(value = {"datasets/insert_first_payment.xml", "datasets/clear_payments.xml"})
     public void updateStatus_recordsExistInDB_shouldReturnValidStatuses() {
         assertThat(sut.updateStatus(USER_ID, FIRST_PAYMENT_SCRIPT_ID, Status.CREATED))
                 .isNotNull()
@@ -122,7 +149,7 @@ public class PaymentRepositoryTest {
     }
 
     @Test
-    @DataSet("datasets/insert_second_payment.xml")
+    @DataSet(value = {"datasets/insert_second_payment.xml", "datasets/clear_payments.xml"})
     public void sequentScenarioOfCreateReadUpdateActions() {
         Payment firstPaymentCreated = sut.create(USER_ID, createFirstPayment());
 

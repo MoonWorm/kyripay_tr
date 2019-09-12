@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @RequiredArgsConstructor
@@ -17,6 +18,8 @@ import java.time.LocalDateTime;
 public class Payment {
 
     private Long id;
+    @NotNull(message = "User id must be specified")
+    private UUID userId;
     @NotNull(message = "Payment amount must be specified")
     private final Amount amount;
     @NotNull(message = "Customer bank must be specified")

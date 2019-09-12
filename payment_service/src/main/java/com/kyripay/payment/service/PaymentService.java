@@ -17,11 +17,13 @@ public interface PaymentService {
     @Transactional(readOnly = true)
     List<PaymentResponse> readAll(UUID userId, int limit, int offset) throws ServiceException;
 
+    @Transactional(readOnly = true)
+    List<PaymentWithUserIdResponse> search(SearchCriterias searchCriterias, int limit, int offset);
 
     @Transactional(readOnly = true)
     PaymentResponse readById(UUID userId, long paymentId) throws ServiceException;
 
-    @Transactional
+    @Transactional(readOnly = true)
     Status getStatus(UUID userId, long paymentId) throws ServiceException;
 
     @Transactional

@@ -22,6 +22,7 @@ public class PaymentRecordConverter extends DozerConverter<PaymentRecord, Paymen
     public Payment convertTo(PaymentRecord src, Payment dest) {
         return new Payment(
                 src.getId(),
+                src.getUserId(),
                 new Amount(src.getAmount(), Currency.valueOf(src.getCurrency())),
                 src.getBankId(),
                 src.getAccountNumber(),
@@ -41,6 +42,7 @@ public class PaymentRecordConverter extends DozerConverter<PaymentRecord, Paymen
 
     @Override
     public PaymentRecord convertFrom(Payment src, PaymentRecord dest) {
+        dest.setUserId(src.getUserId());
         dest.setStatus(src.getStatus().name());
         dest.setBankId(src.getBankId());
         dest.setAmount(src.getAmount().getAmount());
