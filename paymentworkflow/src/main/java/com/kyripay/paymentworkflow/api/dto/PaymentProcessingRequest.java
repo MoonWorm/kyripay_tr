@@ -1,8 +1,12 @@
 package com.kyripay.paymentworkflow.api.dto;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Value
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PaymentProcessingRequest {
-    private Long PaymentId;
+    public long paymentId;
 }

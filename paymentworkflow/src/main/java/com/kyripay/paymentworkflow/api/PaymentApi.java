@@ -7,7 +7,9 @@ import com.kyripay.paymentworkflow.stream.ConverterStreams;
 import com.kyripay.paymentworkflow.stream.PaymentStreams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.stereotype.Service;
 
+@Service
 class PaymentApi {
 
     @Autowired

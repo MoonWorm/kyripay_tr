@@ -1,4 +1,4 @@
-package com.kyripay.paymentworkflow.adapter;
+package com.kyripay.paymentworkflow.adapter.connector;
 
 import com.kyripay.paymentworkflow.domain.dto.PaymentToSendRequest;
 import com.kyripay.paymentworkflow.domain.port.out.Connector;

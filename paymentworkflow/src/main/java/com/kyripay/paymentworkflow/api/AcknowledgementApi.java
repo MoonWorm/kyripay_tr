@@ -6,7 +6,9 @@ import com.kyripay.paymentworkflow.stream.AcknowledgementStreams;
 import com.kyripay.paymentworkflow.stream.ConnectorStreams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AcknowledgementApi {
 
     @Autowired

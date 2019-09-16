@@ -31,13 +31,14 @@ dependencies {
     implementation 'org.apache.kafka:kafka-streams'
     implementation 'org.springframework.cloud:spring-cloud-stream'
     implementation 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
     implementation 'io.springfox:springfox-swagger2:2.9.2'
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
 
-//    testCompile 'org.springframework.kafka:spring-kafka-test:2.2.7.RELEASE'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testCompile "org.testcontainers:kafka:1.12.1"
+    testCompile "com.github.tomakehurst:wiremock-jre8:2.24.1"
 
     testCompile 'org.springframework.cloud:spring-cloud-stream-test-support'
     testCompile 'io.rest-assured:rest-assured:3.3.0'

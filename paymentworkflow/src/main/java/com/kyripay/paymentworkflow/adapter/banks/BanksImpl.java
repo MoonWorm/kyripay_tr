@@ -1,4 +1,4 @@
-package com.kyripay.paymentworkflow.adapter;
+package com.kyripay.paymentworkflow.adapter.banks;
 
 import com.kyripay.paymentworkflow.domain.dto.ConnectionLine;
 import com.kyripay.paymentworkflow.domain.port.out.Banks;

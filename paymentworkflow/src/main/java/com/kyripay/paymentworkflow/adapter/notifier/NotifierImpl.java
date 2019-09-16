@@ -1,4 +1,4 @@
-package com.kyripay.paymentworkflow.adapter;
+package com.kyripay.paymentworkflow.adapter.notifier;
 
 import com.kyripay.paymentworkflow.domain.dto.EmailNotificationRequest;
 import com.kyripay.paymentworkflow.domain.port.out.Notifier;

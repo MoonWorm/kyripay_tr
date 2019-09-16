@@ -1,5 +1,6 @@
 package com.kyripay.paymentworkflow.api;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableList;
 import com.kyripay.paymentworkflow.domain.dto.payment.Payment;
 import com.kyripay.paymentworkflow.stream.ConverterStreams;
@@ -7,7 +8,6 @@ import com.kyripay.paymentworkflow.stream.PaymentStreams;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.json.JSONException;
@@ -24,15 +24,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.test.context.EmbeddedKafka;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.KafkaContainer;
@@ -44,6 +41,7 @@ import java.util.Properties;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -58,6 +56,9 @@ public class PaymentWorkflowApiTest {
     @ClassRule
     public static KafkaContainer kafkaContainer = new KafkaContainer();
 
+    @ClassRule
+    public static WireMockRule wireMockRule = new WireMockRule(8089);
+
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
@@ -69,8 +70,48 @@ public class PaymentWorkflowApiTest {
 
     @Test
     public void incomingPaymentShouldBeSendToConverter() throws JSONException {
-        Payment payment = new Payment(1, UUID.randomUUID(), Payment.Status.CREATED, null, 111);
-        kafkaTemplate.send("payment-workflow-process", 0, "2", "");
+        stubFor(get(urlEqualTo("/api/v1/traces"))
+                .willReturn(aResponse()
+                        .withStatus(201)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{\n" +
+                                "  \"paymentId\": 1,\n" +
+                                "  \"headers\": {\n" +
+                                "    \"userId\": \"63fc53d7-3a67-4d12-8cd0-50bb2dd9a14d\"\n" +
+                                "  },\n" +
+                                "  \"created\": \"2019-09-14T21:54:30.074404\",\n" +
+                                "  \"updated\": \"2019-09-14T21:54:30.074404\"\n" +
+                                "}")));
+
+        stubFor(get(urlEqualTo("/api/v1/payments"))
+                .willReturn(aResponse()
+                        .withStatus(201)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{\n" +
+                                "  \"id\": 1,\n" +
+                                "  \"userId\": \"63fc53d7-3a67-4d12-8cd0-50bb2dd9a14d\",\n" +
+                                "  \"status\": \"CREATED\",\n" +
+                                "  \"paymentDetails\": {\n" +
+                                "    \"amount\": {\n" +
+                                "      \"amount\": 33,\n" +
+                                "      \"currency\": \"USD\"\n" +
+                                "    },\n" +
+                                "    \"bankId\": 1,\n" +
+                                "    \"accountNumber\": \"123\",\n" +
+                                "    \"recipientInfo\": {\n" +
+                                "      \"firstName\": \"Ivan\",\n" +
+                                "      \"lastName\": \"Ivanov\",\n" +
+                                "      \"bankName\": \"first bank\",\n" +
+                                "      \"bankAddress\": \"Italy, Milan, Main str., 1-2\",\n" +
+                                "      \"accountNumber\": \"1234567\"\n" +
+                                "    }\n" +
+                                "  },\n" +
+                                "  \"createdOn\": 1568489717252\n" +
+                                "}\n")));
+
+        Payment payment = new Payment(11, UUID.randomUUID(), Payment.Status.CREATED, null, 111);
+
+        kafkaTemplate.send("payment-workflow-process", 0, "1", "{\"paymentId\": 11}");
         // consumer from converter service
         Properties consumerProperties = new Properties();
         consumerProperties.put("bootstrap.servers", kafkaContainer.getBootstrapServers());
@@ -81,18 +122,17 @@ public class PaymentWorkflowApiTest {
 
         consumer.subscribe(ImmutableList.of("converter-process"));
 
-        ConsumerRecords<String, String> messages = consumer.poll(Duration.ofMinutes(1));
+        ConsumerRecords<String, String> messages = consumer.poll(Duration.ofSeconds(5));
         assertEquals(1, messages.count());
         String value = messages.records("converter-process").iterator().next().value();
-//        JSONAssert.assertEquals(
-//                "{\"documentId\":\"x\",\"status\":\"READY\"}",
-//                value,
-//                new CustomComparator(
-//                        JSONCompareMode.STRICT,
-//                        new Customization("documentId",  new RegularExpressionValueMatcher<>(".*"))
-//                )
-//        );
-
+        JSONAssert.assertEquals(
+                "{\"documentId\":\"x\",\"status\":\"READY\"}",
+                value,
+                new CustomComparator(
+                        JSONCompareMode.STRICT,
+                        new Customization("documentId",  new RegularExpressionValueMatcher<>(".*"))
+                )
+        );
     }
 
     @TestConfiguration

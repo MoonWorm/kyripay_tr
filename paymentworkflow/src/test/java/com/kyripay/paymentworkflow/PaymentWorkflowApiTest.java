@@ -45,7 +45,7 @@ public class PaymentWorkflowApiTest {
 //
 //    private final OperationRequestPreprocessor requestPreprocessor = preprocessRequest(modifyUris()
 //            .scheme("http")
-//            .host("payment-workflow")
+//            .host("payment.json-workflow")
 //            .removePort());
 //
 //    @Before
@@ -60,25 +60,25 @@ public class PaymentWorkflowApiTest {
 //        RestDocumentationFilter documentationFilter = document("paymentTransfer",
 //                requestPreprocessor,
 //                requestFields(
-//                        fieldWithPath("id").description("Unique payment transfer id (UUID)"),
-//                        fieldWithPath("payment").description("Payment that should be send to the bank"),
-//                        fieldWithPath("payment.id").description("Payment id"),
-//                        fieldWithPath("payment.account").description("Sender account"),
-//                        fieldWithPath("payment.account.id").description("Account id"),
-//                        fieldWithPath("payment.account.bankId").description("Bank id of the account"),
-//                        fieldWithPath("payment.account.number").description("Account number"),
-//                        fieldWithPath("payment.account.currency").description("Account currency"),
-//                        fieldWithPath("payment.transactions[]").description("The list of payment transactions"),
-//                        fieldWithPath("payment.transactions[].currency").description("Transaction currency"),
-//                        fieldWithPath("payment.transactions[].amount").description("Amount"),
-//                        fieldWithPath("payment.transactions[].recipient").description("Recipient"),
-//                        fieldWithPath("payment.transactions[].recipient.id").description("Recipient unique id (UUID)"),
-//                        fieldWithPath("payment.transactions[].recipient.firstName").description("Recipient's first name"),
-//                        fieldWithPath("payment.transactions[].recipient.lastName").description("Recipient's last name"),
-//                        fieldWithPath("payment.transactions[].recipient.bankName").description("Recipient's bank name"),
-//                        fieldWithPath("payment.transactions[].recipient.bankAddress").description("Recipient's bank address"),
-//                        fieldWithPath("payment.transactions[].recipient.bankUrn").description("Recipient's bank URN"),
-//                        fieldWithPath("payment.transactions[].recipient.accountNumber").description("Recipient's account number")
+//                        fieldWithPath("id").description("Unique payment.json transfer id (UUID)"),
+//                        fieldWithPath("payment.json").description("Payment that should be send to the bank"),
+//                        fieldWithPath("payment.json.id").description("Payment id"),
+//                        fieldWithPath("payment.json.account").description("Sender account"),
+//                        fieldWithPath("payment.json.account.id").description("Account id"),
+//                        fieldWithPath("payment.json.account.bankId").description("Bank id of the account"),
+//                        fieldWithPath("payment.json.account.number").description("Account number"),
+//                        fieldWithPath("payment.json.account.currency").description("Account currency"),
+//                        fieldWithPath("payment.json.transactions[]").description("The list of payment.json transactions"),
+//                        fieldWithPath("payment.json.transactions[].currency").description("Transaction currency"),
+//                        fieldWithPath("payment.json.transactions[].amount").description("Amount"),
+//                        fieldWithPath("payment.json.transactions[].recipient").description("Recipient"),
+//                        fieldWithPath("payment.json.transactions[].recipient.id").description("Recipient unique id (UUID)"),
+//                        fieldWithPath("payment.json.transactions[].recipient.firstName").description("Recipient's first name"),
+//                        fieldWithPath("payment.json.transactions[].recipient.lastName").description("Recipient's last name"),
+//                        fieldWithPath("payment.json.transactions[].recipient.bankName").description("Recipient's bank name"),
+//                        fieldWithPath("payment.json.transactions[].recipient.bankAddress").description("Recipient's bank address"),
+//                        fieldWithPath("payment.json.transactions[].recipient.bankUrn").description("Recipient's bank URN"),
+//                        fieldWithPath("payment.json.transactions[].recipient.accountNumber").description("Recipient's account number")
 //                )
 //        );
 //
@@ -101,13 +101,13 @@ public class PaymentWorkflowApiTest {
 //        transaction.setRecipient(recipient);
 //        List<Transaction> transactions = new ArrayList<>();
 //        transactions.add(transaction);
-//        Payment payment = new Payment();
-//        payment.setId(UUID.randomUUID());
-//        payment.setAccount(account);
-//        payment.setTransactions(transactions);
+//        Payment payment.json = new Payment();
+//        payment.json.setId(UUID.randomUUID());
+//        payment.json.setAccount(account);
+//        payment.json.setTransactions(transactions);
 //
 //        PaymentTransfer paymentTransfer = new PaymentTransfer();
-//        paymentTransfer.setPayment(payment);
+//        paymentTransfer.setPayment(payment.json);
 //
 //        given(this.documentationSpec)
 //            .port(port)
@@ -115,7 +115,7 @@ public class PaymentWorkflowApiTest {
 //            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
 //            .body(paymentTransfer)
 //        .when()
-//            .post("/api/v1/payment-transfers")
+//            .post("/api/v1/payment.json-transfers")
 //        .then()
 //            .statusCode(SC_OK);
 //    }

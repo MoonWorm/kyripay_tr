@@ -1,4 +1,4 @@
-package com.kyripay.paymentworkflow.adapter.dto;
+package com.kyripay.paymentworkflow.adapter.traces.dto;
 
 import com.kyripay.paymentworkflow.domain.dto.trace.Event;
 import lombok.Value;
