@@ -1,14 +1,15 @@
-package com.kyripay.converter.service;
+package com.kyripay.converter.unitTests;
 
 import com.kyripay.converter.api.dto.ConversionRequest;
 import com.kyripay.converter.converters.Converter;
 import com.kyripay.converter.dto.Document;
 import com.kyripay.converter.dto.FormatDetails;
-import com.kyripay.converter.dto.Payment;
 import com.kyripay.converter.dto.events.ConversionRequestEvent;
 import com.kyripay.converter.exceptions.DocumentNotFoundException;
 import com.kyripay.converter.exceptions.WrongFormatException;
 import com.kyripay.converter.repository.DocumentRepository;
+import com.kyripay.converter.service.ConversionService;
+import com.kyripay.converter.service.ConversionServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

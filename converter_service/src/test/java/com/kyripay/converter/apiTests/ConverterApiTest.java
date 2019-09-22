@@ -1,4 +1,4 @@
-package com.kyripay.converter.api;
+package com.kyripay.converter.apiTests;
 
 import com.kyripay.converter.repository.DocumentRepository;
 import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
@@ -23,15 +23,10 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.skyscreamer.jsonassert.RegularExpressionValueMatcher;
 import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.cloud.stream.messaging.Processor;
-import org.springframework.cloud.stream.test.binder.MessageCollector;
-import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
-import org.springframework.cloud.stream.test.binder.TestSupportBinderConfiguration;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;

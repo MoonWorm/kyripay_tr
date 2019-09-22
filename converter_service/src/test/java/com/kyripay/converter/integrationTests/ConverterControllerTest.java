@@ -1,4 +1,4 @@
-package com.kyripay.converter.api;
+package com.kyripay.converter.integrationTests;
 
 
 import com.kyripay.converter.api.rest.ConverterController;

@@ -5,7 +5,6 @@ import com.kyripay.converter.dto.Payment;
 import com.kyripay.converter.dto.Transaction;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
 
 @Component(BankPaymentConverter.ID)
 public class BankPaymentConverter implements Converter

@@ -1,7 +1,8 @@
-package com.kyripay.converter.repository;
+package com.kyripay.converter.integrationTests;
 
 import com.kyripay.converter.dto.Document;
 import com.kyripay.converter.dto.DocumentStatus;
+import com.kyripay.converter.repository.DocumentRepository;
 import com.lordofthejars.nosqlunit.annotation.ShouldMatchDataSet;
 import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
