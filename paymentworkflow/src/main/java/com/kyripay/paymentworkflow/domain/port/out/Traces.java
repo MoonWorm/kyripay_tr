@@ -9,6 +9,6 @@ import java.util.Optional;
 public interface Traces {
     Optional<Trace> getTraceById(long id);
     Trace createTrace(Map<String, String> headers, Event event);
-    void updateHeaders(Map<String, String> headers);
-    void add(Event event);
+    void updateHeaders(long traceId, Map<String, String> headers);
+    void addEvent(long traceId, Event event);
 }

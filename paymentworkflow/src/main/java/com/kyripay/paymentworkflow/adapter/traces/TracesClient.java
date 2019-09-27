@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.Map;
 import java.util.Optional;
 
-@FeignClient("traces")
+@FeignClient(name = "traces", url = "${traces.url}")
 public interface TracesClient {
     @RequestMapping(method = RequestMethod.GET, value = "api/v1/traces/{traceId}", consumes = "application/json")
     public Optional<Trace> getTraceById(@PathVariable("traceId") long id);

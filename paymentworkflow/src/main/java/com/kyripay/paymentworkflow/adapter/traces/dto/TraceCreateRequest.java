@@ -7,6 +7,6 @@ import java.util.Map;
 
 @Value
 public class TraceCreateRequest {
-    private Map<String, Object> headers;
+    private Map<String, String> headers;
     private Event event;
 }
