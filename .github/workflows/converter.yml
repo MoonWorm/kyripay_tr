@@ -20,17 +20,33 @@ jobs:
           cd converter_service
           ./gradlew build -x bootJar --info
       - name: Integration tests
-        run: ./gradlew integrationTests --info
+        run: |
+          cd converter_service
+          ./gradlew integrationTests --info
       - name: Contract tests
-        run: ./gradlew contractTests --info
+        run: |
+          cd converter_service
+          ./gradlew contractTests --info
       - name: Api tests
-        run: ./gradlew apiTests --info
+        run: |
+          cd converter_service
+          ./gradlew apiTests --info
       - name: Prepare documentation
-        run: ./gradlew asciidoctor
+        run: |
+          cd converter_service
+          ./gradlew asciidoctor
+      - name: Prepare boot jar
+        run: |
+          cd converter_service
+          ./gradlew bootJar
       - name: Upload test results
+        if: failure()
         uses: actions/upload-artifact@master
         with:
           name: test-report
-          path: build/reports/tests
+          path: ./converter_service/build/reports/tests
       - name: Publish docker image
-        run: ./gradlew dockerPushVersion -PcustomVersion=${{github.sha}}
+        run: |
+          cd converter_service
+          docker login --username kyripay --password "(VXB8Ehqp"
+          ./gradlew dockerPushVersion dockerPushLatest -PcustomVersion=${{github.sha}}
