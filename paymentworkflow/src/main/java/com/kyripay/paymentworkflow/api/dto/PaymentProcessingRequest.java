@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentProcessingRequest {
-    public long paymentId;
+    private long paymentId;
 }

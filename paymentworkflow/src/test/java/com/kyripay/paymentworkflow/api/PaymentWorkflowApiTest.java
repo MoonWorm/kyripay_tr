@@ -2,9 +2,6 @@ package com.kyripay.paymentworkflow.api;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableList;
-import com.kyripay.paymentworkflow.domain.dto.payment.Payment;
-import com.kyripay.paymentworkflow.stream.ConverterStreams;
-import com.kyripay.paymentworkflow.stream.PaymentStreams;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -23,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.util.TestPropertyValues;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -38,10 +34,9 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -50,32 +45,23 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 @ContextConfiguration(initializers = {PaymentWorkflowApiTest.Initializer.class})
 public class PaymentWorkflowApiTest {
 
-    @LocalServerPort
-    int port;
-
     @ClassRule
     public static KafkaContainer kafkaContainer = new KafkaContainer();
 
     @ClassRule
-    public static WireMockRule wireMockRule = new WireMockRule(8089);
+    public static WireMockRule wireMockRule = new WireMockRule();
 
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
-    @Autowired
-    PaymentStreams paymentStreams;
-
-    @Autowired
-    ConverterStreams converterStreams;
-
     @Test
     public void incomingPaymentShouldBeSendToConverter() throws JSONException {
-        stubFor(get(urlEqualTo("/api/v1/traces"))
+        stubFor(post(urlEqualTo("/api/v1/traces"))
                 .willReturn(aResponse()
                         .withStatus(201)
                         .withHeader("Content-Type", "application/json")
                         .withBody("{\n" +
-                                "  \"paymentId\": 1,\n" +
+                                "  \"paymentId\": 11,\n" +
                                 "  \"headers\": {\n" +
                                 "    \"userId\": \"63fc53d7-3a67-4d12-8cd0-50bb2dd9a14d\"\n" +
                                 "  },\n" +
@@ -83,12 +69,12 @@ public class PaymentWorkflowApiTest {
                                 "  \"updated\": \"2019-09-14T21:54:30.074404\"\n" +
                                 "}")));
 
-        stubFor(get(urlEqualTo("/api/v1/payments"))
+        stubFor(get(urlEqualTo("/api/v1/payments/11"))
                 .willReturn(aResponse()
-                        .withStatus(201)
+                        .withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody("{\n" +
-                                "  \"id\": 1,\n" +
+                                "  \"id\": 11,\n" +
                                 "  \"userId\": \"63fc53d7-3a67-4d12-8cd0-50bb2dd9a14d\",\n" +
                                 "  \"status\": \"CREATED\",\n" +
                                 "  \"paymentDetails\": {\n" +
@@ -109,8 +95,6 @@ public class PaymentWorkflowApiTest {
                                 "  \"createdOn\": 1568489717252\n" +
                                 "}\n")));
 
-        Payment payment = new Payment(11, UUID.randomUUID(), Payment.Status.CREATED, null, 111);
-
         kafkaTemplate.send("payment-workflow-process", 0, "1", "{\"paymentId\": 11}");
         // consumer from converter service
         Properties consumerProperties = new Properties();
@@ -126,7 +110,27 @@ public class PaymentWorkflowApiTest {
         assertEquals(1, messages.count());
         String value = messages.records("converter-process").iterator().next().value();
         JSONAssert.assertEquals(
-                "{\"documentId\":\"x\",\"status\":\"READY\"}",
+                "{\n" +
+                        "  \"id\": 11,\n" +
+                        "  \"userId\": \"63fc53d7-3a67-4d12-8cd0-50bb2dd9a14d\",\n" +
+                        "  \"status\": \"CREATED\",\n" +
+                        "  \"paymentDetails\": {\n" +
+                        "    \"amount\": {\n" +
+                        "      \"amount\": 33,\n" +
+                        "      \"currency\": \"USD\"\n" +
+                        "    },\n" +
+                        "    \"bankId\": 1,\n" +
+                        "    \"accountNumber\": \"123\",\n" +
+                        "    \"recipientInfo\": {\n" +
+                        "      \"firstName\": \"Ivan\",\n" +
+                        "      \"lastName\": \"Ivanov\",\n" +
+                        "      \"bankName\": \"first bank\",\n" +
+                        "      \"bankAddress\": \"Italy, Milan, Main str., 1-2\",\n" +
+                        "      \"accountNumber\": \"1234567\"\n" +
+                        "    }\n" +
+                        "  },\n" +
+                        "  \"createdOn\": 1568489717252\n" +
+                        "}",
                 value,
                 new CustomComparator(
                         JSONCompareMode.STRICT,
@@ -157,7 +161,9 @@ public class PaymentWorkflowApiTest {
             implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(
-                    "spring.cloud.stream.kafka.binder.brokers=" + kafkaContainer.getBootstrapServers()
+                    "spring.cloud.stream.kafka.binder.brokers=" + kafkaContainer.getBootstrapServers(),
+                    "traces.url=localhost:" + wireMockRule.port(),
+                    "payments.url=localhost:" + wireMockRule.port()
             ).applyTo(configurableApplicationContext.getEnvironment());
         }
     }
