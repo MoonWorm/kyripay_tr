@@ -11,14 +11,14 @@ spec:
     spec:
       containers:
         - name: traces-cont
-          image: kyripay/traces:latest
-          imagePullPolicy: Never
+          image: asidoruk/kyripay-traces:0.0.2
+          # TODO investigate how to maintain versions
           ports:
             - containerPort: 8090
           env:
             - name: spring.profiles.active
               value: postgres
             - name: POSTGRESQL_HOST
-              value: postgres
+              value: traces-postgres-service
 
 

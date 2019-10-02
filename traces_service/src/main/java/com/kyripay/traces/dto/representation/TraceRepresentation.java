@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
+import lombok.experimental.NonFinal;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -19,9 +21,7 @@ import java.util.Map;
 /**
  * @author M-ASI
  */
-@Data
-@Builder
-@RequiredArgsConstructor
+@Value(staticConstructor = "of")
 @ApiModel(value = "Full Trace representation")
 public class TraceRepresentation
 {

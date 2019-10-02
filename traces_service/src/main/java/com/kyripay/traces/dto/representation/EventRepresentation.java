@@ -16,10 +16,7 @@ import java.time.LocalDateTime;
 /**
  * @author M-ASI
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Value(staticConstructor = "of")
 @ApiModel(value = "Trace Event representation")
 public class EventRepresentation
 {

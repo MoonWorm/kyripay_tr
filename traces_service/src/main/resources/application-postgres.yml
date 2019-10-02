@@ -1,6 +1,7 @@
 spring:
   datasource:
     url: jdbc:postgresql://${POSTGRESQL_HOST}:5432/traces?currentSchema=public
+    # TODO: XPI: Don't store credentials in config, pass them as environment variables or managed secrets. -> good point! To be implemented.
     username: admin
     password: admin
     driver-class-name: org.postgresql.Driver

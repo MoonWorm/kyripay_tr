@@ -7,10 +7,7 @@ package com.kyripay.traces.dto.representation;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -19,9 +16,7 @@ import javax.validation.constraints.Size;
 /**
  * @author M-ASI
  */
-@Data
-@Builder
-@NoArgsConstructor
+@Value
 @AllArgsConstructor
 @ApiModel(value = "Header representation")
 public class HeaderRepresentation
