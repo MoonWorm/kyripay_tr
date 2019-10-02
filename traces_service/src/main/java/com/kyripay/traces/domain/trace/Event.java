@@ -22,20 +22,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Event
 {
-  @Column(nullable = false)
   private String name;
 
-  @Column
   private String source;
 
-  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private EventType type;
 
-  @Column
   private String comment;
 
-  @Column
   private LocalDateTime created;
 
 
@@ -54,13 +49,7 @@ public class Event
 
   public EventRepresentation toRepresentation()
   {
-    return EventRepresentation.builder()
-        .name(name)
-        .source(source)
-        .type(type)
-        .comment(comment)
-        .created(created)
-        .build();
+    return EventRepresentation.of(name, source, type, comment, created);
   }
 
 }

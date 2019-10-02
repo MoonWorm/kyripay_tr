@@ -9,7 +9,7 @@ import com.kyripay.traces.api.dto.SimpleErrorCollection;
 import com.kyripay.traces.service.ResourceNotFoundException;
 import com.kyripay.traces.service.ResourceAlreadyExistsException;
 import com.kyripay.traces.service.TraceServiceException;
-import org.springframework.dao.DataAccessException;
+import com.kyripay.traces.service.TracesDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * @author M-ASI
  */
-@ControllerAdvice(basePackageClasses = { GenericTraceController.class })
+@ControllerAdvice(basePackageClasses = {API_V1.class })
 public class RestExceptionHandler extends ResponseEntityExceptionHandler
 {
 
@@ -43,15 +43,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler
   }
 
 
-  //All the JPA-related exceptions that may happen in Service (integrity constraints violations, etc) - are wrapped into some DataAccessException descendant. Handle them here.
-  @ExceptionHandler
-  ResponseEntity<Object> handleResourceNotFound(DataAccessException e)
-  {
-    return handleGenericException(e, HttpStatus.INTERNAL_SERVER_ERROR);
-  }
+    @ExceptionHandler
+    ResponseEntity<Object> handleTracesDataAccessException(TracesDataAccessException e)
+    {
+        return handleGenericException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 
-  private ResponseEntity<Object> handleTraceServiceException(TraceServiceException e, HttpStatus httpStatus)
+    private ResponseEntity<Object> handleTraceServiceException(TraceServiceException e, HttpStatus httpStatus)
   {
     return handleGenericException(e, httpStatus);
   }

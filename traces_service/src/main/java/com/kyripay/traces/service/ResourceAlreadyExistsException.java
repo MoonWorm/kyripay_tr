@@ -16,6 +16,7 @@ public class ResourceAlreadyExistsException extends TraceServiceException
   }
 
 
+  //TODO: XPI: Usually such business exceptions are general and don't know about all resources where they could be applied. From my perspective the best place is in correcponding service because only it throws such exception for domain entity.
   public static ResourceAlreadyExistsException trace(long id)
   {
     return new ResourceAlreadyExistsException(String.format("Trace [%d]", id));

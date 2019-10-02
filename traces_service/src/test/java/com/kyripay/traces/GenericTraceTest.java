@@ -15,12 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
@@ -29,19 +26,15 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 /**
  * @author M-ASI
  */
-//@RunWith(SpringRunner.class)
 @ExtendWith({SpringExtension.class, RestDocumentationExtension.class})
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureRestDocs("build/generated-snippets")
-//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class GenericTraceTest
 {
-//  @Rule
-//  public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
-
   @LocalServerPort
   private int port;
 
+  //TODO XPI: API tests are black box, don't use service to manage data, prefer API calls instead. -> OK.
   @Autowired
   protected TracesService tracesService;
 

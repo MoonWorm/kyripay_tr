@@ -8,7 +8,7 @@ package com.kyripay.traces.service;
 /**
  * @author M-ASI
  */
-public class TraceServiceException extends Exception
+public class TraceServiceException extends RuntimeException
 {
   public TraceServiceException(String message)
   {

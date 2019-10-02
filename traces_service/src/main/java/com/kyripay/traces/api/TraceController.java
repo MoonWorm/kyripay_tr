@@ -9,11 +9,10 @@ import com.kyripay.traces.dto.representation.TraceRepresentation;
 import com.kyripay.traces.dto.request.TraceCreationRequest;
 import com.kyripay.traces.dto.request.TraceUpdateRequest;
 import com.kyripay.traces.service.ResourceNotFoundException;
-import com.kyripay.traces.service.TraceServiceException;
 import com.kyripay.traces.service.TracesService;
 import io.swagger.annotations.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static org.apache.http.HttpStatus.*;
@@ -22,14 +21,13 @@ import static org.apache.http.HttpStatus.*;
 /**
  * @author M-ASI
  */
+@API_V1
 @Api(value = "Traces", tags = "Traces API")
 @RestController
-public class TraceController extends GenericTraceController
+@RequiredArgsConstructor
+public class TraceController
 {
-  public TraceController(TracesService service)
-  {
-    super(service);
-  }
+  private final TracesService service;
 
   @PostMapping("/traces")
   @ApiOperation(value = "Add a new Trace", response = TraceRepresentation.class)
@@ -37,9 +35,10 @@ public class TraceController extends GenericTraceController
       @ApiResponse(code = SC_CREATED, message = "Trace created"),
       @ApiResponse(code = SC_CONFLICT, message = "Trace with given Id already exist"),
   })
-  public ResponseEntity<TraceRepresentation> addTrace(@RequestBody TraceCreationRequest creationRequest) throws TraceServiceException
+  @ResponseStatus(HttpStatus.CREATED)
+  public void addTrace(@RequestBody TraceCreationRequest creationRequest)
   {
-    return response(HttpStatus.CREATED, service.addTrace(creationRequest));
+    service.addTrace(creationRequest);
    }
 
 
@@ -50,11 +49,9 @@ public class TraceController extends GenericTraceController
       @ApiResponse(code = SC_OK, message = "Trace returned"),
       @ApiResponse(code = SC_NOT_FOUND, message = "Trace with given Id is not found"),
   })
-  public ResponseEntity<?> getTrace(@PathVariable("id") long id) throws ResourceNotFoundException
+  public @ResponseBody TraceRepresentation getTrace(@PathVariable("id") long id)
   {
-    return service.getTrace(id)
-        .map(trace -> response(HttpStatus.OK, trace))
-        .orElseThrow(() -> ResourceNotFoundException.trace(id));
+    return service.getTrace(id).orElseThrow(() -> ResourceNotFoundException.trace(id));
   }
 
 
@@ -65,10 +62,10 @@ public class TraceController extends GenericTraceController
       @ApiResponse(code = SC_NO_CONTENT, message = "Trace updated"),
       @ApiResponse(code = SC_NOT_FOUND, message = "Trace with given Id is not found"),
   })
-  public ResponseEntity<?> putTrace(@PathVariable("id") long id, @RequestBody TraceUpdateRequest traceUpdateRequest) throws ResourceNotFoundException
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void putTrace(@PathVariable("id") long id, @RequestBody TraceUpdateRequest traceUpdateRequest)
   {
     service.updateTrace(id, traceUpdateRequest, false);
-    return status(HttpStatus.NO_CONTENT);
   }
 
 
@@ -79,9 +76,9 @@ public class TraceController extends GenericTraceController
       @ApiResponse(code = SC_OK, message = "Trace returned"),
       @ApiResponse(code = SC_NOT_FOUND, message = "Trace with given Id is not found"),
   })
-  public ResponseEntity<?> patchTrace(@PathVariable("id") long id, @RequestBody TraceUpdateRequest traceUpdateRequest) throws ResourceNotFoundException
+  public @ResponseBody TraceRepresentation patchTrace(@PathVariable("id") long id, @RequestBody TraceUpdateRequest traceUpdateRequest)
   {
-    return response(HttpStatus.OK, service.updateTrace(id, traceUpdateRequest, true));
+    return service.updateTrace(id, traceUpdateRequest, true);
   }
 
 
@@ -92,10 +89,10 @@ public class TraceController extends GenericTraceController
       @ApiResponse(code = SC_NO_CONTENT, message = "Trace deleted"),
       @ApiResponse(code = SC_NOT_FOUND, message = "Trace with given Id is not found"),
   })
-  public ResponseEntity<?> deleteTrace(@PathVariable("id") long id)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteTrace(@PathVariable("id") long id)
   {
     service.deleteTrace(id);
-    return status(HttpStatus.NO_CONTENT);
   }
 }
 

@@ -114,5 +114,33 @@ It is to document only headers that are important in the operation context; to r
 
 [Postgres in Kubernetes](https://severalnines.com/blog/using-kubernetes-deploy-postgresql)
 
+Cyber-dojo
+
+ContainerDatabaseDriver
+
+AssertJ
+
+@SpringBootTest(classes=...)
+
+In test context:
+@TestConfiguration - ADD to context; @Configuration - override the entire context
+
+@DataJpaTest
+
+@TestEntityManager
+
+@RestClientTest (MockRestServiceServer)
+
+WireMockRule
+MockLab (dump req/resp)
+
+SpringMessageTest
+Spring messaging
+
+Spring cloud contracts (+ Pact?)
+
+k8s+Helm
+k8s: service mash / istio (~ LB by header...)
+CircleCI, teamcity
 
 

@@ -17,6 +17,7 @@ public class ResourceNotFoundException extends TraceServiceException
   }
 
 
+  //TODO avoid such methods
   public static ResourceNotFoundException trace(long id)
   {
     return new ResourceNotFoundException(String.format("Trace [%d]", id));
