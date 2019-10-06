@@ -20,7 +20,7 @@ spec:
             - name: SPRING_DATA_MONGODB_HOST
               value: mongodb
             - name: KAFKA_HOST
-              value: kafka
+              value: kafka-cluster
             - name: EUREKA_HOST
               value: eureka
           livenessProbe:
