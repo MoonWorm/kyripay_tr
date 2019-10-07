@@ -95,6 +95,15 @@ public class PaymentWorkflowApiTest {
                                 "  \"createdOn\": 1568489717252\n" +
                                 "}\n")));
 
+        String paymentStatusUpdateRequest = "{\n" +
+                "  \"status\": \"PROCESSING\"\n" +
+                "}";
+        stubFor(put(urlEqualTo("/api/v1/payments/11/status"))
+                .withRequestBody(equalToJson(paymentStatusUpdateRequest))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                ));
+
         kafkaTemplate.send("payment-workflow-process", 0, "1", "{\"paymentId\": 11}");
         // consumer from converter service
         Properties consumerProperties = new Properties();
@@ -137,6 +146,76 @@ public class PaymentWorkflowApiTest {
                         new Customization("documentId",  new RegularExpressionValueMatcher<>(".*"))
                 )
         );
+    }
+
+    @Test
+    public void convertedPaymentShouldBeSendToConnector() throws JSONException {
+        String converterNotification = "{\n" +
+                "  \"paymentId\": 11,\n" +
+                "  \"status\": \"READY\",\n" +
+                "  \"payloadUrl\": \"http://localhost/payloadUrl\"\n" +
+                "}";
+        kafkaTemplate.send("converter-notifications", 0, "1", converterNotification);
+        stubFor(post(urlEqualTo("/api/v1/traces/11/events"))
+                .willReturn(aResponse()
+                        .withStatus(201)));
+        // send to connector
+        Properties consumerProperties = new Properties();
+        consumerProperties.put("bootstrap.servers", kafkaContainer.getBootstrapServers());
+        consumerProperties.put("group.id", "test");
+        consumerProperties.put("key.deserializer", StringDeserializer.class);
+        consumerProperties.put("value.deserializer", StringDeserializer.class);
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(consumerProperties);
+
+        consumer.subscribe(ImmutableList.of("connector-send"));
+
+        ConsumerRecords<String, String> messages = consumer.poll(Duration.ofSeconds(5));
+        assertEquals(1, messages.count());
+
+        String value = messages.records("converter-process").iterator().next().value();
+        JSONAssert.assertEquals(
+                "{\n" +
+                        "  \"id\": 11,\n" +
+                        "  \"userId\": \"63fc53d7-3a67-4d12-8cd0-50bb2dd9a14d\",\n" +
+                        "  \"status\": \"CREATED\",\n" +
+                        "  \"paymentDetails\": {\n" +
+                        "    \"amount\": {\n" +
+                        "      \"amount\": 33,\n" +
+                        "      \"currency\": \"USD\"\n" +
+                        "    },\n" +
+                        "    \"bankId\": 1,\n" +
+                        "    \"accountNumber\": \"123\",\n" +
+                        "    \"recipientInfo\": {\n" +
+                        "      \"firstName\": \"Ivan\",\n" +
+                        "      \"lastName\": \"Ivanov\",\n" +
+                        "      \"bankName\": \"first bank\",\n" +
+                        "      \"bankAddress\": \"Italy, Milan, Main str., 1-2\",\n" +
+                        "      \"accountNumber\": \"1234567\"\n" +
+                        "    }\n" +
+                        "  },\n" +
+                        "  \"createdOn\": 1568489717252\n" +
+                        "}",
+                value,
+                new CustomComparator(
+                        JSONCompareMode.STRICT,
+                        new Customization("documentId",  new RegularExpressionValueMatcher<>(".*"))
+                )
+        );
+    }
+
+    @Test
+    public void notificationsFromConnectorShouldUpdatePaymentStatus() {
+        // send notification from connector
+        // update trace
+        // update payment status
+    }
+
+    @Test
+    public void acknowledgementsShouldUpdatePaymentStatusAndSendNotification() {
+        // send ack
+        // update trace
+        // update payment status
+        // send notification
     }
 
     @TestConfiguration
