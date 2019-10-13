@@ -31,6 +31,16 @@ jobs:
         run: |
           cd converter_service
           ./gradlew apiTests --info
+      - name: Prepare coverage report
+        run: |
+          cd converter_service
+          ./gradlew jacocoTestReport
+      - name: Sonar analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd converter_service
+          ./gradlew sonarqube
       - name: Prepare documentation
         run: |
           cd converter_service

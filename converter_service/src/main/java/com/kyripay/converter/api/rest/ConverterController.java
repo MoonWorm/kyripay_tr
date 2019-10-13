@@ -45,7 +45,7 @@ public class ConverterController
       @ApiResponse(code = 400, message = "Payment cannot be converted to the given format") }
   )
   @ResponseStatus(HttpStatus.ACCEPTED)
-  ConverterResponse convert(@RequestBody ConversionRequest request)
+  public ConverterResponse convert(@RequestBody ConversionRequest request)
   {
     try {
       String documentId = conversionService.convert(request.getPayment(), request.getFormat());
@@ -60,7 +60,7 @@ public class ConverterController
 
   @GetMapping("converters")
   @ApiOperation("Returns list of available formats")
-  Map<String, FormatDetails> getFormats()
+  public Map<String, FormatDetails> getFormats()
   {
     return conversionService.getFormats();
   }
@@ -72,7 +72,7 @@ public class ConverterController
       @ApiResponse(code = 200, message = "Document is found", response = Document.class),
       @ApiResponse(code = 404, message = "Document not found") }
   )
-  Document getDocument(@NotBlank(message = "Document id must be provided") @PathVariable String id)
+  public Document getDocument(@NotBlank(message = "Document id must be provided") @PathVariable String id)
   {
     try {
       return conversionService.getDocument(id);
