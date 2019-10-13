@@ -1,4 +1,4 @@
-package com.kyripay.notification.dao;
+package com.kyripay.notification.integration;
 
 import com.kyripay.notification.dao.entity.EmailNotificationDocument;
 import com.kyripay.notification.dao.repository.EmailNotificationRepository;

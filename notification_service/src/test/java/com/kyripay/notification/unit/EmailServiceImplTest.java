@@ -1,4 +1,4 @@
-package com.kyripay.notification.service;
+package com.kyripay.notification.unit;
 
 import com.kyripay.notification.dao.entity.EmailNotificationDocument;
 import com.kyripay.notification.dao.repository.EmailNotificationRepository;
@@ -6,6 +6,9 @@ import com.kyripay.notification.domain.vo.Status;
 import com.kyripay.notification.dto.EmailNotificationRequest;
 import com.kyripay.notification.dto.NotificationResponse;
 import com.kyripay.notification.exception.ServiceException;
+import com.kyripay.notification.service.EmailNotificationValidator;
+import com.kyripay.notification.service.EmailServiceImpl;
+import com.kyripay.notification.service.TemplateResolver;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;

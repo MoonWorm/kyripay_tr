@@ -1,5 +1,6 @@
-package com.kyripay.notification.api;
+package com.kyripay.notification.integration;
 
+import com.kyripay.notification.api.NotificationController;
 import com.kyripay.notification.domain.vo.Status;
 import com.kyripay.notification.dto.EmailNotificationRequest;
 import com.kyripay.notification.dto.NotificationResponse;
