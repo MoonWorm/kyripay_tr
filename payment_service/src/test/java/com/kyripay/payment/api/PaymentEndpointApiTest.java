@@ -5,19 +5,30 @@
  *******************************************************************************/
 package com.kyripay.payment.api;
 
-import com.kyripay.payment.api.dto.PaymentStatus;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.matching.RegexPattern;
+import com.kyripay.payment.infrastructure.adapter.in.payment.CustomGlobalExceptionHandler;
+import com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentStatus;
 import com.kyripay.payment.domain.vo.Status;
-import com.kyripay.payment.dto.PaymentResponse;
-import com.kyripay.payment.dto.PaymentWithUserIdResponse;
+import com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentResponse;
+import com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentWithUserIdResponse;
+import com.netflix.loadbalancer.Server;
+import com.netflix.loadbalancer.ServerList;
+import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
+import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.cloud.netflix.ribbon.StaticServerList;
+import org.springframework.context.annotation.Bean;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -33,13 +44,15 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
@@ -50,7 +63,7 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
  * @author M-ATA
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = DEFINED_PORT)
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 public class PaymentEndpointApiTest {
 
@@ -58,16 +71,26 @@ public class PaymentEndpointApiTest {
 
     @ClassRule
     public static final PostgreSQLContainer postgres = new PostgreSQLContainer();
-
+    @ClassRule
+    public static final WireMockRule wiremock = new WireMockRule(wireMockConfig().dynamicPort());
     @Rule
     public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("target/generated-snippets");
+
+    @LocalServerPort
+    private int port;
 
     private RequestSpecification documentationSpec;
 
     @Before
     public void setUp() {
+        RestAssured.port = port;
         this.documentationSpec = new RequestSpecBuilder()
                 .addFilter(documentationConfiguration(restDocumentation)).build();
+        stubFor(post(urlEqualTo("/api/v1/traces"))
+                .withRequestBody(new RegexPattern("\\{\"paymentId\":\\d+,\"headers\":\\{\"userId\":\"" + USER_ID + "\"\\}\\}"))
+                .willReturn(aResponse()
+                        .withStatus(HttpStatus.SC_CREATED)
+                        .withHeader("Content-Type", "application/json")));
     }
 
     @Test
@@ -263,6 +286,14 @@ public class PaymentEndpointApiTest {
         assertNotNull(response);
         return response.getStatus();
 
+    }
+
+    @TestConfiguration
+    public static class LocalRibbonClientConfiguration {
+        @Bean
+        public ServerList<Server> ribbonServerList() {
+            return new StaticServerList<>(new Server("localhost", wiremock.port()));
+        }
     }
 
 }

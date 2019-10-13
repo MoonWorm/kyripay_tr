@@ -1,12 +1,15 @@
 package com.kyripay.payment.api;
 
+import com.kyripay.payment.domain.PaymentTemplate;
+import com.kyripay.payment.domain.port.in.payment.impl.PaymentTemplatesImpl;
+import com.kyripay.payment.infrastructure.adapter.in.payment.CustomGlobalExceptionHandler;
+import com.kyripay.payment.infrastructure.adapter.in.payment.PaymentTemplateController;
 import com.kyripay.payment.domain.vo.Amount;
 import com.kyripay.payment.domain.vo.Currency;
-import com.kyripay.payment.domain.vo.Status;
-import com.kyripay.payment.dto.*;
-import com.kyripay.payment.service.exception.ServiceException;
-import com.kyripay.payment.service.impl.PaymentTemplateServiceImpl;
+import com.kyripay.payment.infrastructure.adapter.in.payment.dto.*;
+import com.kyripay.payment.domain.port.in.payment.ServiceException;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.dozer.DozerBeanMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -39,7 +43,10 @@ public class PaymentTemplateRestControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private PaymentTemplateServiceImpl paymentTemplateService;
+    private PaymentTemplatesImpl paymentTemplateService;
+
+    @MockBean
+    private DozerBeanMapper mapper;
 
     @Test
     public void create_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
@@ -54,7 +61,11 @@ public class PaymentTemplateRestControllerIntegrationTest {
         PaymentTemplateResponse expectedResponse = new PaymentTemplateResponse(1L, "Template 1", paymentTemplateDetails,
                 System.currentTimeMillis());
 
-        when(paymentTemplateService.create(USER_ID, request)).thenReturn(expectedResponse);
+        PaymentTemplate paymentTemplateToCreate = mock(PaymentTemplate.class);
+        when(mapper.map(request, PaymentTemplate.class)).thenReturn(paymentTemplateToCreate);
+        PaymentTemplate paymentTemplateCreated = mock(PaymentTemplate.class);
+        when(paymentTemplateService.create(USER_ID, paymentTemplateToCreate)).thenReturn(paymentTemplateCreated);
+        when(mapper.map(paymentTemplateCreated, PaymentTemplateResponse.class)).thenReturn(expectedResponse);
 
         ResultActions ra = mockMvc.perform(post("/api/v1/paymenttemplates")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -123,7 +134,9 @@ public class PaymentTemplateRestControllerIntegrationTest {
                 new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), asList(ExceptionUtils.getMessage(e))
         );
 
-        when(paymentTemplateService.create(USER_ID, request)).thenThrow(e);
+        PaymentTemplate paymentTemplateToCreate = mock(PaymentTemplate.class);
+        when(mapper.map(request, PaymentTemplate.class)).thenReturn(paymentTemplateToCreate);
+        when(paymentTemplateService.create(USER_ID, paymentTemplateToCreate)).thenThrow(e);
 
         mockMvc.perform(post("/api/v1/paymenttemplates")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -174,7 +187,11 @@ public class PaymentTemplateRestControllerIntegrationTest {
         int limit = 2;
         int offset = 0;
 
-        when(paymentTemplateService.readAll(USER_ID, limit, offset)).thenReturn(asList(expectedResponse1, expectedResponse2));
+        PaymentTemplate paymentTemplate1 = mock(PaymentTemplate.class);
+        PaymentTemplate paymentTemplate2 = mock(PaymentTemplate.class);
+        when(paymentTemplateService.readAll(USER_ID, limit, offset)).thenReturn(asList(paymentTemplate1, paymentTemplate2));
+        when(mapper.map(paymentTemplate1, PaymentTemplateResponse.class)).thenReturn(expectedResponse1);
+        when(mapper.map(paymentTemplate2, PaymentTemplateResponse.class)).thenReturn(expectedResponse2);
 
         ResultActions ra = mockMvc.perform(get("/api/v1/paymenttemplates")
                 .param("limit", String.valueOf(limit))
@@ -205,7 +222,9 @@ public class PaymentTemplateRestControllerIntegrationTest {
         PaymentTemplateResponse expectedResponse = new PaymentTemplateResponse(paymentTemplateId, "Template 1", paymentDetails,
                 System.currentTimeMillis());
 
-        when(paymentTemplateService.readById(USER_ID, paymentTemplateId)).thenReturn(expectedResponse);
+        PaymentTemplate paymentTemplate = mock(PaymentTemplate.class);
+        when(paymentTemplateService.readById(USER_ID, paymentTemplateId)).thenReturn(paymentTemplate);
+        when(mapper.map(paymentTemplate, PaymentTemplateResponse.class)).thenReturn(expectedResponse);
 
         ResultActions ra = mockMvc.perform(get("/api/v1/paymenttemplates/" + paymentTemplateId)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -237,7 +256,11 @@ public class PaymentTemplateRestControllerIntegrationTest {
         PaymentTemplateResponse expectedResponse = new PaymentTemplateResponse(paymentTemplateId, "Template 1", paymentTemplateDetails,
                 System.currentTimeMillis());
 
-        when(paymentTemplateService.update(USER_ID, paymentTemplateId, request)).thenReturn(expectedResponse);
+        PaymentTemplate paymentTemplateToUpdate = mock(PaymentTemplate.class);
+        when(mapper.map(request, PaymentTemplate.class)).thenReturn(paymentTemplateToUpdate);
+        PaymentTemplate paymentTemplateUpdated = mock(PaymentTemplate.class);
+        when(paymentTemplateService.update(USER_ID, paymentTemplateId, paymentTemplateToUpdate)).thenReturn(paymentTemplateUpdated);
+        when(mapper.map(paymentTemplateUpdated, PaymentTemplateResponse.class)).thenReturn(expectedResponse);
 
         ResultActions ra = mockMvc.perform(put("/api/v1/paymenttemplates/" + paymentTemplateId)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)

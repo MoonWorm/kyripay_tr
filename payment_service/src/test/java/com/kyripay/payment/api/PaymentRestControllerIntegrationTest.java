@@ -1,12 +1,17 @@
 package com.kyripay.payment.api;
 
+import com.kyripay.payment.domain.Payment;
+import com.kyripay.payment.infrastructure.adapter.in.payment.CustomGlobalExceptionHandler;
+import com.kyripay.payment.infrastructure.adapter.in.payment.PaymentController;
+import com.kyripay.payment.domain.SearchCriterias;
 import com.kyripay.payment.domain.vo.Amount;
 import com.kyripay.payment.domain.vo.Currency;
 import com.kyripay.payment.domain.vo.Status;
-import com.kyripay.payment.dto.*;
-import com.kyripay.payment.service.exception.ServiceException;
-import com.kyripay.payment.service.impl.PaymentServiceImpl;
+import com.kyripay.payment.infrastructure.adapter.in.payment.dto.*;
+import com.kyripay.payment.domain.port.in.payment.ServiceException;
+import com.kyripay.payment.domain.port.in.payment.impl.PaymentsImpl;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.dozer.DozerBeanMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +28,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -39,7 +45,10 @@ public class PaymentRestControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private PaymentServiceImpl paymentService;
+    private PaymentsImpl paymentService;
+
+    @MockBean
+    private DozerBeanMapper mapper;
 
     @Test
     public void create_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
@@ -48,7 +57,11 @@ public class PaymentRestControllerIntegrationTest {
         PaymentResponse expectedResponse = new PaymentResponse(1L, Status.CREATED, pr.getPaymentDetails(),
                 System.currentTimeMillis());
 
-        when(paymentService.create(USER_ID, pr)).thenReturn(expectedResponse);
+        Payment paymentToCreate = mock(Payment.class);
+        when(mapper.map(pr, Payment.class)).thenReturn(paymentToCreate);
+        Payment paymentCreated = mock(Payment.class);
+        when(paymentService.create(USER_ID, paymentToCreate)).thenReturn(paymentCreated);
+        when(mapper.map(paymentCreated, PaymentResponse.class)).thenReturn(expectedResponse);
 
         ResultActions ra = mockMvc.perform(post("/api/v1/payments")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -109,7 +122,9 @@ public class PaymentRestControllerIntegrationTest {
                 new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), asList(ExceptionUtils.getMessage(e))
         );
 
-        when(paymentService.create(USER_ID, paymentRequest)).thenThrow(e);
+        Payment paymentToCreate = mock(Payment.class);
+        when(mapper.map(paymentRequest, Payment.class)).thenReturn(paymentToCreate);
+        when(paymentService.create(USER_ID, paymentToCreate)).thenThrow(e);
 
         mockMvc.perform(post("/api/v1/payments")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -153,7 +168,11 @@ public class PaymentRestControllerIntegrationTest {
         int limit = 2;
         int offset = 0;
 
-        when(paymentService.readAll(USER_ID, limit, offset)).thenReturn(asList(expectedResponse1, expectedResponse2));
+        Payment payment1 = mock(Payment.class);
+        Payment payment2 = mock(Payment.class);
+        when(paymentService.readAll(USER_ID, limit, offset)).thenReturn(asList(payment1, payment2));
+        when(mapper.map(payment1, PaymentResponse.class)).thenReturn(expectedResponse1);
+        when(mapper.map(payment2, PaymentResponse.class)).thenReturn(expectedResponse2);
 
         ResultActions ra = mockMvc.perform(get("/api/v1/payments")
                 .param("limit", String.valueOf(limit))
@@ -186,7 +205,9 @@ public class PaymentRestControllerIntegrationTest {
         SearchCriterias sc = new SearchCriterias();
         sc.setStatus(Status.PROCESSING);
 
-        when(paymentService.search(sc, limit, offset)).thenReturn(asList(expectedResponse));
+        Payment payment = mock(Payment.class);
+        when(paymentService.search(sc, limit, offset)).thenReturn(asList(payment));
+        when(mapper.map(payment, PaymentWithUserIdResponse.class)).thenReturn(expectedResponse);
 
         ResultActions ra = mockMvc.perform(get("/api/v1/payments/search/result")
                 .param("status", sc.getStatus().name())
@@ -214,7 +235,9 @@ public class PaymentRestControllerIntegrationTest {
         PaymentResponse expectedResponse = new PaymentResponse(paymentId, Status.CREATED, paymentDetails,
                 System.currentTimeMillis());
 
-        when(paymentService.readById(USER_ID, paymentId)).thenReturn(expectedResponse);
+        Payment payment = mock(Payment.class);
+        when(paymentService.readById(USER_ID, paymentId)).thenReturn(payment);
+        when(mapper.map(payment, PaymentResponse.class)).thenReturn(expectedResponse);
 
         ResultActions ra = mockMvc.perform(get("/api/v1/payments/" + paymentId)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)

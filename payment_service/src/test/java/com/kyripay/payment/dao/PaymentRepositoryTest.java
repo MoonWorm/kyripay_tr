@@ -2,16 +2,15 @@ package com.kyripay.payment.dao;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
-import com.kyripay.payment.config.DozerConfig;
-import com.kyripay.payment.dao.exception.RepositoryException;
-import com.kyripay.payment.dao.impl.jooq.JooqPaymentRepository;
-import com.kyripay.payment.dao.impl.jooq.config.JooqConfig;
+import com.kyripay.payment.infrastructure.config.DozerConfig;
+import com.kyripay.payment.domain.port.out.payment.RepositoryException;
+import com.kyripay.payment.infrastructure.adapter.out.payment.JooqPaymentRepository;
 import com.kyripay.payment.domain.Payment;
 import com.kyripay.payment.domain.PaymentRecipientInfo;
 import com.kyripay.payment.domain.vo.Amount;
 import com.kyripay.payment.domain.vo.Currency;
 import com.kyripay.payment.domain.vo.Status;
-import com.kyripay.payment.dto.SearchCriterias;
+import com.kyripay.payment.domain.SearchCriterias;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,8 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JooqTest(
         includeFilters = {
                 @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JooqPaymentRepository.class),
-                @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = DozerConfig.class),
-                @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JooqConfig.class)
+                @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = DozerConfig.class)
         }
 )
 @DBRider

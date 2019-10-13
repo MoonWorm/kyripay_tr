@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozer.sourceforge.net
+      http://dozer.sourceforge.net/schema/beanmapping.xsd">
+    <configuration>
+        <custom-converters>
+            <converter type="com.kyripay.payment.infrastructure.mapping.converter.PaymentRequestConverter">
+                <class-a>com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentRequest</class-a>
+                <class-b>com.kyripay.payment.domain.Payment</class-b>
+            </converter>
+            <converter type="com.kyripay.payment.infrastructure.mapping.converter.PaymentResponseConverter">
+                <class-a>com.kyripay.payment.domain.Payment</class-a>
+                <class-b>com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentResponse</class-b>
+            </converter>
+            <converter type="com.kyripay.payment.infrastructure.mapping.converter.PaymentWithUserIdResponseConverter">
+                <class-a>com.kyripay.payment.domain.Payment</class-a>
+                <class-b>com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentWithUserIdResponse</class-b>
+            </converter>
+            <converter type="com.kyripay.payment.infrastructure.mapping.converter.jooq.PaymentRecordConverter">
+                <class-a>com.kyripay.payment.dao.impl.jooq.meta.tables.records.PaymentRecord</class-a>
+                <class-b>com.kyripay.payment.domain.Payment</class-b>
+            </converter>
+
+            <converter type="com.kyripay.payment.infrastructure.mapping.converter.PaymentTemplateRequestConverter">
+                <class-a>com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentTemplateRequest</class-a>
+                <class-b>com.kyripay.payment.domain.PaymentTemplate</class-b>
+            </converter>
+            <converter type="com.kyripay.payment.infrastructure.mapping.converter.PaymentTemplateResponseConverter">
+                <class-a>com.kyripay.payment.domain.PaymentTemplate</class-a>
+                <class-b>com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentTemplateResponse</class-b>
+            </converter>
+            <converter type="com.kyripay.payment.infrastructure.mapping.converter.jooq.PaymentTemplateRecordConverter">
+                <class-a>com.kyripay.payment.dao.impl.jooq.meta.tables.records.PaymentTemplateRecord</class-a>
+                <class-b>com.kyripay.payment.domain.PaymentTemplate</class-b>
+            </converter>
+        </custom-converters>
+    </configuration>
+</mappings>

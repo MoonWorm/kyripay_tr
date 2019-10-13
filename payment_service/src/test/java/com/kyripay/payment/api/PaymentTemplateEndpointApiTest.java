@@ -5,7 +5,9 @@
  *******************************************************************************/
 package com.kyripay.payment.api;
 
-import com.kyripay.payment.dto.PaymentTemplateResponse;
+import com.kyripay.payment.infrastructure.adapter.in.payment.CustomGlobalExceptionHandler;
+import com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentTemplateResponse;
+import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
@@ -15,6 +17,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -35,18 +38,17 @@ import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
-
 /**
  * @author M-ATA
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = DEFINED_PORT)
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 public class PaymentTemplateEndpointApiTest {
 
@@ -60,8 +62,12 @@ public class PaymentTemplateEndpointApiTest {
 
     private RequestSpecification documentationSpec;
 
+    @LocalServerPort
+    private int port;
+
     @Before
     public void setUp() {
+        RestAssured.port = port;
         this.documentationSpec = new RequestSpecBuilder()
                 .addFilter(documentationConfiguration(restDocumentation)).build();
     }
@@ -243,3 +249,4 @@ public class PaymentTemplateEndpointApiTest {
     }
 
 }
+

@@ -1,29 +1,31 @@
 package com.kyripay.payment.service;
 
-import com.kyripay.payment.dao.PaymentRepository;
-import com.kyripay.payment.dao.exception.RepositoryException;
 import com.kyripay.payment.domain.Payment;
+import com.kyripay.payment.domain.SearchCriterias;
+import com.kyripay.payment.domain.Trace;
+import com.kyripay.payment.domain.port.in.payment.ServiceException;
+import com.kyripay.payment.domain.port.in.payment.impl.PaymentValidator;
+import com.kyripay.payment.domain.port.in.payment.impl.PaymentsImpl;
+import com.kyripay.payment.domain.port.out.payment.Payments;
+import com.kyripay.payment.domain.port.out.payment.RepositoryException;
+import com.kyripay.payment.domain.port.out.traces.Traces;
 import com.kyripay.payment.domain.vo.Amount;
 import com.kyripay.payment.domain.vo.Currency;
 import com.kyripay.payment.domain.vo.Status;
-import com.kyripay.payment.dto.*;
-import com.kyripay.payment.service.exception.ServiceException;
-import com.kyripay.payment.service.impl.PaymentServiceImpl;
-import com.kyripay.payment.service.impl.PaymentValidator;
-import org.dozer.DozerBeanMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -32,52 +34,43 @@ public class PaymentServiceTest {
     private static final UUID USER_ID = UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11");
 
     @Mock
-    private PaymentRepository repository;
+    private Payments repository;
     @Mock
     private PaymentValidator validator;
     @Mock
-    private DozerBeanMapper mapper;
+    private Traces traces;
     @InjectMocks
-    private PaymentServiceImpl sut;
+    private PaymentsImpl sut;
 
     @Test
     public void create_setupSuccessScenario_checkAllInvocationsAndResult() {
         // given
-        PaymentRequest request = createPaymentRequest1();
-        PaymentDetails pdDto = request.getPaymentDetails();
-        PaymentRecipientInfo riDto = pdDto.getRecipientInfo();
+        Payment paymentToCreate = createPayment1();
+        Payment paymentCreated = createPayment1(1L);
 
-        com.kyripay.payment.domain.PaymentRecipientInfo riDomain = new com.kyripay.payment.domain.PaymentRecipientInfo(
-                riDto.getFirstName(), riDto.getLastName(), riDto.getBankUrn(), riDto.getBankName(),
-                riDto.getBankAddress(), riDto.getAccountNumber());
-        Payment pDomain = new Payment(pdDto.getAmount(), pdDto.getBankId(), pdDto.getAccountNumber(), Status.CREATED,
-                riDomain, null);
-        Payment pDomainCreated = new Payment(1L, USER_ID, pdDto.getAmount(), pdDto.getBankId(), pdDto.getAccountNumber(),
-                Status.CREATED, riDomain, LocalDateTime.now());
-
-        PaymentResponse expectedResponse = new PaymentResponse(pDomainCreated.getId(), pDomainCreated.getStatus(), pdDto,
-                pDomainCreated.getCreatedOn().toInstant(ZoneOffset.UTC).toEpochMilli());
-
-        when(mapper.map(request, Payment.class)).thenReturn(pDomain);
-        when(repository.create(USER_ID, pDomain)).thenReturn(pDomainCreated);
-        when(mapper.map(pDomainCreated, PaymentResponse.class)).thenReturn(expectedResponse);
+        when(repository.create(USER_ID, paymentToCreate)).thenReturn(paymentCreated);
+        ArgumentCaptor<Trace> traceCapture = ArgumentCaptor.forClass(Trace.class);
+        doNothing().when(traces).createTrace(traceCapture.capture());
 
         // when
-        PaymentResponse actualResponse = sut.create(USER_ID, request);
+        Payment actualResult = sut.create(USER_ID, paymentToCreate);
 
         // then
-        assertThat(actualResponse).isNotNull().isEqualTo(expectedResponse);
+        assertThat(actualResult).isNotNull().isEqualTo(paymentCreated);
+        Trace trace = traceCapture.getValue();
+        assertThat(trace).isNotNull().hasFieldOrPropertyWithValue("paymentId", paymentCreated.getId());
+        assertThat(trace.getHeaders()).isNotNull().containsEntry("userId", USER_ID.toString());
     }
 
     @Test(expected = ServiceException.class)
     public void create_setupFailureScenario_checkExceptionIsThrown() {
         // given
-        PaymentRequest request = createPaymentRequest1();
+        Payment paymentToCreate = createPayment1();
 
-        when(mapper.map(request, Payment.class)).thenThrow(new NullPointerException());
+        when(repository.create(USER_ID, paymentToCreate)).thenThrow(new NullPointerException());
 
         // when
-        sut.create(USER_ID, request);
+        sut.create(USER_ID, paymentToCreate);
 
         // then assert expected exception
     }
@@ -89,19 +82,15 @@ public class PaymentServiceTest {
         int offset = 0;
         Payment payment1 = createPayment1();
         Payment payment2 = createPayment2();
-        PaymentResponse paymentResponse1 = createPaymentResponse(payment1);
-        PaymentResponse paymentResponse2 = createPaymentResponse(payment2);
         when(repository.readAll(USER_ID, limit, offset)).thenReturn(asList(payment1, payment2));
-        when(mapper.map(payment1, PaymentResponse.class)).thenReturn(paymentResponse1);
-        when(mapper.map(payment2, PaymentResponse.class)).thenReturn(paymentResponse2);
 
         // when
-        List<PaymentResponse> actualResponse = sut.readAll(USER_ID, limit, offset);
+        List<Payment> actualResult = sut.readAll(USER_ID, limit, offset);
 
         // then
-        assertThat(actualResponse).isNotNull().doesNotContainNull();
-        assertThat(actualResponse.get(0)).isEqualTo(paymentResponse1);
-        assertThat(actualResponse.get(1)).isEqualTo(paymentResponse2);
+        assertThat(actualResult).isNotNull().doesNotContainNull();
+        assertThat(actualResult.get(0)).isEqualTo(payment1);
+        assertThat(actualResult.get(1)).isEqualTo(payment2);
     }
 
     @Test(expected = ServiceException.class)
@@ -124,18 +113,16 @@ public class PaymentServiceTest {
         int limit = 2;
         int offset = 0;
         Payment payment1 = createPayment1();
-        PaymentWithUserIdResponse paymentResponse1 = createPaymentResponse(USER_ID, payment1);
         SearchCriterias sc = new SearchCriterias();
         sc.setStatus(Status.CREATED);
         when(repository.search(sc, limit, offset)).thenReturn(asList(payment1));
-        when(mapper.map(payment1, PaymentWithUserIdResponse.class)).thenReturn(paymentResponse1);
 
         // when
-        List<PaymentWithUserIdResponse> actualResponse = sut.search(sc, limit, offset);
+        List<Payment> actualResult = sut.search(sc, limit, offset);
 
         // then
-        assertThat(actualResponse).isNotNull().doesNotContainNull().size().isEqualTo(1);
-        assertThat(actualResponse.get(0)).isEqualTo(paymentResponse1);
+        assertThat(actualResult).isNotNull().doesNotContainNull().size().isEqualTo(1);
+        assertThat(actualResult.get(0)).isEqualTo(payment1);
     }
 
     @Test(expected = ServiceException.class)
@@ -160,15 +147,13 @@ public class PaymentServiceTest {
         // given
         long paymentId = 1L;
         Payment payment = createPayment1();
-        PaymentResponse paymentResponse = createPaymentResponse(payment);
         when(repository.readById(USER_ID, paymentId)).thenReturn(payment);
-        when(mapper.map(payment, PaymentResponse.class)).thenReturn(paymentResponse);
 
         // when
-        PaymentResponse actualResponse = sut.readById(USER_ID, paymentId);
+        Payment actualResult = sut.readById(USER_ID, paymentId);
 
         // then
-        assertThat(actualResponse).isNotNull().isEqualTo(paymentResponse);
+        assertThat(actualResult).isNotNull().isEqualTo(payment);
     }
 
     @Test(expected = ServiceException.class)
@@ -192,10 +177,10 @@ public class PaymentServiceTest {
         when(repository.getStatus(USER_ID, paymentId)).thenReturn(status);
 
         // when
-        Status actualResponse = sut.getStatus(USER_ID, paymentId);
+        Status actualResult = sut.getStatus(USER_ID, paymentId);
 
         // then
-        assertThat(actualResponse).isNotNull().isEqualTo(status);
+        assertThat(actualResult).isNotNull().isEqualTo(status);
     }
 
     @Test(expected = ServiceException.class)
@@ -219,10 +204,10 @@ public class PaymentServiceTest {
         when(repository.updateStatus(USER_ID, paymentId, status)).thenReturn(status);
 
         // when
-        Status actualResponse = sut.updateStatus(USER_ID, paymentId, status);
+        Status actualResult = sut.updateStatus(USER_ID, paymentId, status);
 
         // then
-        assertThat(actualResponse).isNotNull().isEqualTo(status);
+        assertThat(actualResult).isNotNull().isEqualTo(status);
     }
 
     @Test(expected = ServiceException.class)
@@ -239,56 +224,19 @@ public class PaymentServiceTest {
         // then assert expected exception
     }
 
-    private PaymentResponse createPaymentResponse(Payment payment) {
-        com.kyripay.payment.domain.PaymentRecipientInfo ri = payment.getRecipientInfo();
-        long createdOn = payment.getCreatedOn().toInstant(ZoneOffset.UTC).toEpochMilli();
-        return new PaymentResponse(
-                payment.getId(),
-                payment.getStatus(),
-                new PaymentDetails(
-                        payment.getAmount(),
-                        payment.getBankId(),
-                        payment.getAccountNumber(),
-                        new PaymentRecipientInfo(
-                                ri.getFirstName(),
-                                ri.getLastName(),
-                                ri.getBankUrn(),
-                                ri.getBankName(),
-                                ri.getBankAddress(),
-                                ri.getAccountNumber()
-                        )
-                ),
-                createdOn);
-    }
-
-    private PaymentWithUserIdResponse createPaymentResponse(UUID userId, Payment payment) {
-        com.kyripay.payment.domain.PaymentRecipientInfo ri = payment.getRecipientInfo();
-        long createdOn = payment.getCreatedOn().toInstant(ZoneOffset.UTC).toEpochMilli();
-        return new PaymentWithUserIdResponse(
-                payment.getId(),
-                userId,
-                payment.getStatus(),
-                new PaymentDetails(
-                        payment.getAmount(),
-                        payment.getBankId(),
-                        payment.getAccountNumber(),
-                        new PaymentRecipientInfo(
-                                ri.getFirstName(),
-                                ri.getLastName(),
-                                ri.getBankUrn(),
-                                ri.getBankName(),
-                                ri.getBankAddress(),
-                                ri.getAccountNumber()
-                        )
-                ),
-                createdOn);
-    }
-
     private Payment createPayment1() {
         com.kyripay.payment.domain.PaymentRecipientInfo recipientInfo1
                 = new com.kyripay.payment.domain.PaymentRecipientInfo("Vasia", "Pupkin",
                 "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
         return new Payment(1L, USER_ID, new Amount(100L, Currency.BYN), 1L,
+                "IBAN123", Status.CREATED, recipientInfo1, LocalDateTime.now());
+    }
+
+    private Payment createPayment1(long id) {
+        com.kyripay.payment.domain.PaymentRecipientInfo recipientInfo1
+                = new com.kyripay.payment.domain.PaymentRecipientInfo("Vasia", "Pupkin",
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+        return new Payment(id, USER_ID, new Amount(100L, Currency.BYN), 1L,
                 "IBAN123", Status.CREATED, recipientInfo1, LocalDateTime.now());
     }
 
@@ -298,18 +246,6 @@ public class PaymentServiceTest {
                 "0000/00222/0XXXY", "Super Bank 2 Inc.", "Main str. 1-2", "IBAN432");
         return new Payment(2L, USER_ID, new Amount(200L, Currency.USD), 2L,
                 "IBAN234", Status.CREATED, recipientInfo2, LocalDateTime.now());
-    }
-
-    private PaymentRequest createPaymentRequest1() {
-        PaymentDetails paymentDetails = createPaymentDetails1();
-        return new PaymentRequest(paymentDetails);
-    }
-
-    private PaymentDetails createPaymentDetails1() {
-        PaymentRecipientInfo recipientInfo1 = new PaymentRecipientInfo("Vasia", "Pupkin",
-                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
-        return new PaymentDetails(new Amount(100L, Currency.BYN), 1L,
-                "IBAN123", recipientInfo1);
     }
 
 }

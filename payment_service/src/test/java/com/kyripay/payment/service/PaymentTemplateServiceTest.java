@@ -1,18 +1,13 @@
 package com.kyripay.payment.service;
 
-import com.kyripay.payment.dao.PaymentTemplateRepository;
-import com.kyripay.payment.dao.exception.RepositoryException;
 import com.kyripay.payment.domain.PaymentTemplate;
+import com.kyripay.payment.domain.port.in.payment.ServiceException;
+import com.kyripay.payment.domain.port.in.payment.impl.PaymentTemplateValidator;
+import com.kyripay.payment.domain.port.in.payment.impl.PaymentTemplatesImpl;
+import com.kyripay.payment.domain.port.out.payment.PaymentTemplates;
+import com.kyripay.payment.domain.port.out.payment.RepositoryException;
 import com.kyripay.payment.domain.vo.Amount;
 import com.kyripay.payment.domain.vo.Currency;
-import com.kyripay.payment.dto.PaymentTemplateDetails;
-import com.kyripay.payment.dto.PaymentTemplateRecipientInfo;
-import com.kyripay.payment.dto.PaymentTemplateRequest;
-import com.kyripay.payment.dto.PaymentTemplateResponse;
-import com.kyripay.payment.service.exception.ServiceException;
-import com.kyripay.payment.service.impl.PaymentTemplateServiceImpl;
-import com.kyripay.payment.service.impl.PaymentTemplateValidator;
-import org.dozer.DozerBeanMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -20,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,52 +28,36 @@ public class PaymentTemplateServiceTest {
     private static final UUID USER_ID = UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11");
 
     @Mock
-    private PaymentTemplateRepository repository;
+    private PaymentTemplates repository;
     @Mock
     private PaymentTemplateValidator validator;
-    @Mock
-    private DozerBeanMapper mapper;
     @InjectMocks
-    private PaymentTemplateServiceImpl sut;
+    private PaymentTemplatesImpl sut;
 
     @Test
     public void create_setupSuccessScenario_checkAllInvocationsAndResult() {
         // given
-        PaymentTemplateRequest request = createPaymentTemplateRequest1();
-        PaymentTemplateDetails pdDto = request.getPaymentDetails();
-        PaymentTemplateRecipientInfo riDto = pdDto.getRecipientInfo();
+        PaymentTemplate paymentTemplateToCreate = createPaymentTemplate1();
+        PaymentTemplate paymentTemplateCreated = createPaymentTemplate1(1L);
 
-        com.kyripay.payment.domain.PaymentTemplateRecipientInfo riDomain
-                = new com.kyripay.payment.domain.PaymentTemplateRecipientInfo(riDto.getFirstName(), riDto.getLastName(),
-                riDto.getBankUrn(), riDto.getBankName(), riDto.getBankAddress(), riDto.getAccountNumber());
-        PaymentTemplate ptDomain = new PaymentTemplate(null, request.getName(), pdDto.getAmount(), pdDto.getBankId(),
-                pdDto.getAccountNumber(), riDomain, null);
-        PaymentTemplate ptDomainCreated = new PaymentTemplate(1L, request.getName(), pdDto.getAmount(),
-                pdDto.getBankId(), pdDto.getAccountNumber(), riDomain, LocalDateTime.now());
-
-        PaymentTemplateResponse expectedResponse = new PaymentTemplateResponse(ptDomainCreated.getId(), ptDomain.getName(),
-                pdDto, ptDomainCreated.getCreatedOn().toInstant(ZoneOffset.UTC).toEpochMilli());
-
-        when(mapper.map(request, PaymentTemplate.class)).thenReturn(ptDomain);
-        when(repository.create(USER_ID, ptDomain)).thenReturn(ptDomainCreated);
-        when(mapper.map(ptDomainCreated, PaymentTemplateResponse.class)).thenReturn(expectedResponse);
+        when(repository.create(USER_ID, paymentTemplateToCreate)).thenReturn(paymentTemplateCreated);
 
         // when
-        PaymentTemplateResponse actualResponse = sut.create(USER_ID, request);
+        PaymentTemplate actualResult = sut.create(USER_ID, paymentTemplateToCreate);
 
         // then
-        assertThat(actualResponse).isNotNull().isEqualTo(expectedResponse);
+        assertThat(actualResult).isNotNull().isEqualTo(paymentTemplateCreated);
     }
 
     @Test(expected = ServiceException.class)
     public void create_setupFailureScenario_checkExceptionIsThrown() {
         // given
-        PaymentTemplateRequest request = createPaymentTemplateRequest1();
+        PaymentTemplate paymentTemplateToCreate = createPaymentTemplate1();
 
-        when(mapper.map(request, PaymentTemplate.class)).thenThrow(new NullPointerException());
+        when(repository.create(USER_ID, paymentTemplateToCreate)).thenThrow(new NullPointerException());
 
         // when
-        sut.create(USER_ID, request);
+        sut.create(USER_ID, paymentTemplateToCreate);
 
         // then assert expected exception
     }
@@ -89,21 +67,17 @@ public class PaymentTemplateServiceTest {
         // given
         int limit = 3;
         int offset = 0;
-        PaymentTemplate pt1 = createPaymentTemplate1();
-        PaymentTemplate pt2 = createPaymentTemplate2();
-        PaymentTemplateResponse pr1 = createPaymentResponse(pt1);
-        PaymentTemplateResponse pr2 = createPaymentResponse(pt2);
-        when(repository.readAll(USER_ID, limit, offset)).thenReturn(asList(pt1, pt2));
-        when(mapper.map(pt1, PaymentTemplateResponse.class)).thenReturn(pr1);
-        when(mapper.map(pt2, PaymentTemplateResponse.class)).thenReturn(pr2);
+        PaymentTemplate paymentTemplate1 = createPaymentTemplate1();
+        PaymentTemplate paymentTemplate2 = createPaymentTemplate2();
+        when(repository.readAll(USER_ID, limit, offset)).thenReturn(asList(paymentTemplate1, paymentTemplate2));
 
         // when
-        List<PaymentTemplateResponse> actualResponse = sut.readAll(USER_ID, limit, offset);
+        List<PaymentTemplate> actualResult = sut.readAll(USER_ID, limit, offset);
 
         // then
-        assertThat(actualResponse).isNotNull().doesNotContainNull();
-        assertThat(actualResponse.get(0)).isEqualTo(pr1);
-        assertThat(actualResponse.get(1)).isEqualTo(pr2);
+        assertThat(actualResult).isNotNull().doesNotContainNull();
+        assertThat(actualResult.get(0)).isEqualTo(paymentTemplate1);
+        assertThat(actualResult.get(1)).isEqualTo(paymentTemplate2);
     }
 
     @Test(expected = ServiceException.class)
@@ -123,28 +97,26 @@ public class PaymentTemplateServiceTest {
     @Test
     public void readById_setupSuccessScenario_checkAllInvocationsAndResult() {
         // given
-        long paymentId = 1L;
+        long id = 1L;
         PaymentTemplate payment = createPaymentTemplate1();
-        PaymentTemplateResponse paymentResponse = createPaymentResponse(payment);
-        when(repository.readById(USER_ID, paymentId)).thenReturn(payment);
-        when(mapper.map(payment, PaymentTemplateResponse.class)).thenReturn(paymentResponse);
+        when(repository.readById(USER_ID, id)).thenReturn(payment);
 
         // when
-        PaymentTemplateResponse actualResponse = sut.readById(USER_ID, paymentId);
+        PaymentTemplate actualResult = sut.readById(USER_ID, id);
 
         // then
-        assertThat(actualResponse).isNotNull().isEqualTo(paymentResponse);
+        assertThat(actualResult).isNotNull().isEqualTo(payment);
     }
 
     @Test(expected = ServiceException.class)
     public void readById_setupFailureScenario_checkExceptionIsThrown() {
         // given
-        long paymentId = 1L;
+        long id = 1L;
 
-        when(repository.readById(USER_ID, paymentId)).thenThrow(new RepositoryException(""));
+        when(repository.readById(USER_ID, id)).thenThrow(new RepositoryException(""));
 
         // when
-        sut.readById(USER_ID, paymentId);
+        sut.readById(USER_ID, id);
 
         // then assert expected exception
     }
@@ -152,43 +124,30 @@ public class PaymentTemplateServiceTest {
     @Test
     public void update_setupSuccessScenario_checkAllInvocationsAndResult() {
         // given
-        long ptId = 1L;
-        PaymentTemplateRequest request = createPaymentTemplateRequest1();
-        PaymentTemplateDetails pdDto = request.getPaymentDetails();
-        PaymentTemplateRecipientInfo riDto = pdDto.getRecipientInfo();
+        long id = 1L;
 
-        com.kyripay.payment.domain.PaymentTemplateRecipientInfo riDomain
-                = new com.kyripay.payment.domain.PaymentTemplateRecipientInfo(riDto.getFirstName(), riDto.getLastName(),
-                riDto.getBankUrn(), riDto.getBankName(), riDto.getBankAddress(), riDto.getAccountNumber());
-        PaymentTemplate ptDomain = new PaymentTemplate(ptId, request.getName(), pdDto.getAmount(), pdDto.getBankId(),
-                pdDto.getAccountNumber(), riDomain, null);
-        PaymentTemplate ptDomainUpdated = new PaymentTemplate(ptId, request.getName(), pdDto.getAmount(),
-                pdDto.getBankId(), pdDto.getAccountNumber(), riDomain, LocalDateTime.now());
+        PaymentTemplate paymentTemplate = createPaymentTemplate1(id);
+        PaymentTemplate paymentTemplateUpdated = createPaymentTemplate1(id);
 
-        PaymentTemplateResponse expectedResponse = new PaymentTemplateResponse(ptDomainUpdated.getId(), ptDomain.getName(),
-                pdDto, ptDomainUpdated.getCreatedOn().toInstant(ZoneOffset.UTC).toEpochMilli());
-
-        when(mapper.map(request, PaymentTemplate.class)).thenReturn(ptDomain);
-        when(repository.update(USER_ID, ptId, ptDomain)).thenReturn(ptDomainUpdated);
-        when(mapper.map(ptDomainUpdated, PaymentTemplateResponse.class)).thenReturn(expectedResponse);
+        when(repository.update(USER_ID, id, paymentTemplate)).thenReturn(paymentTemplateUpdated);
 
         // when
-        PaymentTemplateResponse actualResponse = sut.update(USER_ID, ptId, request);
+        PaymentTemplate actualResult = sut.update(USER_ID, id, paymentTemplate);
 
         // then
-        assertThat(actualResponse).isNotNull().isEqualTo(expectedResponse);
+        assertThat(actualResult).isNotNull().isEqualTo(paymentTemplateUpdated);
     }
 
     @Test(expected = ServiceException.class)
     public void update_setupFailureScenario_checkExceptionIsThrown() {
         // given
-        long ptId = 1L;
-        PaymentTemplateRequest request = createPaymentTemplateRequest1();
+        long id = 1L;
+        PaymentTemplate paymentTemplate = createPaymentTemplate1(id);
 
-        when(mapper.map(request, PaymentTemplate.class)).thenThrow(new NullPointerException());
+        when(repository.update(USER_ID, id, paymentTemplate)).thenThrow(new NullPointerException());
 
         // when
-        sut.update(USER_ID, ptId, request);
+        sut.update(USER_ID, id, paymentTemplate);
 
         // then assert expected exception
     }
@@ -196,55 +155,41 @@ public class PaymentTemplateServiceTest {
     @Test
     public void delete_setupSuccessScenario_checkAllInvocationsAndResult() {
         // given
-        long ptId = 1L;
+        long id = 1L;
 
         // when
-        sut.delete(USER_ID, ptId);
+        sut.delete(USER_ID, id);
 
         // then
-        verify(repository).delete(USER_ID, ptId);
+        verify(repository).delete(USER_ID, id);
     }
 
     @Test(expected = ServiceException.class)
     public void delete_setupFailureScenario_checkExceptionIsThrown() {
         // given
-        long ptId = 1L;
+        long id = 1L;
 
-        doThrow(new RepositoryException("")).when(repository).delete(USER_ID, ptId);
+        doThrow(new RepositoryException("")).when(repository).delete(USER_ID, id);
 
         // when
-        sut.delete(USER_ID, ptId);
+        sut.delete(USER_ID, id);
 
         // then assert expected exception
-    }
-
-    private PaymentTemplateResponse createPaymentResponse(PaymentTemplate pt) {
-        com.kyripay.payment.domain.PaymentTemplateRecipientInfo ri = pt.getRecipientInfo();
-        long createdOn = pt.getCreatedOn().toInstant(ZoneOffset.UTC).toEpochMilli();
-        return new PaymentTemplateResponse(
-                pt.getId(),
-                pt.getName(),
-                new PaymentTemplateDetails(
-                        pt.getAmount(),
-                        pt.getBankId(),
-                        pt.getAccountNumber(),
-                        new PaymentTemplateRecipientInfo(
-                                ri.getFirstName(),
-                                ri.getLastName(),
-                                ri.getBankUrn(),
-                                ri.getBankName(),
-                                ri.getBankAddress(),
-                                ri.getAccountNumber()
-                        )
-                ),
-                createdOn);
     }
 
     private PaymentTemplate createPaymentTemplate1() {
         com.kyripay.payment.domain.PaymentTemplateRecipientInfo recipientInfo1
                 = new com.kyripay.payment.domain.PaymentTemplateRecipientInfo("Vasia", "Pupkin",
                 "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
-        return new PaymentTemplate(1L, "Template 1", new Amount(100L, Currency.BYN), 1L,
+        return new PaymentTemplate(null, "Template 1", new Amount(100L, Currency.BYN), 1L,
+                "IBAN123", recipientInfo1, LocalDateTime.now());
+    }
+
+    private PaymentTemplate createPaymentTemplate1(long id) {
+        com.kyripay.payment.domain.PaymentTemplateRecipientInfo recipientInfo1
+                = new com.kyripay.payment.domain.PaymentTemplateRecipientInfo("Vasia", "Pupkin",
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+        return new PaymentTemplate(id, "Template 1", new Amount(100L, Currency.BYN), 1L,
                 "IBAN123", recipientInfo1, LocalDateTime.now());
     }
 
@@ -256,16 +201,5 @@ public class PaymentTemplateServiceTest {
                 "IBAN234", recipientInfo2, LocalDateTime.now());
     }
 
-    private PaymentTemplateRequest createPaymentTemplateRequest1() {
-        PaymentTemplateDetails paymentDetails = createPaymentTemplateDetails1();
-        return new PaymentTemplateRequest("Template 1", paymentDetails);
-    }
-
-    private PaymentTemplateDetails createPaymentTemplateDetails1() {
-        PaymentTemplateRecipientInfo recipientInfo1 = new PaymentTemplateRecipientInfo("Vasia", "Pupkin",
-                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
-        return new PaymentTemplateDetails(new Amount(100L, Currency.BYN), 1L,
-                "IBAN123", recipientInfo1);
-    }
 
 }
