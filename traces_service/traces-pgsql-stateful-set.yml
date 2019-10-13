@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: traces-postgres-stateful-set
+spec:
+  serviceName: "traces-postgres-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-stateful-set
+  template:
+    metadata:
+      labels:
+        app: postgres-stateful-set
+    spec:
+      containers:
+        - name: traces-postgres-db
+          image: postgres:9.5-alpine
+          imagePullPolicy: "IfNotPresent"
+          envFrom:
+            - configMapRef:
+                name: traces-postgres-config
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: traces-postgres-volume
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: traces-postgres-volume
+          persistentVolumeClaim:
+            claimName: traces-postgres-volume-claim

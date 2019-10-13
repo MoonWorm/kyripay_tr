@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: traces-service-pg
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: traces-cont
+    spec:
+      containers:
+        - name: traces-cont
+          image: asidoruk/kyripay-traces:0.0.2
+          # TODO investigate how to maintain versions
+          ports:
+            - containerPort: 8090
+          env:
+            - name: spring.profiles.active
+              value: postgres
+            - name: POSTGRESQL_HOST
+              value: traces-postgres-service
+
+

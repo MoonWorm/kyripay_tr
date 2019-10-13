@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: traces-postgres-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: traces-postgres
+    spec:
+      containers:
+        - name: traces-postgres-db
+          image: postgres:9.5-alpine
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: traces-postgres-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: traces-postgres-volume
+      volumes:
+        - name: traces-postgres-volume
+          persistentVolumeClaim:
+            claimName: traces-postgres-volume-claim
