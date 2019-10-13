@@ -1,4 +1,4 @@
-package com.kyripay.payment.dao;
+package com.kyripay.payment.integration;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;

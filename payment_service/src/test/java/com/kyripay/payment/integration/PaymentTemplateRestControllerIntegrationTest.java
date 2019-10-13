@@ -1,15 +1,13 @@
-package com.kyripay.payment.api;
+package com.kyripay.payment.integration;
 
-import com.kyripay.payment.domain.Payment;
+import com.kyripay.payment.domain.PaymentTemplate;
+import com.kyripay.payment.domain.port.in.payment.impl.PaymentTemplatesImpl;
 import com.kyripay.payment.infrastructure.adapter.in.payment.CustomGlobalExceptionHandler;
-import com.kyripay.payment.infrastructure.adapter.in.payment.PaymentController;
-import com.kyripay.payment.domain.SearchCriterias;
+import com.kyripay.payment.infrastructure.adapter.in.payment.PaymentTemplateController;
 import com.kyripay.payment.domain.vo.Amount;
 import com.kyripay.payment.domain.vo.Currency;
-import com.kyripay.payment.domain.vo.Status;
 import com.kyripay.payment.infrastructure.adapter.in.payment.dto.*;
 import com.kyripay.payment.domain.port.in.payment.ServiceException;
-import com.kyripay.payment.domain.port.in.payment.impl.PaymentsImpl;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.dozer.DozerBeanMapper;
 import org.junit.Test;
@@ -35,9 +33,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(PaymentController.class)
+@WebMvcTest(PaymentTemplateController.class)
 @ActiveProfiles("test")
-public class PaymentRestControllerIntegrationTest {
+public class PaymentTemplateRestControllerIntegrationTest {
 
     private static final UUID USER_ID = UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11");
 
@@ -45,28 +43,35 @@ public class PaymentRestControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private PaymentsImpl paymentService;
+    private PaymentTemplatesImpl paymentTemplateService;
 
     @MockBean
     private DozerBeanMapper mapper;
 
     @Test
     public void create_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
-        PaymentRequest pr = createPaymentRequest1();
+        PaymentTemplateRecipientInfo recipientInfo = new PaymentTemplateRecipientInfo("Vasia", "Pupkin",
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
 
-        PaymentResponse expectedResponse = new PaymentResponse(1L, Status.CREATED, pr.getPaymentDetails(),
+        PaymentTemplateDetails paymentTemplateDetails = new PaymentTemplateDetails(new Amount(100L, Currency.BYN), 1L,
+                "IBAN123", recipientInfo);
+
+        PaymentTemplateRequest request = new PaymentTemplateRequest("Template 1", paymentTemplateDetails);
+
+        PaymentTemplateResponse expectedResponse = new PaymentTemplateResponse(1L, "Template 1", paymentTemplateDetails,
                 System.currentTimeMillis());
 
-        Payment paymentToCreate = mock(Payment.class);
-        when(mapper.map(pr, Payment.class)).thenReturn(paymentToCreate);
-        Payment paymentCreated = mock(Payment.class);
-        when(paymentService.create(USER_ID, paymentToCreate)).thenReturn(paymentCreated);
-        when(mapper.map(paymentCreated, PaymentResponse.class)).thenReturn(expectedResponse);
+        PaymentTemplate paymentTemplateToCreate = mock(PaymentTemplate.class);
+        when(mapper.map(request, PaymentTemplate.class)).thenReturn(paymentTemplateToCreate);
+        PaymentTemplate paymentTemplateCreated = mock(PaymentTemplate.class);
+        when(paymentTemplateService.create(USER_ID, paymentTemplateToCreate)).thenReturn(paymentTemplateCreated);
+        when(mapper.map(paymentTemplateCreated, PaymentTemplateResponse.class)).thenReturn(expectedResponse);
 
-        ResultActions ra = mockMvc.perform(post("/api/v1/payments")
+        ResultActions ra = mockMvc.perform(post("/api/v1/paymenttemplates")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header("userId", USER_ID)
                 .content("{\n" +
+                        "  \"name\": \"Template 1\",\n" +
                         "  \"paymentDetails\": {\n" +
                         "    \"amount\": {\n" +
                         "      \"amount\": 100,\n" +
@@ -85,15 +90,16 @@ public class PaymentRestControllerIntegrationTest {
                         "  }\n" +
                         "}"))
                 .andExpect(status().isOk());
-        assertPaymentResponse(ra, expectedResponse);
+        assertPaymentTemplateResponse(ra, expectedResponse);
     }
 
     @Test
     public void create_sendInvalidRequest_shouldReturn400() throws Exception {
-        mockMvc.perform(post("/api/v1/payments")
+        mockMvc.perform(post("/api/v1/paymenttemplates")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header("userId", USER_ID)
                 .content("{\n" +
+                        "  \"name\": \"Template 1\",\n" +
                         "  \"paymentDetails\": {\n" +
                         "    \"amount\": {\n" +
                         "      \"amount\": null,\n" +
@@ -114,7 +120,13 @@ public class PaymentRestControllerIntegrationTest {
 
     @Test
     public void create_sendValidRequestButServiceThrowException_shouldReturnErrorResponse() throws Exception {
-        PaymentRequest paymentRequest = createPaymentRequest1();
+        PaymentTemplateRecipientInfo recipientInfo = new PaymentTemplateRecipientInfo("Vasia", "Pupkin",
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+
+        PaymentTemplateDetails paymentTemplateDetails = new PaymentTemplateDetails(new Amount(100L, Currency.BYN), 1L,
+                "IBAN123", recipientInfo);
+
+        PaymentTemplateRequest request = new PaymentTemplateRequest("Template 1", paymentTemplateDetails);
 
         Throwable e = new ServiceException("");
 
@@ -122,14 +134,15 @@ public class PaymentRestControllerIntegrationTest {
                 new Date(), HttpStatus.INTERNAL_SERVER_ERROR.value(), asList(ExceptionUtils.getMessage(e))
         );
 
-        Payment paymentToCreate = mock(Payment.class);
-        when(mapper.map(paymentRequest, Payment.class)).thenReturn(paymentToCreate);
-        when(paymentService.create(USER_ID, paymentToCreate)).thenThrow(e);
+        PaymentTemplate paymentTemplateToCreate = mock(PaymentTemplate.class);
+        when(mapper.map(request, PaymentTemplate.class)).thenReturn(paymentTemplateToCreate);
+        when(paymentTemplateService.create(USER_ID, paymentTemplateToCreate)).thenThrow(e);
 
-        mockMvc.perform(post("/api/v1/payments")
+        mockMvc.perform(post("/api/v1/paymenttemplates")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header("userId", USER_ID)
                 .content("{\n" +
+                        "  \"name\": \"Template 1\",\n" +
                         "  \"paymentDetails\": {\n" +
                         "    \"amount\": {\n" +
                         "      \"amount\": 100,\n" +
@@ -155,147 +168,133 @@ public class PaymentRestControllerIntegrationTest {
 
     @Test
     public void readAll_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
-        PaymentDetails paymentDetails1 = createPaymentDetails1();
+        PaymentTemplateRecipientInfo recipientInfo1 = new PaymentTemplateRecipientInfo("Vasia", "Pupkin",
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+        PaymentTemplateDetails paymentDetails1 = new PaymentTemplateDetails(new Amount(100L, Currency.BYN), 1L,
+                "IBAN123", recipientInfo1);
 
-        PaymentDetails paymentDetails2 = createPaymentDetails2();
+        PaymentTemplateRecipientInfo recipientInfo2 = new PaymentTemplateRecipientInfo("Ivan", "Ivanov",
+                "0000/00222/0XXXX", "Super Bank 2 Inc.", "Main str. 1-2", "IBAN432");
+        PaymentTemplateDetails paymentDetails2 = new PaymentTemplateDetails(new Amount(200L, Currency.USD), 2L,
+                "IBAN234", recipientInfo2);
 
-        PaymentResponse expectedResponse1 = new PaymentResponse(1L, Status.CREATED, paymentDetails1,
+        PaymentTemplateResponse expectedResponse1 = new PaymentTemplateResponse(1L, "Template 1", paymentDetails1,
                 System.currentTimeMillis());
 
-        PaymentResponse expectedResponse2 = new PaymentResponse(2L, Status.PROCESSING, paymentDetails2,
+        PaymentTemplateResponse expectedResponse2 = new PaymentTemplateResponse(2L, "Template 2", paymentDetails2,
                 System.currentTimeMillis());
 
         int limit = 2;
         int offset = 0;
 
-        Payment payment1 = mock(Payment.class);
-        Payment payment2 = mock(Payment.class);
-        when(paymentService.readAll(USER_ID, limit, offset)).thenReturn(asList(payment1, payment2));
-        when(mapper.map(payment1, PaymentResponse.class)).thenReturn(expectedResponse1);
-        when(mapper.map(payment2, PaymentResponse.class)).thenReturn(expectedResponse2);
+        PaymentTemplate paymentTemplate1 = mock(PaymentTemplate.class);
+        PaymentTemplate paymentTemplate2 = mock(PaymentTemplate.class);
+        when(paymentTemplateService.readAll(USER_ID, limit, offset)).thenReturn(asList(paymentTemplate1, paymentTemplate2));
+        when(mapper.map(paymentTemplate1, PaymentTemplateResponse.class)).thenReturn(expectedResponse1);
+        when(mapper.map(paymentTemplate2, PaymentTemplateResponse.class)).thenReturn(expectedResponse2);
 
-        ResultActions ra = mockMvc.perform(get("/api/v1/payments")
+        ResultActions ra = mockMvc.perform(get("/api/v1/paymenttemplates")
                 .param("limit", String.valueOf(limit))
                 .param("offset", String.valueOf(offset))
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header("userId", USER_ID))
                 .andExpect(status().isOk());
-        assertPaymentResponse(ra, expectedResponse1, 0);
-        assertPaymentResponse(ra, expectedResponse2, 1);
+        assertPaymentTemplateResponse(ra, expectedResponse1, 0);
+        assertPaymentTemplateResponse(ra, expectedResponse2, 1);
     }
 
     @Test
     public void readAll_sendInvalidRequestWithoutMandatoryUserIdHeaderValue_shouldReturn400() throws Exception {
-        mockMvc.perform(get("/api/v1/payments")
+        mockMvc.perform(get("/api/v1/paymenttemplates")
                 //.header("userId", USER_ID)
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void search_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
-        PaymentDetails paymentDetails1 = createPaymentDetails1();
-
-        PaymentWithUserIdResponse expectedResponse = new PaymentWithUserIdResponse(1L, USER_ID, Status.PROCESSING, paymentDetails1,
-                System.currentTimeMillis());
-
-        int limit = 2;
-        int offset = 0;
-
-        SearchCriterias sc = new SearchCriterias();
-        sc.setStatus(Status.PROCESSING);
-
-        Payment payment = mock(Payment.class);
-        when(paymentService.search(sc, limit, offset)).thenReturn(asList(payment));
-        when(mapper.map(payment, PaymentWithUserIdResponse.class)).thenReturn(expectedResponse);
-
-        ResultActions ra = mockMvc.perform(get("/api/v1/payments/search/result")
-                .param("status", sc.getStatus().name())
-                .param("limit", String.valueOf(limit))
-                .param("offset", String.valueOf(offset))
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk());
-        assertPaymentResponse(ra, expectedResponse, 0);
-    }
-
-    @Test
-    public void search_sendInvalidRequestWithoutMandatoryRequestParam_shouldReturn400() throws Exception {
-        mockMvc.perform(get("/api/v1/payments/search/result")
-                .param("limit", String.valueOf(2))
-                .param("offset", "abc")
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void readById_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
-        long paymentId = 1L;
-        PaymentDetails paymentDetails = createPaymentDetails1();
+        long paymentTemplateId = 1L;
+        PaymentTemplateRecipientInfo recipientInfo = new PaymentTemplateRecipientInfo("Vasia", "Pupkin",
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
+        PaymentTemplateDetails paymentDetails = new PaymentTemplateDetails(new Amount(100L, Currency.BYN), 1L,
+                "IBAN123", recipientInfo);
 
-        PaymentResponse expectedResponse = new PaymentResponse(paymentId, Status.CREATED, paymentDetails,
+        PaymentTemplateResponse expectedResponse = new PaymentTemplateResponse(paymentTemplateId, "Template 1", paymentDetails,
                 System.currentTimeMillis());
 
-        Payment payment = mock(Payment.class);
-        when(paymentService.readById(USER_ID, paymentId)).thenReturn(payment);
-        when(mapper.map(payment, PaymentResponse.class)).thenReturn(expectedResponse);
+        PaymentTemplate paymentTemplate = mock(PaymentTemplate.class);
+        when(paymentTemplateService.readById(USER_ID, paymentTemplateId)).thenReturn(paymentTemplate);
+        when(mapper.map(paymentTemplate, PaymentTemplateResponse.class)).thenReturn(expectedResponse);
 
-        ResultActions ra = mockMvc.perform(get("/api/v1/payments/" + paymentId)
+        ResultActions ra = mockMvc.perform(get("/api/v1/paymenttemplates/" + paymentTemplateId)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header("userId", USER_ID))
                 .andExpect(status().isOk());
-        assertPaymentResponse(ra, expectedResponse);
+        assertPaymentTemplateResponse(ra, expectedResponse);
     }
 
     @Test
     public void readById_sendInvalidRequestWithoutMandatoryUserIdHeaderValue_shouldReturn400() throws Exception {
-        mockMvc.perform(get("/api/v1/payments/1")
+        mockMvc.perform(get("/api/v1/paymenttemplates/1")
                 //.header("userId", USER_ID)
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void getPaymentStatus_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
-        long paymentId = 1L;
-        Status status = Status.COMPLETED;
-        when(paymentService.getStatus(USER_ID, paymentId)).thenReturn(status);
+    public void update_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
+        long paymentTemplateId = 1L;
+        
+        PaymentTemplateRecipientInfo recipientInfo = new PaymentTemplateRecipientInfo("Vasia", "Pupkin",
+                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
 
-        mockMvc.perform(get("/api/v1/payments/" + paymentId + "/status")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .header("userId", USER_ID))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(status.name()));
-    }
+        PaymentTemplateDetails paymentTemplateDetails = new PaymentTemplateDetails(new Amount(100L, Currency.BYN), 1L,
+                "IBAN123", recipientInfo);
 
-    @Test
-    public void getPaymentStatus_sendInvalidRequestWithWrongPathVarType_shouldReturn400() throws Exception {
-        mockMvc.perform(get("/api/v1/payments/abc/status")
-                .header("userId", USER_ID)
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest());
-    }
+        PaymentTemplateRequest request = new PaymentTemplateRequest("Template 1", paymentTemplateDetails);
 
-    @Test
-    public void updateStatus_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
-        long paymentId = 1L;
-        Status status = Status.PROCESSING;
+        PaymentTemplateResponse expectedResponse = new PaymentTemplateResponse(paymentTemplateId, "Template 1", paymentTemplateDetails,
+                System.currentTimeMillis());
 
-        when(paymentService.updateStatus(USER_ID, paymentId, status)).thenReturn(status);
+        PaymentTemplate paymentTemplateToUpdate = mock(PaymentTemplate.class);
+        when(mapper.map(request, PaymentTemplate.class)).thenReturn(paymentTemplateToUpdate);
+        PaymentTemplate paymentTemplateUpdated = mock(PaymentTemplate.class);
+        when(paymentTemplateService.update(USER_ID, paymentTemplateId, paymentTemplateToUpdate)).thenReturn(paymentTemplateUpdated);
+        when(mapper.map(paymentTemplateUpdated, PaymentTemplateResponse.class)).thenReturn(expectedResponse);
 
-        mockMvc.perform(put("/api/v1/payments/" + paymentId + "/status")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .header("userId", USER_ID)
-                .content("{\"status\": \"PROCESSING\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(status.name()));
-    }
-
-    @Test
-    public void updateStatus_sendInvalidRequest_shouldReturn400() throws Exception {
-        mockMvc.perform(post("/api/v1/payments")
+        ResultActions ra = mockMvc.perform(put("/api/v1/paymenttemplates/" + paymentTemplateId)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header("userId", USER_ID)
                 .content("{\n" +
+                        "  \"name\": \"Template 1\",\n" +
+                        "  \"paymentDetails\": {\n" +
+                        "    \"amount\": {\n" +
+                        "      \"amount\": 100,\n" +
+                        "      \"currency\": \"BYN\"\n" +
+                        "    },\n" +
+                        "    \"bankId\": 1,\n" +
+                        "    \"accountNumber\": \"IBAN123\",\n" +
+                        "    \"recipientInfo\": {\n" +
+                        "      \"firstName\": \"Vasia\",\n" +
+                        "      \"lastName\": \"Pupkin\",\n" +
+                        "      \"bankUrn\": \"0000/00222/0XXXX\",\n" +
+                        "      \"bankName\": \"Super Bank Inc.\",\n" +
+                        "      \"bankAddress\": \"Main str. 1-1\",\n" +
+                        "      \"accountNumber\": \"IBAN321\"\n" +
+                        "    }\n" +
+                        "  }\n" +
+                        "}"))
+                .andExpect(status().isOk());
+        assertPaymentTemplateResponse(ra, expectedResponse);
+    }
+
+    @Test
+    public void update_sendInvalidRequest_shouldReturn400() throws Exception {
+        mockMvc.perform(put("/api/v1/paymenttemplates/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header("userId", USER_ID)
+                .content("{\n" +
+                        "  \"name\": \"Template 1\",\n" +
                         "  \"paymentDetails\": {\n" +
                         "    \"amount\": {\n" +
                         "      \"amount\": null,\n" +
@@ -314,31 +313,28 @@ public class PaymentRestControllerIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
-    private PaymentRequest createPaymentRequest1() {
-        PaymentDetails paymentDetails = createPaymentDetails1();
-        return new PaymentRequest(paymentDetails);
+    @Test
+    public void delete_sendValidRequest_shouldReturn200andValidResponse() throws Exception {
+        long paymentTemplateId = 1L;
+        mockMvc.perform(delete("/api/v1/paymenttemplates/" + paymentTemplateId)
+                .header("userId", USER_ID))
+                .andExpect(status().isOk());
     }
 
-    private PaymentDetails createPaymentDetails1() {
-        PaymentRecipientInfo recipientInfo1 = new PaymentRecipientInfo("Vasia", "Pupkin",
-                "0000/00222/0XXXX", "Super Bank Inc.", "Main str. 1-1", "IBAN321");
-        return new PaymentDetails(new Amount(100L, Currency.BYN), 1L,
-                "IBAN123", recipientInfo1);
+    @Test
+    public void delete_sendInvalidRequestWithWrongPathVarType_shouldReturn400() throws Exception {
+        mockMvc.perform(delete("/api/v1/paymenttemplates/abc")
+                .header("userId", USER_ID)
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
     }
 
-    private PaymentDetails createPaymentDetails2() {
-        PaymentRecipientInfo recipientInfo2 = new PaymentRecipientInfo("Ivan", "Ivanov",
-                "0000/00222/0XXXX", "Super Bank 2 Inc.", "Main str. 1-2", "IBAN432");
-        return new PaymentDetails(new Amount(200L, Currency.USD), 2L,
-                "IBAN234", recipientInfo2);
-    }
-
-    private void assertPaymentResponse(ResultActions ra, PaymentResponse expectedResponse) throws Exception {
-        PaymentDetails pd = expectedResponse.getPaymentDetails();
+    private void assertPaymentTemplateResponse(ResultActions ra, PaymentTemplateResponse expectedResponse) throws Exception {
+        PaymentTemplateDetails pd = expectedResponse.getPaymentDetails();
         Amount a = pd.getAmount();
-        PaymentRecipientInfo ri = pd.getRecipientInfo();
+        PaymentTemplateRecipientInfo ri = pd.getRecipientInfo();
         ra.andExpect(jsonPath("$.id").value(expectedResponse.getId()))
-                .andExpect(jsonPath("$.status").value(expectedResponse.getStatus().name()))
+                .andExpect(jsonPath("$.name").value(expectedResponse.getName()))
                 .andExpect(jsonPath("$.paymentDetails.amount.amount").value(a.getAmount()))
                 .andExpect(jsonPath("$.paymentDetails.amount.currency").value(a.getCurrency().name()))
                 .andExpect(jsonPath("$.paymentDetails.bankId").value(pd.getBankId()))
@@ -352,36 +348,16 @@ public class PaymentRestControllerIntegrationTest {
                 .andExpect(jsonPath("$.createdOn").value(expectedResponse.getCreatedOn()));
     }
 
-    private void assertPaymentResponse(ResultActions ra, PaymentResponse expectedResponse, int index) throws Exception {
-        PaymentDetails pd = expectedResponse.getPaymentDetails();
-        Amount a = pd.getAmount();
-        PaymentRecipientInfo ri = pd.getRecipientInfo();
+    private void assertPaymentTemplateResponse(ResultActions ra, PaymentTemplateResponse expectedResponse, int index) throws Exception {
+        PaymentTemplateDetails ptd = expectedResponse.getPaymentDetails();
+        Amount a = ptd.getAmount();
+        PaymentTemplateRecipientInfo ri = ptd.getRecipientInfo();
         ra.andExpect(jsonPath("$[" + index + "].id").value(expectedResponse.getId()))
-                .andExpect(jsonPath("$[" + index + "].status").value(expectedResponse.getStatus().name()))
+                .andExpect(jsonPath("$[" + index + "].name").value(expectedResponse.getName()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.amount.amount").value(a.getAmount()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.amount.currency").value(a.getCurrency().name()))
-                .andExpect(jsonPath("$[" + index + "].paymentDetails.bankId").value(pd.getBankId()))
-                .andExpect(jsonPath("$[" + index + "].paymentDetails.accountNumber").value(pd.getAccountNumber()))
-                .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.firstName").value(ri.getFirstName()))
-                .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.lastName").value(ri.getLastName()))
-                .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.bankUrn").value(ri.getBankUrn()))
-                .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.bankName").value(ri.getBankName()))
-                .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.bankAddress").value(ri.getBankAddress()))
-                .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.accountNumber").value(ri.getAccountNumber()))
-                .andExpect(jsonPath("$[" + index + "].createdOn").value(expectedResponse.getCreatedOn()));
-    }
-
-    private void assertPaymentResponse(ResultActions ra, PaymentWithUserIdResponse expectedResponse, int index) throws Exception {
-        PaymentDetails pd = expectedResponse.getPaymentDetails();
-        Amount a = pd.getAmount();
-        PaymentRecipientInfo ri = pd.getRecipientInfo();
-        ra.andExpect(jsonPath("$[" + index + "].id").value(expectedResponse.getId()))
-                .andExpect(jsonPath("$[" + index + "].userId").value(expectedResponse.getUserId().toString()))
-                .andExpect(jsonPath("$[" + index + "].status").value(expectedResponse.getStatus().name()))
-                .andExpect(jsonPath("$[" + index + "].paymentDetails.amount.amount").value(a.getAmount()))
-                .andExpect(jsonPath("$[" + index + "].paymentDetails.amount.currency").value(a.getCurrency().name()))
-                .andExpect(jsonPath("$[" + index + "].paymentDetails.bankId").value(pd.getBankId()))
-                .andExpect(jsonPath("$[" + index + "].paymentDetails.accountNumber").value(pd.getAccountNumber()))
+                .andExpect(jsonPath("$[" + index + "].paymentDetails.bankId").value(ptd.getBankId()))
+                .andExpect(jsonPath("$[" + index + "].paymentDetails.accountNumber").value(ptd.getAccountNumber()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.firstName").value(ri.getFirstName()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.lastName").value(ri.getLastName()))
                 .andExpect(jsonPath("$[" + index + "].paymentDetails.recipientInfo.bankUrn").value(ri.getBankUrn()))
