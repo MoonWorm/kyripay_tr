@@ -5,15 +5,15 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: mongodb
+      app: notification-mongodb
   template:
     metadata:
-      name: mongodb
+      name: notification-mongodb
       labels:
-        app: mongodb
+        app: notification-mongodb
     spec:
       containers:
-        - name: mongodb
+        - name: notification-mongodb
           image: mongo:3.6
           ports:
             - containerPort: 27017
@@ -21,10 +21,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb
+  name: notification-mongodb
 spec:
   selector:
-    app: mongodb
+    app: notification-mongodb
   ports:
     - port: 27017
-      targetPort: 27017
+      targetPort: 27018

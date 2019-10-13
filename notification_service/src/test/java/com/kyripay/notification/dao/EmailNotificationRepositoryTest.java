@@ -24,17 +24,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(initializers = EmailNotificationRepositoryTest.Initializer.class)
 public class EmailNotificationRepositoryTest {
 
-    private static final int PORT = 27017;
+    private static final int MONGODB_PORT = 27017;
 
     @ClassRule
-    public static GenericContainer mongodb = new GenericContainer("mongo:3.6-xenial").withExposedPorts(PORT);
+    public static GenericContainer mongodb = new GenericContainer("mongo:3.6").withExposedPorts(MONGODB_PORT);
     public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext>
     {
         @Override
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues values = TestPropertyValues.of(
                     "spring.data.mongodb.host=" + mongodb.getContainerIpAddress(),
-                    "spring.data.mongodb.port=" + mongodb.getMappedPort(PORT)
+                    "spring.data.mongodb.port=" + mongodb.getMappedPort(MONGODB_PORT)
             );
             values.applyTo(configurableApplicationContext);
         }

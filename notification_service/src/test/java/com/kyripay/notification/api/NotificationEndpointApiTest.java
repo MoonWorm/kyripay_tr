@@ -51,7 +51,7 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 @ContextConfiguration(initializers = NotificationEndpointApiTest.Initializer.class)
 public class NotificationEndpointApiTest {
 
-    private static final int PORT = 27017;
+    private static final int MONGODB_PORT = 27017;
 
     @Rule
     public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("target/generated-snippets");
@@ -59,15 +59,15 @@ public class NotificationEndpointApiTest {
     private RequestSpecification documentationSpec;
 
     @ClassRule
-    public static final GenericContainer mongo = new GenericContainer<>("mongo:3.6-xenial")
-            .withExposedPorts(PORT);
+    public static final GenericContainer mongo = new GenericContainer<>("mongo:3.6")
+            .withExposedPorts(MONGODB_PORT);
 
     public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues values = TestPropertyValues.of(
                     "spring.data.mongodb.host=" + mongo.getContainerIpAddress(),
-                    "spring.data.mongodb.port=" + mongo.getMappedPort(PORT)
+                    "spring.data.mongodb.port=" + mongo.getMappedPort(MONGODB_PORT)
             );
             values.applyTo(configurableApplicationContext);
         }

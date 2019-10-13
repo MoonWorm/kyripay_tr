@@ -4,10 +4,10 @@ services:
     image: kyripay/converter
     container_name: converter
     environment:
-      SPRING_DATA_MONGODB_HOST: mongodb
+      SPRING_DATA_MONGODB_HOST: converter-mongodb
     ports:
       - 8080:8080
-  mongodb:
+  converter-mongodb:
     image: mongo:3.6
     container_name: converter-mongodb
     ports:
