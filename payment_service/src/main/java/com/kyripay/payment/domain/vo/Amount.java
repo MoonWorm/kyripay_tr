@@ -6,9 +6,8 @@
 package com.kyripay.payment.domain.vo;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
@@ -17,16 +16,14 @@ import javax.validation.constraints.NotNull;
  * @author M-ATA
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class Amount
-{
-  @NotNull(message = "Amount must be specified")
-  @ApiModelProperty(value = "Payment amount in selected currency", example = "50")
-  private Long amount;
+@RequiredArgsConstructor
+public class Amount {
 
-  @NotNull(message = "Currency must be specified")
-  @ApiModelProperty(value = "Payment currency", example = "USD")
-  private Currency currency;
+    @ApiModelProperty(value = "Payment amount in selected currency", example = "50")
+    private final long amount;
+
+    @NotNull(message = "Currency must be specified")
+    @ApiModelProperty(value = "Payment currency", example = "USD")
+    private final Currency currency;
 
 }

@@ -2,32 +2,36 @@ package com.kyripay.payment.domain;
 
 import com.kyripay.payment.domain.vo.Amount;
 import com.kyripay.payment.domain.vo.Status;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
-@NoArgsConstructor
+@RequiredArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-@Builder
 public class Payment {
 
     private Long id;
+    @NotNull(message = "User id must be specified")
+    private UUID userId;
     @NotNull(message = "Payment amount must be specified")
-    private Amount amount;
+    private final Amount amount;
     @NotNull(message = "Customer bank must be specified")
-    private Long bankId;
+    private final Long bankId;
     @NotBlank(message = "Account number must be specified")
-    private String accountNumber;
+    private final String accountNumber;
     @NotNull(message = "Payment status must be specified")
-    private Status status;
+    private final Status status;
     @Valid
     @NotNull(message = "Recipient info must be specified")
-    private RecipientInfo recipientInfo = new RecipientInfo();
-    private LocalDateTime createdOn;
+    private final PaymentRecipientInfo recipientInfo;
+    private final LocalDateTime createdOn;
 
 }

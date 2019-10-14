@@ -1,0 +1,7 @@
+<dataset>
+    <payment_template id="2" name="Template 2" user_id="a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11" bank_id="2"
+                      account_number="IBAN234" recipient_first_name="Vasia2" recipient_last_name="Pupkin2"
+                      recipient_bank_urn="0000/00222/0XXXY" recipient_bank_name="Fake Bank Inc 2"
+                      recipient_bank_address="Main str. 1-2" recipient_bank_account="IBAN432" amount="300"
+                      currency="EUR"/>
+</dataset>

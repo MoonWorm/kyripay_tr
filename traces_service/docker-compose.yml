@@ -1,0 +1,43 @@
+version: '2'
+
+services:
+
+  traces:
+    build: .
+    image: kyripay/traces:latest
+    environment:
+      spring.profiles.active: postgres
+      POSTGRESQL_HOST: postgres
+    ports:
+      - 8090:8090
+    container_name: traces-service
+    depends_on:
+      - postgres
+
+
+  postgres:
+    image: postgres:9.5-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: traces
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    container_name: postgres-traces
+
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: nero@tut.by
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - 9098:80
+    container_name: postgres-pgadmin
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+    driver: local
+

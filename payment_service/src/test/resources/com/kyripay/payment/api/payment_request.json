@@ -9,6 +9,7 @@
     "recipientInfo": {
       "firstName": "Vasia",
       "lastName": "Pupkin",
+      "bankUrn": "0000/00222/0XXXX",
       "bankName": "Cool Bank and Partners",
       "bankAddress": "Paris, Main str., 1-2",
       "accountNumber": "54321TTU"

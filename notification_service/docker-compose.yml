@@ -4,11 +4,11 @@ services:
     image: ataliuk/notification
     container_name: notification-api
     environment:
-      SPRING_DATA_MONGODB_HOST: mongodb
+      SPRING_DATA_MONGODB_HOST: notification-mongodb
     ports:
       - 8080:8080
-  mongodb:
+  notification-mongodb:
     image: mongo:3.6
     container_name: notification-mongodb
     ports:
-      - 27017:27017
+      - 27018:27017

@@ -18,4 +18,4 @@ spec:
             - containerPort: 8081
           env:
             - name: SPRING_DATA_MONGODB_HOST
-              value: mongodb
+              value: notification-mongodb

@@ -10,5 +10,5 @@ package com.kyripay.payment.domain.vo;
  */
 public enum Currency
 {
-  USD, EURO, BYN, RUR
+  USD, EUR, BYN, RUR
 }

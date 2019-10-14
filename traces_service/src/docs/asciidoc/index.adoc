@@ -1,0 +1,113 @@
+= Traces service
+
+Traces service API documentation
+
+== Trace lifecycle
+
+- Create an empty Trace with given *paymentId*
+
+.request
+include::{snippets}/traces/create-without-headers/http-request.adoc[]
+
+.response
+include::{snippets}/traces/create-without-headers/http-response.adoc[]
+
+- Create a Trace with given *paymentId* and predefined set of *headers*
+
+.request
+include::{snippets}/traces/create-with-headers/http-request.adoc[]
+
+.response
+include::{snippets}/traces/create-with-headers/http-response.adoc[]
+
+
+- Get Trace by *paymentId*
+
+.request
+include::{snippets}/traces/get-existing-trace/http-request.adoc[]
+
+.response
+include::{snippets}/traces/get-existing-trace/http-response.adoc[]
+
+
+- Delete Trace by *paymentId*
+
+.request
+include::{snippets}/traces/delete-existing-trace/http-request.adoc[]
+
+.response
+include::{snippets}/traces/delete-existing-trace/http-response.adoc[]
+
+
+== Trace Headers management
+
+Sample Header management operations that can be applied to the Trace like this:
+
+.Sample
+include::{snippets}/traces/existing-trace-before-put-headers/response-body.adoc[]
+
+- *Update* multiple headers at once (*rewriting* existing ones) by updating Trace object
+
+.request
+include::{snippets}/traces/put-trace-headers/http-request.adoc[]
+
+.response
+include::{snippets}/traces/put-trace-headers/http-response.adoc[]
+
+As a result, Trace will look like:
+
+.Trace with rewritten headers
+include::{snippets}/traces/trace-after-put-headers/response-body.adoc[]
+
+- *Patch* multiple headers at once (*merging with* existing ones) by updating Trace object
+
+TIP: passing NULL as header value leads to its deletion.
+
+.request
+include::{snippets}/traces/patch-trace-headers/http-request.adoc[]
+
+.response
+include::{snippets}/traces/patch-trace-headers/http-response.adoc[]
+
+- Alternative way to add Header:
+
+.request
+include::{snippets}/traces/add-single-header/http-request.adoc[]
+
+.response
+include::{snippets}/traces/add-single-header/http-response.adoc[]
+
+- Get Header value by name
+
+.request
+include::{snippets}/traces/get-single-header/http-request.adoc[]
+
+.response
+include::{snippets}/traces/get-single-header/http-response.adoc[]
+
+
+- Delete Header value by name
+.request
+include::{snippets}/traces/delete-header/http-request.adoc[]
+
+.response
+include::{snippets}/traces/delete-header/http-response.adoc[]
+
+
+== Trace Events management
+
+- Add event to the Trace
+
+.request
+include::{snippets}/traces/add-event/http-request.adoc[]
+
+.response
+include::{snippets}/traces/add-event/http-response.adoc[]
+
+- List all Trace events
+
+.request
+include::{snippets}/traces/list-events/http-request.adoc[]
+
+.response
+include::{snippets}/traces/list-events/http-response.adoc[]
