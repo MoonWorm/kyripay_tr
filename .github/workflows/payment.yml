@@ -22,11 +22,11 @@ jobs:
       - name: Integration tests
         run: |
           cd payment_service
-          sh mvnw surefire:test -Pintegration
+          sh mvnw test -Pintegration
       - name: Api tests
         run: |
           cd payment_service
-          sh mvnw surefire:test -Papi
+          sh mvnw test -Papi
       - name: Sonar analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
