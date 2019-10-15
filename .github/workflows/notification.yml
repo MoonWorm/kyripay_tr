@@ -18,21 +18,21 @@ jobs:
       - name: Build service, prepare bootJar and run unit tests
         run: |
           cd notification_service
-          ./mvnw clean install
+          sh mvnw clean install
       - name: Integration tests
         run: |
           cd notification_service
-          ./mvnw surefire:test -Pintegration
+          sh mvnw surefire:test -Pintegration
       - name: Api tests
         run: |
           cd notification_service
-          ./mvnw surefire:test -Papi
+          sh mvnw surefire:test -Papi
       - name: Sonar analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd notification_service
-          ./mvnw verify sonar:sonar \
+          sh mvnw verify sonar:sonar \
             -Dsonar.projectKey=kyripay_payment \
             -Dsonar.organization=kyripay \
             -Dsonar.host.url=https://sonarcloud.io \
@@ -40,9 +40,9 @@ jobs:
       - name: Prepare Restdocs documentation
         run: |
           cd notification_service
-          ./mvnw generate-resources -Prestdocs
+          sh mvnw generate-resources -Prestdocs
       - name: Publish docker image
         run: |
           cd notification_service
           docker login --username kyripay --password "(VXB8Ehqp"
-          ./mvnw dockerfile:build dockerfile:push -Pdocker
+          sh mvnw dockerfile:build dockerfile:push -Pdocker
