@@ -23,19 +23,3 @@ include::{snippets}/create-email-notification-success/http-request.adoc[]
 And one showing the HTTP response:
 
 include::{snippets}/create-email-notification-success/http-response.adoc[]
-
-== Send SMS notification
-
-To create an SMS notification, use the next API:
-
-Request sample using cURL:
-
-include::{snippets}/create-sms-notification-success/curl-request.adoc[]
-
-One showing the HTTP request:
-
-include::{snippets}/create-sms-notification-success/http-request.adoc[]
-
-And one showing the HTTP response:
-
-include::{snippets}/create-sms-notification-success/http-response.adoc[]

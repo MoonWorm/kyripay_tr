@@ -422,7 +422,7 @@
 		<profile>
 			<id>docker</id>
 			<properties>
-				<dockerfile.version>1.4.1</dockerfile.version>
+				<dockerfile.version>1.4.12</dockerfile.version>
 				<docker.image.prefix>kyripay</docker.image.prefix>
 			</properties>
 			<build>

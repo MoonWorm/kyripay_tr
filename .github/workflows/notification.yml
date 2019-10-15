@@ -1,0 +1,48 @@
+name: Notification service build
+on:
+  push:
+    paths:
+      - '.github/workflows/notification.yml'
+      - 'notification_service/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@master
+      - name: Set up JDK 11
+        uses: actions/setup-java@master
+        with:
+          java-version: '11.0.4'
+      - name: Build service, prepare bootJar and run unit tests
+        run: |
+          cd notification_service
+          ./mvnw clean install
+      - name: Integration tests
+        run: |
+          cd notification_service
+          ./mvnw surefire:test -Pintegration
+      - name: Api tests
+        run: |
+          cd notification_service
+          ./mvnw surefire:test -Papi
+      - name: Sonar analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd notification_service
+          ./mvnw verify sonar:sonar \
+            -Dsonar.projectKey=kyripay_payment \
+            -Dsonar.organization=kyripay \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=56a031546712293e238790d48b53ea92efedccce
+      - name: Prepare Restdocs documentation
+        run: |
+          cd notification_service
+          ./mvnw generate-resources -Prestdocs
+      - name: Publish docker image
+        run: |
+          cd notification_service
+          docker login --username kyripay --password "(VXB8Ehqp"
+          ./mvnw dockerfile:build dockerfile:push -Pdocker
