@@ -261,11 +261,11 @@
         </profile>
 
 		<profile>
+			<id>docker</id>
 			<properties>
 				<dockerfile.version>1.4.12</dockerfile.version>
 				<docker.image.prefix>kyripay</docker.image.prefix>
 			</properties>
-			<id>docker</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -301,7 +301,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<!--Dont's run any tests-->
+							<!--Don't run any tests-->
 							<excludes>
 								<exclude>../unit/*Test.java</exclude>
 								<exclude>../api/*Test.java</exclude>
