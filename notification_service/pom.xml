@@ -22,6 +22,10 @@
 		<jtwig.version>5.58</jtwig.version>
 		<spring-cloud.version>Greenwich.SR1</spring-cloud.version>
 		<testcontainers.version>1.11.3</testcontainers.version>
+
+		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
+		<dockerfile-maven-plugin.version>1.4.12</dockerfile-maven-plugin.version>
+		<asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -146,6 +150,28 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<destFile>${project.build.directory}/jacoco-unit.exec</destFile>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
@@ -182,6 +208,28 @@
 							</includes>
 						</configuration>
 					</plugin>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>${jacoco-maven-plugin.version}</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>report</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>report</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<destFile>${project.build.directory}/jacoco-api.exec</destFile>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -204,6 +252,28 @@
 							</includes>
 						</configuration>
 					</plugin>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>${jacoco-maven-plugin.version}</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>report</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>report</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<destFile>${project.build.directory}/jacoco-integration.exec</destFile>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -215,7 +285,7 @@
                     <plugin>
                         <groupId>org.asciidoctor</groupId>
                         <artifactId>asciidoctor-maven-plugin</artifactId>
-                        <version>1.5.6</version>
+                        <version>${asciidoctor-maven-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>generate-docs</id>
@@ -263,7 +333,6 @@
 		<profile>
 			<id>docker</id>
 			<properties>
-				<dockerfile.version>1.4.12</dockerfile.version>
 				<docker.image.prefix>kyripay</docker.image.prefix>
 			</properties>
 			<build>
@@ -271,7 +340,7 @@
 					<plugin>
 						<groupId>com.spotify</groupId>
 						<artifactId>dockerfile-maven-plugin</artifactId>
-						<version>${dockerfile.version}</version>
+						<version>${dockerfile-maven-plugin.version}</version>
 						<!-- Wire up to the default build phases -->
 						<executions>
 							<execution>
