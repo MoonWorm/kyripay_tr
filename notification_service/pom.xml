@@ -23,6 +23,12 @@
 		<spring-cloud.version>Greenwich.SR1</spring-cloud.version>
 		<testcontainers.version>1.11.3</testcontainers.version>
 
+        <!-- Sonar -->
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.jacoco.reportPaths>${project.basedir}/target/jacoco-unit.exec,${project.basedir}/target/jacoco-api.exec,${project.basedir}/target/jacoco-integration.exec</sonar.jacoco.reportPaths>
+        <sonar.language>java</sonar.language>
+
 		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
 		<dockerfile-maven-plugin.version>1.4.12</dockerfile-maven-plugin.version>
 		<asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
