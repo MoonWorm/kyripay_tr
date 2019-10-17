@@ -19,11 +19,11 @@ jobs:
         run: |
           cd notification_service
           sh mvnw clean install
-      - name: Integration tests
+      - name: Run Integration tests
         run: |
           cd notification_service
           sh mvnw test -Pintegration
-      - name: Api tests
+      - name: Run Api tests
         run: |
           cd notification_service
           sh mvnw test -Papi

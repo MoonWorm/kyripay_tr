@@ -23,11 +23,11 @@ jobs:
         run: |
           cd payment_service
           sh mvnw install
-      - name: Integration tests
+      - name: Run Integration tests
         run: |
           cd payment_service
           sh mvnw test -Pintegration
-      - name: Api tests
+      - name: Run Api tests
         run: |
           cd payment_service
           sh mvnw test -Papi
@@ -37,10 +37,10 @@ jobs:
         run: |
           cd payment_service
           sh mvnw verify sonar:sonar \
-            -Dsonar.projectKey=kyripay_payment \
-            -Dsonar.organization=kyripay \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=56a031546712293e238790d48b53ea92efedccce
+               -Dsonar.projectKey=kyripay-payment \
+               -Dsonar.organization=kyripay-payment \
+               -Dsonar.host.url=https://sonarcloud.io \
+               -Dsonar.login=d2d687ba5972f541985e9286af7e1581eae2168e
       - name: Prepare Restdocs documentation
         run: |
           cd payment_service
