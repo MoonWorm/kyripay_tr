@@ -25,6 +25,14 @@
 		<postgresql.driver.version>42.2.5</postgresql.driver.version>
 		<dozer.version>5.3.1</dozer.version>
 		<testcontainers.version>1.11.3</testcontainers.version>
+		<rider-core.version>1.7.2</rider-core.version>
+		<wiremock.version>2.25.0</wiremock.version>
+
+		<!-- Sonar -->
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.jacoco.reportPaths>${project.basedir}/target/jacoco-unit.exec,${project.basedir}/target/jacoco-api.exec,${project.basedir}/target/jacoco-integration.exec</sonar.jacoco.reportPaths>
+		<sonar.language>java</sonar.language>
 
 		<schema.name>public</schema.name>
 		<jdbc.user>payments_ms_user</jdbc.user>
@@ -33,8 +41,10 @@
 		<jooq.database>org.jooq.meta.postgres.PostgresDatabase</jooq.database>
 		<flyway.locations>filesystem:src/main/resources/db/migration/tables,filesystem:src/main/resources/db/migration/data</flyway.locations>
 		<jdbc.url>jdbc:postgresql://localhost:5432/payments_ms</jdbc.url>
-		<rider-core.version>1.7.2</rider-core.version>
-		<wiremock.version>2.25.0</wiremock.version>
+
+		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
+		<dockerfile-maven-plugin.version>1.4.12</dockerfile-maven-plugin.version>
+		<asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -307,7 +317,28 @@
 					</generator>
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<destFile>${project.build.directory}/jacoco-unit.exec</destFile>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -345,6 +376,28 @@
 							</includes>
 						</configuration>
 					</plugin>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>${jacoco-maven-plugin.version}</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>report</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>report</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<destFile>${project.build.directory}/jacoco-api.exec</destFile>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -367,66 +420,87 @@
 							</includes>
 						</configuration>
 					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<profile>
-			<id>restdocs</id>
-			<build>
-				<plugins>
 					<plugin>
-						<groupId>org.asciidoctor</groupId>
-						<artifactId>asciidoctor-maven-plugin</artifactId>
-						<version>1.5.6</version>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>${jacoco-maven-plugin.version}</version>
 						<executions>
 							<execution>
-								<id>generate-docs</id>
-								<phase>generate-resources</phase>
 								<goals>
-									<goal>process-asciidoc</goal>
+									<goal>prepare-agent</goal>
 								</goals>
-								<configuration>
-									<backend>html</backend>
-									<doctype>book</doctype>
-
-									<attributes>
-										<snippets>${project.build.directory}/generated-snippets</snippets>
-									</attributes>
-
-									<sourceDirectory>src/main/asciidoc</sourceDirectory>
-									<outputDirectory>target/generated-docs</outputDirectory>
-								</configuration>
+							</execution>
+							<execution>
+								<id>report</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>report</goal>
+								</goals>
 							</execution>
 						</executions>
-						<dependencies>
-							<dependency>
-								<groupId>org.springframework.restdocs</groupId>
-								<artifactId>spring-restdocs-asciidoctor</artifactId>
-								<version>${spring-restdocs.version}</version>
-							</dependency>
-						</dependencies>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<!--Dont's run any tests-->
-							<excludes>
-								<exclude>../unit/*Test.java</exclude>
-								<exclude>../integration/*Test.java</exclude>
-								<exclude>../api/*Test.java</exclude>
-							</excludes>
+							<destFile>${project.build.directory}/jacoco-integration.exec</destFile>
 						</configuration>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
 
+        <profile>
+            <id>restdocs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctor-maven-plugin</artifactId>
+                        <version>${asciidoctor-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>generate-docs</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>process-asciidoc</goal>
+                                </goals>
+                                <configuration>
+                                    <backend>html</backend>
+                                    <doctype>book</doctype>
+
+                                    <attributes>
+                                        <snippets>${project.build.directory}/generated-snippets</snippets>
+                                    </attributes>
+
+                                    <sourceDirectory>src/main/asciidoc</sourceDirectory>
+                                    <outputDirectory>target/generated-docs</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.springframework.restdocs</groupId>
+                                <artifactId>spring-restdocs-asciidoctor</artifactId>
+                                <version>${spring-restdocs.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <!--Dont's run any tests-->
+                            <excludes>
+                                <exclude>../unit/*Test.java</exclude>
+                                <exclude>../integration/*Test.java</exclude>
+                                <exclude>../api/*Test.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
 		<profile>
 			<id>docker</id>
 			<properties>
-				<dockerfile.version>1.4.12</dockerfile.version>
 				<docker.image.prefix>kyripay</docker.image.prefix>
 			</properties>
 			<build>
@@ -434,7 +508,7 @@
 					<plugin>
 						<groupId>com.spotify</groupId>
 						<artifactId>dockerfile-maven-plugin</artifactId>
-						<version>${dockerfile.version}</version>
+						<version>${dockerfile-maven-plugin.version}</version>
 						<!-- Wire up to the default build phases -->
 						<executions>
 							<execution>
