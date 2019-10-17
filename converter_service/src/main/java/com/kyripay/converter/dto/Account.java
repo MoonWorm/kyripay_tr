@@ -7,12 +7,13 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 
 @Data
 @NoArgsConstructor
 @ApiModel(value = "Account", description = "Representation of the customer account used for the payment")
-public class Account
+public class Account implements Serializable
 {
   @NotBlank(message = "Account id can't be empty")
   @ApiModelProperty(value = "Account unique id")

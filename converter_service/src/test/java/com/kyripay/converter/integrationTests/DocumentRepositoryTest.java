@@ -1,7 +1,8 @@
-package com.kyripay.converter.repository;
+package com.kyripay.converter.integrationTests;
 
 import com.kyripay.converter.dto.Document;
 import com.kyripay.converter.dto.DocumentStatus;
+import com.kyripay.converter.repository.DocumentRepository;
 import com.lordofthejars.nosqlunit.annotation.ShouldMatchDataSet;
 import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
@@ -54,7 +55,7 @@ public class DocumentRepositoryTest
   }
 
   @Rule
-  public MongoDbRule embeddedMongoDbRule = new MongoDbRule(
+  public MongoDbRule mongoDbRule = new MongoDbRule(
       mongoDb().databaseName("converter").port(mongo.getMappedPort(27017)).build()
   );
 
@@ -64,13 +65,13 @@ public class DocumentRepositoryTest
   }
 
   @Test
-  @ShouldMatchDataSet(location="/testdata/expectedData.json")
+  @ShouldMatchDataSet(location="/testdata/db/expectedData.json")
   public void saveAndFindDocument(){
     repository.save(testDocument);
   }
 
   @Test
-  @UsingDataSet(locations="/testdata/expectedData.json")
+  @UsingDataSet(locations="/testdata/db/expectedData.json")
   public void shouldFindExistingDocument(){
     Optional<Document> document = repository.findById("1");
     assert document.isPresent();

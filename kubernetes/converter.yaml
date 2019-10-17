@@ -18,4 +18,12 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_DATA_MONGODB_HOST
-              value: converter-mongodb
+              value: mongodb
+            - name: KAFKA_HOST
+              value: kafka-cluster
+            - name: EUREKA_HOST
+              value: eureka
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health
