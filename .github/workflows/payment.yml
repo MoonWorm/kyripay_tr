@@ -15,10 +15,14 @@ jobs:
         uses: actions/setup-java@master
         with:
           java-version: '11.0.4'
+      - name: Generate JOOQ sources
+        run: |
+          cd payment_service
+          sh mvnw process-sources -Pgenerate-jooq-sources
       - name: Build service, prepare bootJar and run unit tests
         run: |
           cd payment_service
-          sh mvnw clean install
+          sh mvnw install
       - name: Integration tests
         run: |
           cd payment_service
