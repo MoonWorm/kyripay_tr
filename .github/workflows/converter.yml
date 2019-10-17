@@ -1,0 +1,62 @@
+name: Converter service build
+on:
+  push:
+    paths:
+      - '.github/workflows/converter.yml'
+      - 'converter_service/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@master
+      - name: Set up JDK 11
+        uses: actions/setup-java@master
+        with:
+          java-version: '11.0.4'
+      - name: Build and unit tests
+        run: |
+          cd converter_service
+          ./gradlew build -x bootJar --info
+      - name: Integration tests
+        run: |
+          cd converter_service
+          ./gradlew integrationTests --info
+      - name: Contract tests
+        run: |
+          cd converter_service
+          ./gradlew contractTests --info
+      - name: Api tests
+        run: |
+          cd converter_service
+          ./gradlew apiTests --info
+      - name: Prepare coverage report
+        run: |
+          cd converter_service
+          ./gradlew jacocoTestReport
+      - name: Sonar analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd converter_service
+          ./gradlew sonarqube
+      - name: Prepare documentation
+        run: |
+          cd converter_service
+          ./gradlew asciidoctor
+      - name: Prepare boot jar
+        run: |
+          cd converter_service
+          ./gradlew bootJar
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@master
+        with:
+          name: test-report
+          path: ./converter_service/build/reports/tests
+      - name: Publish docker image
+        run: |
+          cd converter_service
+          docker login --username kyripay --password "(VXB8Ehqp"
+          ./gradlew dockerPushVersion dockerPushLatest -PcustomVersion=${{github.sha}}

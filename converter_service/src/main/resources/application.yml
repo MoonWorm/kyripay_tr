@@ -4,10 +4,23 @@ spring:
   data:
     mongodb:
       database: converter
+  cloud:
+    stream:
+      bindings:
+        input:
+          destination: converter-process
+        output:
+          destination: converter-notifications
+      kafka:
+        binder:
+          brokers: ${KAFKA_HOST}
+
 eureka:
   client:
     fetch-registry: false
     service-url:
-      defaultZone: http://eureka:9090/eureka/
+      defaultZone: http://${EUREKA_HOST}:9090/eureka/
   instance:
     prefer-ip-address: true
+server:
+  port: 8181

@@ -20,6 +20,7 @@ spring:
           uri: lb://converter
           predicates:
             - Path=/api/*/converters
+            - Path=/api/*/documents
         - id: notification
           uri: lb://notification_service
           predicates:
