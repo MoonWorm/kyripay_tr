@@ -28,7 +28,7 @@ import static java.util.stream.Collectors.toList;
  * @author M-ATA
  */
 @RestController
-@Api(value = "Payment Endpoint", description = "Set of API methods that are exposed for payments management")
+@Api(value = "Payment Endpoint")
 public class PaymentController extends GenericController {
 
     private final Payments paymentService;
@@ -41,7 +41,7 @@ public class PaymentController extends GenericController {
 
     @ApiOperation("Creates a passed payment")
     @PostMapping("/payments")
-    PaymentResponse create(@RequestHeader UUID userId,
+    public PaymentResponse create(@RequestHeader UUID userId,
                            @Valid @RequestBody PaymentRequest request) {
         return mapper.map(paymentService.create(userId, mapper.map(request, Payment.class)), PaymentResponse.class);
     }
@@ -49,7 +49,7 @@ public class PaymentController extends GenericController {
 
     @ApiOperation("Reads all existing payments")
     @GetMapping("/payments")
-    List<PaymentResponse> readAll(@RequestHeader UUID userId,
+    public List<PaymentResponse> readAll(@RequestHeader UUID userId,
                                   @RequestParam(defaultValue = "10") int limit,
                                   @RequestParam(defaultValue = "0") int offset) {
         return paymentService.readAll(userId, limit, offset)
@@ -60,7 +60,7 @@ public class PaymentController extends GenericController {
 
     @ApiOperation("Search payments that are relevant to passed filter criterias")
     @GetMapping("/payments/search/result")
-    List<PaymentWithUserIdResponse> search(SearchCriterias searchCriterias,
+    public List<PaymentWithUserIdResponse> search(SearchCriterias searchCriterias,
                                            @RequestParam(defaultValue = "10") int limit,
                                            @RequestParam(defaultValue = "0") int offset) {
         return paymentService.search(searchCriterias, limit, offset)
@@ -71,7 +71,7 @@ public class PaymentController extends GenericController {
 
     @ApiOperation("Reads an existing payment template by id")
     @GetMapping("/payments/{paymentId}")
-    PaymentResponse readById(@RequestHeader UUID userId,
+    public PaymentResponse readById(@RequestHeader UUID userId,
                              @PathVariable long paymentId) {
         return mapper.map(paymentService.readById(userId, paymentId), PaymentResponse.class);
     }
@@ -79,7 +79,7 @@ public class PaymentController extends GenericController {
 
     @ApiOperation("Reads an existing payment template by id")
     @GetMapping("/payments/{paymentId}/status")
-    PaymentStatus getPaymentStatus(@RequestHeader UUID userId,
+    public PaymentStatus getPaymentStatus(@RequestHeader UUID userId,
                                    @PathVariable long paymentId) {
         return new PaymentStatus(paymentService.getStatus(userId, paymentId));
     }
@@ -87,7 +87,7 @@ public class PaymentController extends GenericController {
 
     @ApiOperation("Updates a status for an existing payment")
     @PutMapping(value = "/payments/{paymentId}/status")
-    PaymentStatus updateStatus(@RequestHeader UUID userId,
+    public PaymentStatus updateStatus(@RequestHeader UUID userId,
                       @PathVariable long paymentId,
                       @Valid @RequestBody PaymentStatus status) {
         return new PaymentStatus(paymentService.updateStatus(userId, paymentId, status.getStatus()));

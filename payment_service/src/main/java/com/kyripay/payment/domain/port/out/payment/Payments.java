@@ -9,16 +9,16 @@ import java.util.UUID;
 
 public interface Payments {
 
-    Payment create(UUID userId, Payment payment) throws RepositoryException;
+    Payment create(UUID userId, Payment payment);
 
-    List<Payment> readAll(UUID userId, int limit, int offset) throws RepositoryException;
+    List<Payment> readAll(UUID userId, int limit, int offset);
 
-    List<Payment> search(SearchCriterias searchCriterias, int limit, int offset) throws RepositoryException;
+    List<Payment> search(SearchCriterias searchCriterias, int limit, int offset);
 
-    Payment readById(UUID userId, long paymentId) throws RepositoryException;
+    Payment readById(UUID userId, long paymentId);
 
-    Status getStatus(UUID userId, long paymentId) throws RepositoryException;
+    Status getStatus(UUID userId, long paymentId);
 
-    Status updateStatus(UUID userId, long paymentId, Status status) throws RepositoryException;
+    Status updateStatus(UUID userId, long paymentId, Status status);
 
 }

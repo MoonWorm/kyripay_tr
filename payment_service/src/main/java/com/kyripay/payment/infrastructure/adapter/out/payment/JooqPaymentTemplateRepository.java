@@ -27,7 +27,7 @@ public class JooqPaymentTemplateRepository implements PaymentTemplates {
     }
 
     @Override
-    public PaymentTemplate create(UUID userId, PaymentTemplate data) throws RepositoryException {
+    public PaymentTemplate create(UUID userId, PaymentTemplate data) {
         try {
             PaymentTemplateRecord record = ctx.newRecord(PAYMENT_TEMPLATE);
             mapper.map(data, record);
@@ -40,7 +40,7 @@ public class JooqPaymentTemplateRepository implements PaymentTemplates {
     }
 
     @Override
-    public List<PaymentTemplate> readAll(UUID userId, int limit, int offset) throws RepositoryException {
+    public List<PaymentTemplate> readAll(UUID userId, int limit, int offset) {
         try {
             return ctx.selectFrom(PAYMENT_TEMPLATE)
                     .where(PAYMENT_TEMPLATE.USER_ID.eq(userId))
@@ -57,7 +57,7 @@ public class JooqPaymentTemplateRepository implements PaymentTemplates {
     }
 
     @Override
-    public PaymentTemplate readById(UUID userId, long paymentTemplateId) throws RepositoryException {
+    public PaymentTemplate readById(UUID userId, long paymentTemplateId) {
         try {
             PaymentTemplateRecord record = ctx.selectFrom(PAYMENT_TEMPLATE)
                     .where(PAYMENT_TEMPLATE.ID.eq(paymentTemplateId).and(PAYMENT_TEMPLATE.USER_ID.eq(userId)))
@@ -72,7 +72,7 @@ public class JooqPaymentTemplateRepository implements PaymentTemplates {
     }
 
     @Override
-    public PaymentTemplate update(UUID userId, long templateId, PaymentTemplate data) throws RepositoryException {
+    public PaymentTemplate update(UUID userId, long templateId, PaymentTemplate data) {
         try {
             PaymentTemplateRecord paymentTemplateRecord = ctx.newRecord(PAYMENT_TEMPLATE);
             mapper.map(data, paymentTemplateRecord);
@@ -92,7 +92,7 @@ public class JooqPaymentTemplateRepository implements PaymentTemplates {
     }
 
     @Override
-    public void delete(UUID userId, long paymentTemplateId) throws RepositoryException {
+    public void delete(UUID userId, long paymentTemplateId) {
         try {
             ctx.delete(PAYMENT_TEMPLATE)
                     .where(PAYMENT_TEMPLATE.ID.eq(paymentTemplateId).and(PAYMENT_TEMPLATE.USER_ID.eq(userId)))

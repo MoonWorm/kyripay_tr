@@ -21,7 +21,7 @@ public class PaymentTemplatesImpl implements PaymentTemplates {
     }
 
     @Override
-    public PaymentTemplate create(UUID userId, PaymentTemplate paymentTemplate) throws ServiceException {
+    public PaymentTemplate create(UUID userId, PaymentTemplate paymentTemplate) {
         try {
             validator.validatePayment(paymentTemplate);
             return repository.create(userId, paymentTemplate);
@@ -31,7 +31,7 @@ public class PaymentTemplatesImpl implements PaymentTemplates {
     }
 
     @Override
-    public List<PaymentTemplate> readAll(UUID userId, int limit, int offset) throws ServiceException {
+    public List<PaymentTemplate> readAll(UUID userId, int limit, int offset) {
         try {
             return repository.readAll(userId, limit, offset);
         } catch (Exception e) {
@@ -40,7 +40,7 @@ public class PaymentTemplatesImpl implements PaymentTemplates {
     }
 
     @Override
-    public PaymentTemplate readById(UUID userId, long paymentTemplateId) throws ServiceException {
+    public PaymentTemplate readById(UUID userId, long paymentTemplateId) {
         try {
             return repository.readById(userId, paymentTemplateId);
         } catch (Exception e) {
@@ -49,7 +49,7 @@ public class PaymentTemplatesImpl implements PaymentTemplates {
     }
 
     @Override
-    public PaymentTemplate update(UUID userId, long paymentTemplateId, PaymentTemplate paymentTemplate) throws ServiceException {
+    public PaymentTemplate update(UUID userId, long paymentTemplateId, PaymentTemplate paymentTemplate) {
         try {
             return repository.update(userId, paymentTemplateId, paymentTemplate);
         } catch (Exception e) {
@@ -58,7 +58,7 @@ public class PaymentTemplatesImpl implements PaymentTemplates {
     }
 
     @Override
-    public void delete(UUID userId, long paymentTemplateId) throws ServiceException {
+    public void delete(UUID userId, long paymentTemplateId) {
         try {
             repository.delete(userId, paymentTemplateId);
         } catch (Exception e) {

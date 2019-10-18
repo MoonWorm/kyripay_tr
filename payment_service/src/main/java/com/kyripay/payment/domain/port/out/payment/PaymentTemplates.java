@@ -7,14 +7,14 @@ import java.util.UUID;
 
 public interface PaymentTemplates {
 
-    PaymentTemplate create(UUID userId, PaymentTemplate data) throws RepositoryException;
+    PaymentTemplate create(UUID userId, PaymentTemplate data);
 
-    List<PaymentTemplate> readAll(UUID userId, int limit, int offset) throws RepositoryException;
+    List<PaymentTemplate> readAll(UUID userId, int limit, int offset);
 
-    PaymentTemplate readById(UUID userId, long paymentTemplateId) throws RepositoryException;
+    PaymentTemplate readById(UUID userId, long paymentTemplateId);
 
-    PaymentTemplate update(UUID userId, long templateId, PaymentTemplate data) throws RepositoryException;
+    PaymentTemplate update(UUID userId, long templateId, PaymentTemplate data);
 
-    void delete(UUID userId, long paymentTemplateId) throws RepositoryException;
+    void delete(UUID userId, long paymentTemplateId);
 
 }

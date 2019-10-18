@@ -11,21 +11,21 @@ import java.util.UUID;
 public interface Payments {
 
     @Transactional
-    Payment create(UUID userId, Payment payment) throws ServiceException;
+    Payment create(UUID userId, Payment payment);
 
     @Transactional(readOnly = true)
-    List<Payment> readAll(UUID userId, int limit, int offset) throws ServiceException;
+    List<Payment> readAll(UUID userId, int limit, int offset);
 
     @Transactional(readOnly = true)
     List<Payment> search(SearchCriterias searchCriterias, int limit, int offset);
 
     @Transactional(readOnly = true)
-    Payment readById(UUID userId, long paymentId) throws ServiceException;
+    Payment readById(UUID userId, long paymentId);
 
     @Transactional(readOnly = true)
-    Status getStatus(UUID userId, long paymentId) throws ServiceException;
+    Status getStatus(UUID userId, long paymentId);
 
     @Transactional
-    Status updateStatus(UUID userId, long paymentId, Status status) throws ServiceException;
+    Status updateStatus(UUID userId, long paymentId, Status status);
 
 }

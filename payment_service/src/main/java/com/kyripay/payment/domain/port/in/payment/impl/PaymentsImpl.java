@@ -30,7 +30,7 @@ public class PaymentsImpl implements Payments {
     }
 
     @Override
-    public Payment create(UUID userId, Payment payment) throws ServiceException {
+    public Payment create(UUID userId, Payment payment) {
         try {
             payment.setUserId(userId);
             validator.validatePayment(payment);
@@ -47,7 +47,7 @@ public class PaymentsImpl implements Payments {
     }
 
     @Override
-    public List<Payment> readAll(UUID userId, int limit, int offset) throws ServiceException {
+    public List<Payment> readAll(UUID userId, int limit, int offset) {
         try {
             return repository.readAll(userId, limit, offset);
         } catch (Exception e) {
@@ -65,7 +65,7 @@ public class PaymentsImpl implements Payments {
     }
 
     @Override
-    public Payment readById(UUID userId, long paymentId) throws ServiceException {
+    public Payment readById(UUID userId, long paymentId) {
         try {
             return repository.readById(userId, paymentId);
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public class PaymentsImpl implements Payments {
     }
 
     @Override
-    public Status updateStatus(UUID userId, long paymentId, Status status) throws ServiceException {
+    public Status updateStatus(UUID userId, long paymentId, Status status) {
         try {
             validator.validatePaymentStatus(status);
             return repository.updateStatus(userId, paymentId, status);
@@ -84,7 +84,7 @@ public class PaymentsImpl implements Payments {
     }
 
     @Override
-    public Status getStatus(UUID userId, long paymentId) throws ServiceException {
+    public Status getStatus(UUID userId, long paymentId) {
         try {
             return repository.getStatus(userId, paymentId);
         } catch (Exception e) {

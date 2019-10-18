@@ -22,8 +22,7 @@ import javax.validation.Valid;
  * @author M-ATA
  */
 @RestController
-@Api(value = "Notification Service", description = "Sends notification messages to users through different channels " +
-        "(email, sms...)")
+@Api(value = "Notification Service")
 public class NotificationController {
 
     private EmailServiceImpl emailService;
@@ -34,20 +33,20 @@ public class NotificationController {
 
     @ApiOperation("Sends an email to a user")
     @PostMapping("/api/v1/emailnotifications")
-    NotificationResponse createEmailNotification(@Valid @RequestBody EmailNotificationRequest notification) {
+    public NotificationResponse createEmailNotification(@Valid @RequestBody EmailNotificationRequest notification) {
         return emailService.sendEmail(notification);
     }
 
     @ExceptionHandler(MailException.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Can't send an email")
     public void handleMailException() {
-
+        // Spring MVC will automatically does the response, no code required
     }
 
 
     @ApiOperation("Sends SMS text message to a user")
     @PostMapping("/api/v1/smsnotifications")
-    void createSmsNotification(@Valid @RequestBody SmsNotificationRequest notification) {
+    public void createSmsNotification(@Valid @RequestBody SmsNotificationRequest notification) {
         throw new UnsupportedOperationException("SMS notification is not supported yet");
     }
 

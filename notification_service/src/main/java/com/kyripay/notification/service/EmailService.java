@@ -6,6 +6,6 @@ import com.kyripay.notification.exception.ServiceException;
 
 public interface EmailService {
 
-    NotificationResponse sendEmail(EmailNotificationRequest notification) throws ServiceException;
+    NotificationResponse sendEmail(EmailNotificationRequest notification);
 
 }

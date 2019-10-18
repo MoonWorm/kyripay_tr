@@ -25,8 +25,7 @@ import static java.util.stream.Collectors.toList;
  * @author M-ATA
  */
 @RestController
-@Api(value = "Payment Template Endpoint", description = "Set of API methods that allows to manage payment templates: " +
-        "create, read, update and perform a deletion.")
+@Api(value = "Payment Template Endpoint")
 public class PaymentTemplateController extends GenericController {
 
     private PaymentTemplates paymentTemplateService;

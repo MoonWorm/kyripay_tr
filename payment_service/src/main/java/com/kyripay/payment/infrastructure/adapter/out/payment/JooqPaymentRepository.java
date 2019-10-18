@@ -30,7 +30,7 @@ public class JooqPaymentRepository implements Payments {
     }
 
     @Override
-    public Payment create(UUID userId, Payment payment) throws RepositoryException {
+    public Payment create(UUID userId, Payment payment) {
         try {
             PaymentRecord record = ctx.newRecord(PAYMENT);
             mapper.map(payment, record);
@@ -43,7 +43,7 @@ public class JooqPaymentRepository implements Payments {
     }
 
     @Override
-    public List<Payment> readAll(UUID userId, int limit, int offset) throws RepositoryException {
+    public List<Payment> readAll(UUID userId, int limit, int offset) {
         try {
             return ctx.selectFrom(PAYMENT)
                     .where(PAYMENT.USER_ID.eq(userId))
@@ -60,7 +60,7 @@ public class JooqPaymentRepository implements Payments {
     }
 
     @Override
-    public List<Payment> search(SearchCriterias searchCriterias, int limit, int offset) throws RepositoryException {
+    public List<Payment> search(SearchCriterias searchCriterias, int limit, int offset) {
         try {
             SelectWhereStep<PaymentRecord> select = ctx.selectFrom(PAYMENT);
             if (searchCriterias != null) {
@@ -81,7 +81,7 @@ public class JooqPaymentRepository implements Payments {
     }
 
     @Override
-    public Payment readById(UUID userId, long paymentId) throws RepositoryException {
+    public Payment readById(UUID userId, long paymentId) {
         try {
             PaymentRecord record = ctx.selectFrom(PAYMENT)
                     .where(PAYMENT.ID.eq(paymentId).and(PAYMENT.USER_ID.eq(userId)))
@@ -96,7 +96,7 @@ public class JooqPaymentRepository implements Payments {
     }
 
     @Override
-    public Status getStatus(UUID userId, long paymentId) throws RepositoryException {
+    public Status getStatus(UUID userId, long paymentId) {
         try {
             return Optional.ofNullable(
                     ctx.select(PAYMENT.STATUS)
@@ -110,7 +110,7 @@ public class JooqPaymentRepository implements Payments {
     }
 
     @Override
-    public Status updateStatus(UUID userId, long paymentId, Status status) throws RepositoryException {
+    public Status updateStatus(UUID userId, long paymentId, Status status) {
         try {
             return Optional.ofNullable(
                     ctx.update(PAYMENT)

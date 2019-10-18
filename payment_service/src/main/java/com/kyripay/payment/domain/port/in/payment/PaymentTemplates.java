@@ -9,19 +9,19 @@ import java.util.UUID;
 public interface PaymentTemplates {
 
     @Transactional
-    PaymentTemplate create(UUID userId, PaymentTemplate paymentTemplate) throws ServiceException;
+    PaymentTemplate create(UUID userId, PaymentTemplate paymentTemplate);
 
     @Transactional(readOnly = true)
-    List<PaymentTemplate> readAll(UUID userId, int limit, int offset) throws ServiceException;
+    List<PaymentTemplate> readAll(UUID userId, int limit, int offset);
 
 
     @Transactional(readOnly = true)
-    PaymentTemplate readById(UUID userId, long paymentTemplateId) throws ServiceException;
+    PaymentTemplate readById(UUID userId, long paymentTemplateId);
 
     @Transactional
-    PaymentTemplate update(UUID userId, long paymentTemplateId, PaymentTemplate data) throws ServiceException;
+    PaymentTemplate update(UUID userId, long paymentTemplateId, PaymentTemplate data);
 
     @Transactional
-    void delete(UUID userId, long paymentTemplateId) throws ServiceException;
+    void delete(UUID userId, long paymentTemplateId);
 
 }
