@@ -38,7 +38,7 @@ public class PaymentTemplateController extends GenericController {
 
     @ApiOperation("Creates a passed payment template")
     @PostMapping("/paymenttemplates")
-    PaymentTemplateResponse create(@RequestHeader UUID userId,
+    public PaymentTemplateResponse create(@RequestHeader UUID userId,
                                    @Valid @RequestBody PaymentTemplateRequest request) {
         return mapper.map(paymentTemplateService.create(userId, mapper.map(request, PaymentTemplate.class)),
                 PaymentTemplateResponse.class);
@@ -47,7 +47,7 @@ public class PaymentTemplateController extends GenericController {
 
     @ApiOperation("Reads all the existing payment templates")
     @GetMapping("/paymenttemplates")
-    List<PaymentTemplateResponse> readAll(@RequestHeader UUID userId,
+    public List<PaymentTemplateResponse> readAll(@RequestHeader UUID userId,
                                           @RequestParam(defaultValue = "10") int limit,
                                           @RequestParam(defaultValue = "0") int offset) {
         return paymentTemplateService.readAll(userId, limit, offset)
@@ -59,7 +59,7 @@ public class PaymentTemplateController extends GenericController {
 
     @ApiOperation("Reads an existing payment template by id")
     @GetMapping("/paymenttemplates/{paymentTemplateId}")
-    PaymentTemplateResponse readById(@RequestHeader UUID userId,
+    public PaymentTemplateResponse readById(@RequestHeader UUID userId,
                                      @PathVariable long paymentTemplateId) {
         return mapper.map(paymentTemplateService.readById(userId, paymentTemplateId), PaymentTemplateResponse.class);
     }
@@ -67,7 +67,7 @@ public class PaymentTemplateController extends GenericController {
 
     @ApiOperation("Updates passed payment template")
     @PutMapping("/paymenttemplates/{paymentTemplateId}")
-    PaymentTemplateResponse update(@RequestHeader UUID userId,
+    public PaymentTemplateResponse update(@RequestHeader UUID userId,
                                    @PathVariable long paymentTemplateId,
                                    @RequestBody @Valid PaymentTemplateRequest request) {
         return mapper.map(paymentTemplateService.update(userId, paymentTemplateId,
@@ -77,7 +77,7 @@ public class PaymentTemplateController extends GenericController {
 
     @ApiOperation("Deletes payment template by its unique identifier")
     @DeleteMapping("/paymenttemplates/{paymentTemplateId}")
-    void delete(@RequestHeader UUID userId,
+    public void delete(@RequestHeader UUID userId,
                 @PathVariable long paymentTemplateId) {
         paymentTemplateService.delete(userId, paymentTemplateId);
     }

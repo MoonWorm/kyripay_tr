@@ -95,7 +95,7 @@ public class PaymentTemplateRepositoryTest {
     @Test(expected = RepositoryException.class)
     @DataSet(value = {"datasets/clear_payment_templates.xml"})
     public void update_noRecordsInDB_shouldThrownException() {
-        assertThat(sut.update(UUID.fromString("aaeeaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), -1L, createFirstPaymentTemplate()));
+        sut.update(UUID.fromString("aaeeaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), -1L, createFirstPaymentTemplate());
     }
 
     @Test

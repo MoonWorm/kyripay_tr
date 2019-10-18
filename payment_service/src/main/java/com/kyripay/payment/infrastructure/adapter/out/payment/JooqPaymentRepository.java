@@ -63,10 +63,8 @@ public class JooqPaymentRepository implements Payments {
     public List<Payment> search(SearchCriterias searchCriterias, int limit, int offset) {
         try {
             SelectWhereStep<PaymentRecord> select = ctx.selectFrom(PAYMENT);
-            if (searchCriterias != null) {
-                if (searchCriterias.getStatus() != null) {
-                    select.where(PAYMENT.STATUS.eq(searchCriterias.getStatus().name()));
-                }
+            if (searchCriterias != null && searchCriterias.getStatus() != null) {
+                select.where(PAYMENT.STATUS.eq(searchCriterias.getStatus().name()));
             }
             return select.orderBy(PAYMENT.CREATED_ON.asc())
                     .limit(limit)

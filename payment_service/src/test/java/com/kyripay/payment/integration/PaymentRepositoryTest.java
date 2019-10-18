@@ -132,7 +132,7 @@ public class PaymentRepositoryTest {
     @Test(expected = RepositoryException.class)
     @DataSet(value = {"datasets/clear_payments.xml"})
     public void updateStatus_noRecordsInDB_shouldThrownException() {
-        assertThat(sut.updateStatus(UUID.fromString("aaeeaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), -1L, Status.PROCESSING));
+        sut.updateStatus(UUID.fromString("aaeeaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), -1L, Status.PROCESSING);
     }
 
     @Test
