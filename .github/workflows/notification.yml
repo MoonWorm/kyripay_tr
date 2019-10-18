@@ -33,10 +33,10 @@ jobs:
         run: |
           cd notification_service
           sh mvnw verify sonar:sonar \
-            -Dsonar.projectKey=kyripay_payment \
-            -Dsonar.organization=kyripay \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=56a031546712293e238790d48b53ea92efedccce
+               -Dsonar.projectKey=kyripay-notification \
+               -Dsonar.organization=kyripay \
+               -Dsonar.host.url=https://sonarcloud.io \
+               -Dsonar.login=152498a6b1a5d9572033c6629b7f9cee2e76a5e3
       - name: Prepare Restdocs documentation
         run: |
           cd notification_service

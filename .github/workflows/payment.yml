@@ -38,9 +38,9 @@ jobs:
           cd payment_service
           sh mvnw verify sonar:sonar \
                -Dsonar.projectKey=kyripay-payment \
-               -Dsonar.organization=kyripay-payment \
+               -Dsonar.organization=kyripay \
                -Dsonar.host.url=https://sonarcloud.io \
-               -Dsonar.login=d2d687ba5972f541985e9286af7e1581eae2168e
+               -Dsonar.login=01219afee4405ca2ac8379a9ced8d34b2b32b5f9
       - name: Prepare Restdocs documentation
         run: |
           cd payment_service
