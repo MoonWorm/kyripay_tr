@@ -31,7 +31,7 @@ apply plugin: 'spring-cloud-contract'
 apply plugin: 'org.springframework.boot'
 
 group = 'com.kyripay'
-version = project.hasProperty('customVersion') ? project.customVersion : '0.1.1-SNAPSHOT'
+version = project.hasProperty('customVersion') ? project.customVersion : '0.1.2'
 
 configurations {
 	compileOnly {
