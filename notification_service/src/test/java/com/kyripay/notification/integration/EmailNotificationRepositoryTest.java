@@ -16,6 +16,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.GenericContainer;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -46,7 +48,9 @@ public class EmailNotificationRepositoryTest {
     @Test
     public void save_passEmailNotificationDocument_shouldBeSuccessfullyStoredWithGeneratedId() {
         // given
-        EmailNotificationDocument document = new EmailNotificationDocument("vasia.pupkin@kpay.com", "test subj", "test body", Status.SENT);
+        UUID uuid = UUID.fromString("123e4567-e89b-12d3-a456-426655440000");
+        EmailNotificationDocument document = new EmailNotificationDocument(uuid, "vasia.pupkin@kpay.com",
+                "test subj", "test body", Status.SENT);
 
         // when
         EmailNotificationDocument documentSaved = repository.save(document);
@@ -54,6 +58,7 @@ public class EmailNotificationRepositoryTest {
         // then
         assertThat(documentSaved)
                 .isNotNull()
+                .hasFieldOrPropertyWithValue("uuid", document.getUuid())
                 .hasFieldOrPropertyWithValue("to", document.getTo())
                 .hasFieldOrPropertyWithValue("subject", document.getSubject())
                 .hasFieldOrPropertyWithValue("body", document.getBody())

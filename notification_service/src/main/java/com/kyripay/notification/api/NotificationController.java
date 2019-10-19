@@ -7,7 +7,6 @@ package com.kyripay.notification.api;
 
 import com.kyripay.notification.dto.EmailNotificationRequest;
 import com.kyripay.notification.dto.NotificationResponse;
-import com.kyripay.notification.dto.SmsNotificationRequest;
 import com.kyripay.notification.service.EmailServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -43,11 +42,5 @@ public class NotificationController {
         // Spring MVC will automatically does the response, no code required
     }
 
-
-    @ApiOperation("Sends SMS text message to a user")
-    @PostMapping("/api/v1/smsnotifications")
-    public void createSmsNotification(@Valid @RequestBody SmsNotificationRequest notification) {
-        throw new UnsupportedOperationException("SMS notification is not supported yet");
-    }
 
 }

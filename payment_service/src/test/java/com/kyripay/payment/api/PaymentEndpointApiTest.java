@@ -49,9 +49,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
 import static org.apache.http.HttpStatus.SC_OK;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -107,7 +105,7 @@ public class PaymentEndpointApiTest {
                 .contentType(ContentType.JSON)
                 .extract()
                 .as(PaymentResponse.class);
-        assertNotNull(response);
+        assertThat(response).isNotNull();
     }
 
     @Test
@@ -125,8 +123,8 @@ public class PaymentEndpointApiTest {
                 .response()
                 .as(CustomGlobalExceptionHandler.ErrorsInfo.class);
 
-        assertThat(responseModel.getStatus(), is(400));
-        assertThat(responseModel.getErrors().size(), is(9));
+        assertThat(responseModel).isNotNull().hasFieldOrPropertyWithValue("status", 400);
+        assertThat(responseModel.getErrors()).hasSize(9);
     }
 
     @Test
@@ -146,8 +144,7 @@ public class PaymentEndpointApiTest {
                 .contentType(ContentType.JSON)
                 .extract()
                 .as(List.class);
-        assertNotNull(response);
-        assertThat(response.size(), is(2));
+        assertThat(response).isNotNull().hasSize(2);
     }
 
     @Test
@@ -169,8 +166,7 @@ public class PaymentEndpointApiTest {
                 .contentType(ContentType.JSON)
                 .extract()
                 .as(List.class);
-        assertNotNull(processing);
-        assertThat(processing.size(), is(1));
+        assertThat(processing).isNotNull().hasSize(1);
     }
 
     @Test
@@ -188,7 +184,7 @@ public class PaymentEndpointApiTest {
                 .contentType(ContentType.JSON)
                 .extract()
                 .as(PaymentResponse.class);
-        assertNotNull(response);
+        assertThat(response).isNotNull();
     }
 
     @Test
@@ -206,7 +202,7 @@ public class PaymentEndpointApiTest {
                 .contentType(ContentType.JSON)
                 .extract()
                 .as(PaymentStatus.class);
-        assertThat(responseStatus.getStatus(), is(Status.CREATED));
+        assertThat(responseStatus).isNotNull().hasFieldOrPropertyWithValue("status", Status.CREATED);
     }
 
     @Test
@@ -225,7 +221,7 @@ public class PaymentEndpointApiTest {
                 .statusCode(SC_OK)
                 .extract()
                 .as(PaymentStatus.class);
-        assertThat(responseStatus.getStatus(), is(Status.COMPLETED));
+        assertThat(responseStatus).isNotNull().hasFieldOrPropertyWithValue("status", Status.COMPLETED);
     }
 
 
@@ -242,9 +238,8 @@ public class PaymentEndpointApiTest {
                 .extract()
                 .response()
                 .as(CustomGlobalExceptionHandler.ErrorsInfo.class);
-
-        assertThat(responseModel.getStatus(), is(400));
-        assertThat(responseModel.getErrors().size(), is(1));
+        assertThat(responseModel).isNotNull().hasFieldOrPropertyWithValue("status", 400);
+        assertThat(responseModel.getErrors()).hasSize(1);
     }
 
     private String readTestResource(String relativePath) throws URISyntaxException, IOException {
@@ -266,7 +261,7 @@ public class PaymentEndpointApiTest {
                 .contentType(ContentType.JSON)
                 .extract()
                 .as(PaymentResponse.class);
-        assertNotNull(response);
+        assertThat(response).isNotNull();
         return response.getId();
     }
 
@@ -283,7 +278,7 @@ public class PaymentEndpointApiTest {
                 .contentType(ContentType.JSON)
                 .extract()
                 .as(PaymentStatus.class);
-        assertNotNull(response);
+        assertThat(response).isNotNull();
         return response.getStatus();
 
     }

@@ -36,8 +36,7 @@ import java.util.UUID;
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
 import static org.apache.http.HttpStatus.SC_OK;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -86,7 +85,7 @@ public class PaymentTemplateEndpointApiTest {
                 .contentType(ContentType.JSON)
                 .extract()
                 .as(PaymentTemplateResponse.class);
-        assertNotNull(response);
+        assertThat(response).isNotNull();
     }
 
     @Test
@@ -103,8 +102,8 @@ public class PaymentTemplateEndpointApiTest {
                 .extract()
                 .response()
                 .as(CustomGlobalExceptionHandler.ErrorsInfo.class);
-        assertThat(responseModel.getStatus(), is(400));
-        assertThat(responseModel.getErrors().size(), is(1));
+        assertThat(responseModel).isNotNull().hasFieldOrPropertyWithValue("status", 400);
+        assertThat(responseModel.getErrors()).hasSize(1);
     }
 
     @Test
@@ -124,8 +123,8 @@ public class PaymentTemplateEndpointApiTest {
                 .contentType(ContentType.JSON)
                 .extract()
                 .as(List.class);
-        assertNotNull(response);
-        assertEquals(2, response.size());
+        assertThat(response).isNotNull();
+        assertThat(response).hasSize(2);
     }
 
     @Test
@@ -143,7 +142,7 @@ public class PaymentTemplateEndpointApiTest {
                 .contentType(ContentType.JSON)
                 .extract()
                 .as(PaymentTemplateResponse.class);
-        assertNotNull(response);
+        assertThat(response).isNotNull();
     }
 
     @Test
@@ -164,7 +163,7 @@ public class PaymentTemplateEndpointApiTest {
                 .extract()
                 .response()
                 .as(PaymentTemplateResponse.class);
-        assertNotNull(response);
+        assertThat(response).isNotNull();
     }
 
 
@@ -182,9 +181,8 @@ public class PaymentTemplateEndpointApiTest {
                 .extract()
                 .response()
                 .as(CustomGlobalExceptionHandler.ErrorsInfo.class);
-
-        assertThat(responseModel.getStatus(), is(400));
-        assertThat(responseModel.getErrors().size(), is(1));
+        assertThat(responseModel).isNotNull().hasFieldOrPropertyWithValue("status", 400);
+        assertThat(responseModel.getErrors()).hasSize(1);
     }
 
     @Test
@@ -221,7 +219,7 @@ public class PaymentTemplateEndpointApiTest {
                 .contentType(ContentType.JSON)
                 .extract()
                 .as(PaymentTemplateResponse.class);
-        assertNotNull(response);
+        assertThat(response).isNotNull();
         return response.getId();
     }
 

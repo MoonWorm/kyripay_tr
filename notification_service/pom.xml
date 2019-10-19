@@ -32,6 +32,7 @@
 		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
 		<dockerfile-maven-plugin.version>1.4.12</dockerfile-maven-plugin.version>
 		<asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
+		<spring-cloud-contract-maven-plugin.version>2.1.3.RELEASE</spring-cloud-contract-maven-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -120,6 +121,14 @@
 			<version>${testcontainers.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-contract-verifier</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -185,6 +194,7 @@
 					<excludes>
 						<exclude>../api/*Test.java</exclude>
 						<exclude>../integration/*Test.java</exclude>
+						<exclude>../contract/*</exclude>
 					</excludes>
                     <includes>
                         <include>../unit/*Test.java</include>
@@ -208,6 +218,7 @@
 							<excludes>
 								<exclude>../unit/*Test.java</exclude>
 								<exclude>../integration/*Test.java</exclude>
+								<exclude>../contract/*</exclude>
 							</excludes>
 							<includes>
 								<include>../api/*Test.java</include>
@@ -252,6 +263,7 @@
 							<excludes>
 								<exclude>../unit/*Test.java</exclude>
 								<exclude>../api/*Test.java</exclude>
+								<exclude>../contract/*</exclude>
 							</excludes>
 							<includes>
 								<include>../integration/*Test.java</include>
@@ -278,6 +290,38 @@
 						</executions>
 						<configuration>
 							<destFile>${project.build.directory}/jacoco-integration.exec</destFile>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>contract</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.cloud</groupId>
+						<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+						<version>${spring-cloud-contract-maven-plugin.version}</version>
+						<extensions>true</extensions>
+						<configuration>
+							<baseClassForTests>com.kyripay.notification.contract.ContractTestBase</baseClassForTests>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<!--Dont's run any other tests-->
+							<excludes>
+								<exclude>../unit/*Test.java</exclude>
+								<exclude>../integration/*Test.java</exclude>
+								<exclude>../api/*Test.java</exclude>
+							</excludes>
+							<includes>
+								<include>../contract/*</include>
+							</includes>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -329,6 +373,7 @@
                                 <exclude>../unit/*Test.java</exclude>
                                 <exclude>../integration/*Test.java</exclude>
                                 <exclude>../api/*Test.java</exclude>
+								<exclude>../contract/*</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
@@ -381,6 +426,7 @@
 								<exclude>../unit/*Test.java</exclude>
 								<exclude>../api/*Test.java</exclude>
 								<exclude>../integration/*Test.java</exclude>
+								<exclude>../contract/*</exclude>
 							</excludes>
 						</configuration>
 					</plugin>

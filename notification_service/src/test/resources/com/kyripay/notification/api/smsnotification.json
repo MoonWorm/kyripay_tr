@@ -1,7 +1,0 @@
-{
-  "bodyTemplateId": "payment_completed_body.twig",
-  "parameters": {
-     "firstName": "Vasia",
-     "lastName": "Pupkin"
-  }
-}

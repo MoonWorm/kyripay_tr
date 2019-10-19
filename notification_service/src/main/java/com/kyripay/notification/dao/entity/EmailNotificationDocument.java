@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @Document
 @Data
@@ -21,11 +22,12 @@ public class EmailNotificationDocument extends GenericNotification {
     @NotNull
     private final Status status;
 
-    public EmailNotificationDocument(@Email String to,
+    public EmailNotificationDocument(@NotNull UUID uuid,
+                                     @Email String to,
                                      @NotBlank String subject,
                                      @NotBlank String body,
                                      @NotNull Status status) {
-        super(body);
+        super(uuid, body);
         this.to = to;
         this.subject = subject;
         this.status = status;

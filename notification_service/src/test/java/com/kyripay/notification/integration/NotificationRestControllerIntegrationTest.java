@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,6 +38,7 @@ public class NotificationRestControllerIntegrationTest {
 
     @Test
     public void emailIsSentToUser() throws Exception {
+        // given
         EmailNotificationRequest notificationRequest = new EmailNotificationRequest("vasia@pupkin.com",
                 "registration_conf_subj", "registration_conf_body");
         Map<String, Object> params = new HashMap<>();
@@ -45,10 +47,13 @@ public class NotificationRestControllerIntegrationTest {
         params.put("honorific", "Mr.");
         notificationRequest.setParameters(params);
 
-        NotificationResponse expectedResponse = new NotificationResponse("abc-abc-abc", Status.SENT);
+        UUID uuid = UUID.fromString("123e4567-e89b-12d3-a456-426655440000");
+
+        NotificationResponse expectedResponse = new NotificationResponse(uuid, Status.SENT);
 
         when(emailService.sendEmail(notificationRequest)).thenReturn(expectedResponse);
 
+        // when then
         mockMvc.perform(post("/api/v1/emailnotifications")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content("{\n" +
@@ -62,7 +67,7 @@ public class NotificationRestControllerIntegrationTest {
                         "  }\n" +
                         "}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(expectedResponse.getId()))
+                .andExpect(jsonPath("$.uuid").value(expectedResponse.getUuid().toString()))
                 .andExpect(jsonPath("$.status").value(expectedResponse.getStatus().name()));
     }
 

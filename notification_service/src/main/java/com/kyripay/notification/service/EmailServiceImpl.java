@@ -14,6 +14,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -44,11 +45,11 @@ public class EmailServiceImpl implements EmailService {
             String body = templateResolver.resolveText(notification.getBodyTemplateId(), notification.getParameters());
             Status status = doSend(notification.getTo(), subject, body);
 
-            EmailNotificationDocument notificationDocument = new EmailNotificationDocument(notification.getTo(),
-                    subject, body, status);
+            EmailNotificationDocument notificationDocument = new EmailNotificationDocument(UUID.randomUUID(),
+                    notification.getTo(), subject, body, status);
             validator.validateEmailNotification(notificationDocument);
             notificationDocument = repository.save(notificationDocument);
-            return new NotificationResponse(notificationDocument.getId(), status);
+            return new NotificationResponse(notificationDocument.getUuid(), status);
         } catch (Exception e) {
             throw new ServiceException("Can't send an email notification", e);
         }

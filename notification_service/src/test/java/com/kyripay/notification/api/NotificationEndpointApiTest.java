@@ -5,6 +5,8 @@
  *******************************************************************************/
 package com.kyripay.notification.api;
 
+import com.kyripay.notification.domain.vo.Status;
+import com.kyripay.notification.dto.NotificationResponse;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -35,8 +37,7 @@ import java.nio.file.Paths;
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
 import static org.apache.http.HttpStatus.SC_OK;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
 import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
@@ -83,14 +84,20 @@ public class NotificationEndpointApiTest {
 
     @Test
     public void createEmailNotificationSuccess() throws IOException, URISyntaxException {
-        given(this.documentationSpec)
+        NotificationResponse response = given(this.documentationSpec)
                 .filter(document("{method-name}"))
                 .contentType(ContentType.JSON)
                 .body(readTestResource("/com/kyripay/notification/api/emailnotification.json"))
                 .when()
                 .post("/api/v1/emailnotifications")
                 .then()
-                .assertThat().statusCode(SC_OK);
+                .assertThat()
+                .statusCode(SC_OK)
+                .extract()
+                .as(NotificationResponse.class);
+        assertThat(response).isNotNull();
+        assertThat(response.getUuid()).isNotNull();
+        assertThat(response.getStatus()).isEqualTo(Status.SENT);
     }
 
     @Test
@@ -107,8 +114,8 @@ public class NotificationEndpointApiTest {
                 .response();
         CustomGlobalExceptionHandler.ErrorsInfo responseModel = response.as(CustomGlobalExceptionHandler.ErrorsInfo.class);
 
-        assertThat(responseModel.getStatus(), is(400));
-        assertThat(responseModel.getErrors().size(), is(3));
+        assertThat(responseModel).isNotNull().hasFieldOrPropertyWithValue("status", 400);
+        assertThat(responseModel.getErrors()).hasSize(3);
     }
 
     private String readTestResource(String relativePath) throws URISyntaxException, IOException {
