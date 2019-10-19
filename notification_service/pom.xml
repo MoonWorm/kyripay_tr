@@ -125,10 +125,6 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-contract-verifier</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
-		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -186,6 +182,17 @@
 					<destFile>${project.build.directory}/jacoco-unit.exec</destFile>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+				<version>${spring-cloud-contract-maven-plugin.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<baseClassForTests>com.kyripay.notification.contract.ContractTestBase</baseClassForTests>
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -194,7 +201,7 @@
 					<excludes>
 						<exclude>../api/*Test.java</exclude>
 						<exclude>../integration/*Test.java</exclude>
-						<exclude>../contract/*</exclude>
+						<exclude>**/contract/ContractVerifierTest.class</exclude>
 					</excludes>
                     <includes>
                         <include>../unit/*Test.java</include>
@@ -218,7 +225,7 @@
 							<excludes>
 								<exclude>../unit/*Test.java</exclude>
 								<exclude>../integration/*Test.java</exclude>
-								<exclude>../contract/*</exclude>
+								<exclude>**/contract/ContractVerifierTest.class</exclude>
 							</excludes>
 							<includes>
 								<include>../api/*Test.java</include>
@@ -263,7 +270,7 @@
 							<excludes>
 								<exclude>../unit/*Test.java</exclude>
 								<exclude>../api/*Test.java</exclude>
-								<exclude>../contract/*</exclude>
+								<exclude>**/contract/ContractVerifierTest.class</exclude>
 							</excludes>
 							<includes>
 								<include>../integration/*Test.java</include>
@@ -301,15 +308,6 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.springframework.cloud</groupId>
-						<artifactId>spring-cloud-contract-maven-plugin</artifactId>
-						<version>${spring-cloud-contract-maven-plugin.version}</version>
-						<extensions>true</extensions>
-						<configuration>
-							<baseClassForTests>com.kyripay.notification.contract.ContractTestBase</baseClassForTests>
-						</configuration>
-					</plugin>
-					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
@@ -320,7 +318,7 @@
 								<exclude>../api/*Test.java</exclude>
 							</excludes>
 							<includes>
-								<include>../contract/*</include>
+								<include>**/contract/ContractVerifierTest.class</include>
 							</includes>
 						</configuration>
 					</plugin>
@@ -373,7 +371,7 @@
                                 <exclude>../unit/*Test.java</exclude>
                                 <exclude>../integration/*Test.java</exclude>
                                 <exclude>../api/*Test.java</exclude>
-								<exclude>../contract/*</exclude>
+								<exclude>**/contract/ContractVerifierTest.class</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
@@ -426,7 +424,7 @@
 								<exclude>../unit/*Test.java</exclude>
 								<exclude>../api/*Test.java</exclude>
 								<exclude>../integration/*Test.java</exclude>
-								<exclude>../contract/*</exclude>
+								<exclude>**/contract/ContractVerifierTest.class</exclude>
 							</excludes>
 						</configuration>
 					</plugin>

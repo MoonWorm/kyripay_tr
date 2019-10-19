@@ -7,6 +7,11 @@ Contract.make {
 
     request {
         method POST()
+        headers {
+            header(
+                    'Content-Type', "application/json;charset=UTF-8"
+            )
+        }
         url("/api/v1/emailnotifications")
         body("""
         {
@@ -24,16 +29,16 @@ Contract.make {
 
     response {
         status(HttpStatus.SC_OK)
+        headers {
+            header(
+                    'Content-Type', "application/json;charset=UTF-8"
+            )
+        }
         body("""
         {
             "uuid"         : "123e4567-e89b-12d3-a456-426655440000",
             "status"       : "SENT"
         }
         """)
-        headers {
-            header(
-                    'Content-Type', "application/json;charset=UTF-8"
-            )
-        }
     }
 }

@@ -5,6 +5,8 @@
  *******************************************************************************/
 package com.kyripay.notification.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -27,7 +29,10 @@ public class EmailNotificationRequest extends GenericNotificationRequest {
     @ApiModelProperty(value = "Target email", example = "info@xyz.com")
     private final String to;
 
-    public EmailNotificationRequest(@Email String to, @NotBlank String titleTemplateId, @NotBlank String bodyTemplateId) {
+    @JsonCreator
+    public EmailNotificationRequest(@Email @JsonProperty("to") String to,
+                                    @NotBlank @JsonProperty("titleTemplateId") String titleTemplateId,
+                                    @NotBlank @JsonProperty("bodyTemplateId") String bodyTemplateId) {
         super(bodyTemplateId);
         this.to = to;
         this.titleTemplateId = titleTemplateId;
