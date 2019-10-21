@@ -48,4 +48,4 @@ jobs:
       - name: Publish docker image
         run: |
           cd notification_service
-          sh mvnw fabric8:build fabric8:push -Pdocker -Ddocker.custom.tag={{github.sha}}
+          sh mvnw fabric8:build fabric8:push -Pdocker -Ddocker.custom.tag=${{github.sha}}
