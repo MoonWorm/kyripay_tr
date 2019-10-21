@@ -48,5 +48,4 @@ jobs:
       - name: Publish docker image
         run: |
           cd notification_service
-          docker login --username kyripay --password "(VXB8Ehqp"
-          sh mvnw dockerfile:build dockerfile:push -Pdocker
+          sh mvnw fabric8:build fabric8:push -Pdocker -Ddocker.custom.tag={{github.sha}}
