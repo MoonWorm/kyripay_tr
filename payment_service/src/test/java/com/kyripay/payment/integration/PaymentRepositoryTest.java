@@ -56,6 +56,12 @@ public class PaymentRepositoryTest {
         assertFirstPayment(createdPayment);
     }
 
+    @Test(expected = RepositoryException.class)
+    @DataSet(value = {"datasets/clear_payments.xml"})
+    public void create_someDbErrorHappened_shouldThrowRepositoryException() {
+        sut.create(USER_ID, createBrokenPayment());
+    }
+
     @Test
     @DataSet(value = {"datasets/clear_payments.xml"})
     public void readAll_noRecordsInDB_shouldReturnEmptyList() {
@@ -181,14 +187,30 @@ public class PaymentRepositoryTest {
                 1L,
                 "IBAN123",
                 Status.CREATED,
-                new PaymentRecipientInfo(
-                        "Vasia",
-                        "Pupkin",
-                        "0000/00222/0XXXX",
-                        "Fake Bank Inc",
-                        "Main str. 1-1",
-                        "IBAN321"
-                ),
+                createPaymentRecipientInfo1(),
+                null
+        );
+    }
+
+    private PaymentRecipientInfo createPaymentRecipientInfo1() {
+        return new PaymentRecipientInfo(
+                "Vasia",
+                "Pupkin",
+                "0000/00222/0XXXX",
+                "Fake Bank Inc",
+                "Main str. 1-1",
+                "IBAN321"
+        );
+    }
+
+    private Payment createBrokenPayment() {
+        return new Payment(
+                new Amount(500L, Currency.USD),
+                1L,
+                "IBAN123",
+                Status.CREATED,
+                // recipient info is null which contains mandatory fields
+                null,
                 null
         );
     }

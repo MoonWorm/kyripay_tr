@@ -3,8 +3,9 @@ package com.kyripay.payment.domain.port.in.payment.impl;
 import com.kyripay.payment.domain.Payment;
 import com.kyripay.payment.domain.SearchCriterias;
 import com.kyripay.payment.domain.Trace;
-import com.kyripay.payment.domain.port.in.payment.Payments;
+import com.kyripay.payment.domain.port.in.payment.PaymentService;
 import com.kyripay.payment.domain.port.in.payment.ServiceException;
+import com.kyripay.payment.domain.port.out.payment.Payments;
 import com.kyripay.payment.domain.port.out.traces.Traces;
 import com.kyripay.payment.domain.vo.Status;
 import org.springframework.stereotype.Service;
@@ -15,15 +16,15 @@ import java.util.UUID;
 
 @Validated
 @Service
-public class PaymentsImpl implements Payments {
+public class PaymentServiceImpl implements PaymentService {
 
-    private com.kyripay.payment.domain.port.out.payment.Payments repository;
+    private Payments repository;
     private PaymentValidator validator;
 
     private Traces traces;
 
-    public PaymentsImpl(com.kyripay.payment.domain.port.out.payment.Payments repository,
-                        PaymentValidator validator, Traces traces) {
+    public PaymentServiceImpl(com.kyripay.payment.domain.port.out.payment.Payments repository,
+                              PaymentValidator validator, Traces traces) {
         this.repository = repository;
         this.validator = validator;
         this.traces = traces;

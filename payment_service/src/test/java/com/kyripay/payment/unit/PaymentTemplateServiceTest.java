@@ -3,7 +3,7 @@ package com.kyripay.payment.unit;
 import com.kyripay.payment.domain.PaymentTemplate;
 import com.kyripay.payment.domain.port.in.payment.ServiceException;
 import com.kyripay.payment.domain.port.in.payment.impl.PaymentTemplateValidator;
-import com.kyripay.payment.domain.port.in.payment.impl.PaymentTemplatesImpl;
+import com.kyripay.payment.domain.port.in.payment.impl.PaymentTemplateServiceImpl;
 import com.kyripay.payment.domain.port.out.payment.PaymentTemplates;
 import com.kyripay.payment.domain.port.out.payment.RepositoryException;
 import com.kyripay.payment.domain.vo.Amount;
@@ -32,7 +32,7 @@ public class PaymentTemplateServiceTest {
     @Mock
     private PaymentTemplateValidator validator;
     @InjectMocks
-    private PaymentTemplatesImpl sut;
+    private PaymentTemplateServiceImpl sut;
 
     @Test
     public void create_setupSuccessScenario_checkAllInvocationsAndResult() {

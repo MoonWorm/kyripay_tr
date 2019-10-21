@@ -5,6 +5,8 @@
  *******************************************************************************/
 package com.kyripay.payment.infrastructure.adapter.in.payment.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kyripay.payment.domain.vo.Amount;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -18,7 +20,6 @@ import javax.validation.constraints.NotNull;
  * @author M-ATA
  */
 @Data
-@RequiredArgsConstructor
 public class PaymentDetails {
 
     @Valid
@@ -37,4 +38,14 @@ public class PaymentDetails {
     @NotNull(message = "Recipient info must be specified")
     private final PaymentRecipientInfo recipientInfo;
 
+    @JsonCreator
+    public PaymentDetails(@Valid @NotNull(message = "Payment amount must be specified") @JsonProperty("amount") Amount amount,
+                          @NotNull(message = "Customer bank must be specified") @JsonProperty("bankId") Long bankId,
+                          @NotBlank(message = "Account number must be specified") @JsonProperty("accountNumber") String accountNumber,
+                          @Valid @NotNull(message = "Recipient info must be specified") @JsonProperty("recipientInfo") PaymentRecipientInfo recipientInfo) {
+        this.amount = amount;
+        this.bankId = bankId;
+        this.accountNumber = accountNumber;
+        this.recipientInfo = recipientInfo;
+    }
 }

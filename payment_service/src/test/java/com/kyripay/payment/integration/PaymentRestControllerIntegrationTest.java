@@ -9,7 +9,7 @@ import com.kyripay.payment.domain.vo.Currency;
 import com.kyripay.payment.domain.vo.Status;
 import com.kyripay.payment.infrastructure.adapter.in.payment.dto.*;
 import com.kyripay.payment.domain.port.in.payment.ServiceException;
-import com.kyripay.payment.domain.port.in.payment.impl.PaymentsImpl;
+import com.kyripay.payment.domain.port.in.payment.impl.PaymentServiceImpl;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.dozer.DozerBeanMapper;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class PaymentRestControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private PaymentsImpl paymentService;
+    private PaymentServiceImpl paymentService;
 
     @MockBean
     private DozerBeanMapper mapper;

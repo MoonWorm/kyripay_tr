@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-public interface Payments {
+public interface PaymentService {
 
     @Transactional
     Payment create(UUID userId, Payment payment);

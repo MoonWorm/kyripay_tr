@@ -1,7 +1,7 @@
 package com.kyripay.payment.integration;
 
 import com.kyripay.payment.domain.PaymentTemplate;
-import com.kyripay.payment.domain.port.in.payment.impl.PaymentTemplatesImpl;
+import com.kyripay.payment.domain.port.in.payment.impl.PaymentTemplateServiceImpl;
 import com.kyripay.payment.infrastructure.adapter.in.payment.CustomGlobalExceptionHandler;
 import com.kyripay.payment.infrastructure.adapter.in.payment.PaymentTemplateController;
 import com.kyripay.payment.domain.vo.Amount;
@@ -43,7 +43,7 @@ public class PaymentTemplateRestControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private PaymentTemplatesImpl paymentTemplateService;
+    private PaymentTemplateServiceImpl paymentTemplateService;
 
     @MockBean
     private DozerBeanMapper mapper;

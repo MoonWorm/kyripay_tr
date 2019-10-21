@@ -31,6 +31,10 @@ jobs:
         run: |
           cd payment_service
           sh mvnw test -Papi
+      - name: Run Contract tests
+        run: |
+          cd payment_service
+          sh mvnw test -Pcontract
       - name: Sonar analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

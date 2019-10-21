@@ -11,7 +11,7 @@ import com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentResponse
 import com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentStatus;
 import com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentWithUserIdResponse;
 import com.kyripay.payment.domain.SearchCriterias;
-import com.kyripay.payment.domain.port.in.payment.Payments;
+import com.kyripay.payment.domain.port.in.payment.PaymentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapper;
@@ -31,10 +31,10 @@ import static java.util.stream.Collectors.toList;
 @Api(value = "Payment Endpoint")
 public class PaymentController extends GenericController {
 
-    private final Payments paymentService;
+    private final PaymentService paymentService;
     private final DozerBeanMapper mapper;
 
-    public PaymentController(Payments paymentService, DozerBeanMapper mapper) {
+    public PaymentController(PaymentService paymentService, DozerBeanMapper mapper) {
         this.paymentService = paymentService;
         this.mapper = mapper;
     }

@@ -1,21 +1,22 @@
 package com.kyripay.payment.domain.port.in.payment.impl;
 
 import com.kyripay.payment.domain.PaymentTemplate;
-import com.kyripay.payment.domain.port.in.payment.PaymentTemplates;
+import com.kyripay.payment.domain.port.in.payment.PaymentTemplateService;
 import com.kyripay.payment.domain.port.in.payment.ServiceException;
+import com.kyripay.payment.domain.port.out.payment.PaymentTemplates;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
-public class PaymentTemplatesImpl implements PaymentTemplates {
+public class PaymentTemplateServiceImpl implements PaymentTemplateService {
 
-    private com.kyripay.payment.domain.port.out.payment.PaymentTemplates repository;
+    private PaymentTemplates repository;
     private PaymentTemplateValidator validator;
 
-    public PaymentTemplatesImpl(com.kyripay.payment.domain.port.out.payment.PaymentTemplates repository,
-                                PaymentTemplateValidator validator) {
+    public PaymentTemplateServiceImpl(com.kyripay.payment.domain.port.out.payment.PaymentTemplates repository,
+                                      PaymentTemplateValidator validator) {
         this.repository = repository;
         this.validator = validator;
     }

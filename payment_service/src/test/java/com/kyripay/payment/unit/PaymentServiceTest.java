@@ -5,7 +5,7 @@ import com.kyripay.payment.domain.SearchCriterias;
 import com.kyripay.payment.domain.Trace;
 import com.kyripay.payment.domain.port.in.payment.ServiceException;
 import com.kyripay.payment.domain.port.in.payment.impl.PaymentValidator;
-import com.kyripay.payment.domain.port.in.payment.impl.PaymentsImpl;
+import com.kyripay.payment.domain.port.in.payment.impl.PaymentServiceImpl;
 import com.kyripay.payment.domain.port.out.payment.Payments;
 import com.kyripay.payment.domain.port.out.payment.RepositoryException;
 import com.kyripay.payment.domain.port.out.traces.Traces;
@@ -40,7 +40,7 @@ public class PaymentServiceTest {
     @Mock
     private Traces traces;
     @InjectMocks
-    private PaymentsImpl sut;
+    private PaymentServiceImpl sut;
 
     @Test
     public void create_setupSuccessScenario_checkAllInvocationsAndResult() {

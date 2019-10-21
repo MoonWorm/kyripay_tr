@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-public interface PaymentTemplates {
+public interface PaymentTemplateService {
 
     @Transactional
     PaymentTemplate create(UUID userId, PaymentTemplate paymentTemplate);

@@ -30,14 +30,12 @@ Contract.make {
     response {
         status(HttpStatus.SC_OK)
         headers {
-            header(
-                    'Content-Type', "application/json;charset=UTF-8"
-            )
+            header('Content-Type', 'application/json;charset=UTF-8')
         }
         body("""
         {
-            "uuid"         : "123e4567-e89b-12d3-a456-426655440000",
-            "status"       : "SENT"
+            "uuid"         : "${anyUuid()}",
+            "status"       : "${anyOf('SENT', 'FAILED')}"
         }
         """)
     }

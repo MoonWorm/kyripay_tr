@@ -8,7 +8,7 @@ package com.kyripay.payment.infrastructure.adapter.in.payment;
 import com.kyripay.payment.domain.PaymentTemplate;
 import com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentTemplateRequest;
 import com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentTemplateResponse;
-import com.kyripay.payment.domain.port.in.payment.PaymentTemplates;
+import com.kyripay.payment.domain.port.in.payment.PaymentTemplateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.dozer.DozerBeanMapper;
@@ -28,10 +28,10 @@ import static java.util.stream.Collectors.toList;
 @Api(value = "Payment Template Endpoint")
 public class PaymentTemplateController extends GenericController {
 
-    private PaymentTemplates paymentTemplateService;
+    private PaymentTemplateService paymentTemplateService;
     private DozerBeanMapper mapper;
 
-    public PaymentTemplateController(PaymentTemplates paymentTemplateService, DozerBeanMapper mapper) {
+    public PaymentTemplateController(PaymentTemplateService paymentTemplateService, DozerBeanMapper mapper) {
         this.paymentTemplateService = paymentTemplateService;
         this.mapper = mapper;
     }
