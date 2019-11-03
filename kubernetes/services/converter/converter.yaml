@@ -16,13 +16,9 @@ spec:
           image: kyripay/converter
           ports:
             - containerPort: 8080
-          env:
-            - name: SPRING_DATA_MONGODB_HOST
-              value: mongodb
-            - name: KAFKA_HOST
-              value: kafka-cluster
-            - name: EUREKA_HOST
-              value: eureka
+          envFrom:
+            - configMapRef:
+                name: kyripay-config
           livenessProbe:
             httpGet:
               port: 8080

@@ -16,6 +16,6 @@ spec:
           image: kyripay/notification-service
           ports:
             - containerPort: 8081
-          env:
-            - name: SPRING_DATA_MONGODB_HOST
-              value: notification-mongodb
+          envFrom:
+            - configMapRef:
+                name: kyripay-config
