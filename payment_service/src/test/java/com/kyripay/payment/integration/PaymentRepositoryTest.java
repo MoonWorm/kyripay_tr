@@ -2,32 +2,35 @@ package com.kyripay.payment.integration;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
-import com.kyripay.payment.infrastructure.config.DozerConfig;
-import com.kyripay.payment.domain.port.out.payment.RepositoryException;
-import com.kyripay.payment.infrastructure.adapter.out.payment.JooqPaymentRepository;
 import com.kyripay.payment.domain.Payment;
 import com.kyripay.payment.domain.PaymentRecipientInfo;
+import com.kyripay.payment.domain.SearchCriterias;
+import com.kyripay.payment.domain.port.out.payment.RepositoryException;
 import com.kyripay.payment.domain.vo.Amount;
 import com.kyripay.payment.domain.vo.Currency;
 import com.kyripay.payment.domain.vo.Status;
-import com.kyripay.payment.domain.SearchCriterias;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import com.kyripay.payment.infrastructure.adapter.out.payment.JooqPaymentRepository;
+import com.kyripay.payment.infrastructure.config.DozerConfig;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jooq.JooqTest;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
+@Testcontainers
 @JooqTest(
         includeFilters = {
                 @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JooqPaymentRepository.class),
@@ -45,8 +48,8 @@ public class PaymentRepositoryTest {
     @Autowired
     private JooqPaymentRepository sut;
 
-    @ClassRule
-    public static final PostgreSQLContainer postgres = new PostgreSQLContainer();
+    @Container
+    private static final PostgreSQLContainer postgres = new PostgreSQLContainer();
 
     @Test
     @DataSet(value = {"datasets/clear_payments.xml"})
@@ -56,10 +59,12 @@ public class PaymentRepositoryTest {
         assertFirstPayment(createdPayment);
     }
 
-    @Test(expected = RepositoryException.class)
+    @Test
     @DataSet(value = {"datasets/clear_payments.xml"})
     public void create_someDbErrorHappened_shouldThrowRepositoryException() {
-        sut.create(USER_ID, createBrokenPayment());
+        Assertions.assertThrows(RepositoryException.class, () -> {
+            sut.create(USER_ID, createBrokenPayment());
+        });
     }
 
     @Test
@@ -135,10 +140,12 @@ public class PaymentRepositoryTest {
         assertThat(sut.getStatus(USER_ID, SECOND_PAYMENT_SCRIPT_ID)).isNotNull().isEqualTo(Status.COMPLETED);
     }
 
-    @Test(expected = RepositoryException.class)
+    @Test
     @DataSet(value = {"datasets/clear_payments.xml"})
     public void updateStatus_noRecordsInDB_shouldThrownException() {
-        sut.updateStatus(UUID.fromString("aaeeaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), -1L, Status.PROCESSING);
+        Assertions.assertThrows(RepositoryException.class, () -> {
+            sut.updateStatus(UUID.fromString("aaeeaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), -1L, Status.PROCESSING);
+        });
     }
 
     @Test
