@@ -5,12 +5,12 @@
  *******************************************************************************/
 package com.kyripay.payment.api;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.matching.RegexPattern;
-import com.kyripay.payment.infrastructure.adapter.in.payment.CustomGlobalExceptionHandler;
-import com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentStatus;
 import com.kyripay.payment.domain.vo.Status;
+import com.kyripay.payment.infrastructure.adapter.in.payment.CustomGlobalExceptionHandler;
 import com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentResponse;
+import com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentStatus;
 import com.kyripay.payment.infrastructure.adapter.in.payment.dto.PaymentWithUserIdResponse;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ServerList;
@@ -19,20 +19,23 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpStatus;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.cloud.netflix.ribbon.StaticServerList;
 import org.springframework.context.annotation.Bean;
-import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
 import java.net.URI;
@@ -60,36 +63,51 @@ import static org.springframework.restdocs.restassured3.RestAssuredRestDocumenta
 /**
  * @author M-ATA
  */
-@RunWith(SpringRunner.class)
+@ExtendWith({SpringExtension.class, RestDocumentationExtension.class})
+@Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 public class PaymentEndpointApiTest {
 
     private static final UUID USER_ID = UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11");
 
-    @ClassRule
-    public static final PostgreSQLContainer postgres = new PostgreSQLContainer();
-    @ClassRule
-    public static final WireMockRule wiremock = new WireMockRule(wireMockConfig().dynamicPort());
-    @Rule
-    public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("target/generated-snippets");
+    @Container
+    private static final PostgreSQLContainer postgres = new PostgreSQLContainer();
+
+    private static WireMockServer wireMockServer;
 
     @LocalServerPort
     private int port;
 
     private RequestSpecification documentationSpec;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setup(RestDocumentationContextProvider restDocumentation) {
         RestAssured.port = port;
-        this.documentationSpec = new RequestSpecBuilder()
-                .addFilter(documentationConfiguration(restDocumentation)).build();
-        stubFor(post(urlEqualTo("/api/v1/traces"))
+        this.documentationSpec = new RequestSpecBuilder().addFilter(documentationConfiguration(restDocumentation))
+                .build();
+        setupStubs();
+    }
+
+    private void setupStubs() {
+        wireMockServer.stubFor(post(urlEqualTo("/api/v1/traces"))
                 .withRequestBody(new RegexPattern("\\{\"paymentId\":\\d+,\"headers\":\\{\"userId\":\"" + USER_ID + "\"\\}\\}"))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.SC_CREATED)
                         .withHeader("Content-Type", "application/json")));
     }
+
+    @BeforeAll
+    static void globalSetup() {
+        wireMockServer = new WireMockServer(wireMockConfig().dynamicPort());
+        wireMockServer.start();
+    }
+
+    @AfterAll
+    static void globalShutdown() {
+        wireMockServer.stop();
+    }
+
 
     @Test
     public void createSuccess() throws URISyntaxException, IOException {
@@ -287,7 +305,7 @@ public class PaymentEndpointApiTest {
     public static class LocalRibbonClientConfiguration {
         @Bean
         public ServerList<Server> ribbonServerList() {
-            return new StaticServerList<>(new Server("localhost", wiremock.port()));
+            return new StaticServerList<>(new Server("localhost", wireMockServer.port()));
         }
     }
 
