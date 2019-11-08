@@ -14,6 +14,8 @@ spring:
       kafka:
         binder:
           brokers: ${KAFKA_HOST}
+  zipkin:
+    base-url: ${ZIPKIN_HOST}
 eureka:
   client:
     fetch-registry: false

@@ -53,6 +53,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	implementation 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
+	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+	implementation 'org.springframework.cloud:spring-cloud-starter-zipkin'
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 	testImplementation 'org.springframework.cloud:spring-cloud-stream-test-support'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

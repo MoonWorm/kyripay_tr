@@ -14,12 +14,13 @@ spec:
       containers:
         - name: converter
           image: kyripay/converter
+          imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 8181
           envFrom:
             - configMapRef:
                 name: kyripay-config
-          livenessProbe:
-            httpGet:
-              port: 8080
-              path: /actuator/health
+#          livenessProbe:
+#            httpGet:
+#              port: 8181
+#              path: /actuator/health
