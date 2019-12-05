@@ -46,6 +46,7 @@
 		<dockerfile-maven-plugin.version>1.4.12</dockerfile-maven-plugin.version>
 		<asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
 		<spring-cloud-contract-maven-plugin.version>2.1.3.RELEASE</spring-cloud-contract-maven-plugin.version>
+		<fabric8-maven-plugin.version>4.3.1</fabric8-maven-plugin.version>
 	</properties>
 
 	<dependencies>
