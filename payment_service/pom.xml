@@ -580,7 +580,7 @@
 							</authConfig>
 							<images>
 								<image>
-									<name>${docker.group.name}/${artifactId}</name>
+									<name>${docker.group.name}/${project.artifactId}</name>
 									<build>
 										<args>
 											<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
