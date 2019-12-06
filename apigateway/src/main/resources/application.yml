@@ -22,7 +22,7 @@ spring:
             - Path=/api/*/converters
             - Path=/api/*/documents
         - id: notification
-          uri: lb://notification_service
+          uri: lb://notification-service
           predicates:
             - Path=/api/*/emailnotifications/**
 eureka:
