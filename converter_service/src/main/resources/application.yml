@@ -14,7 +14,8 @@ spring:
       kafka:
         binder:
           brokers: ${KAFKA_HOST}
-
+  zipkin:
+    base-url: ${ZIPKIN_HOST}
 eureka:
   client:
     fetch-registry: false
@@ -24,3 +25,10 @@ eureka:
     prefer-ip-address: true
 server:
   port: 8181
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus
+

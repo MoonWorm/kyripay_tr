@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: converter-deployment
+spec:
+  selector:
+    matchLabels:
+      app: converter
+  template:
+    metadata:
+      labels:
+        app: converter
+    spec:
+      containers:
+        - name: converter
+          image: kyripay/converter
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8181
+          envFrom:
+            - configMapRef:
+                name: kyripay-config
+#          livenessProbe:
+#            httpGet:
+#              port: 8181
+#              path: /actuator/health

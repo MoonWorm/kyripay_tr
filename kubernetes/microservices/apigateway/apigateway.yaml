@@ -19,14 +19,3 @@ spec:
           env:
             - name: EUREKA_INSTANCE_PREFER-IP-ADDRESS
               value: 'true'
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: apigateway
-spec:
-  type: NodePort
-  selector:
-    app: apigateway
-  ports:
-    - port: 9091

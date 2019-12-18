@@ -16,6 +16,9 @@ spec:
           image: kyripay/payment-service
           ports:
             - containerPort: 8082
+          envFrom:
+            - configMapRef:
+                name: kyripay-config
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://postgres:5432/payments_ms?currentSchema=payments
+              value: ${POSTGRES_URL}/payments_ms?currentSchema=payments

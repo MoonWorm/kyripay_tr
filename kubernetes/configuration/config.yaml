@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kyripay-config
+data:
+  SPRING_PROFILES_ACTIVE: ELK
+  SPRING_DATA_MONGODB_HOST: mongodb
+  KAFKA_HOST: kafka-cluster
+  EUREKA_HOST: eureka
+  POSTGRES_URL: jdbc:postgresql://postgres:5432
+  ZOOKEPER_URL: zookeeper:2181
+  ELASTICSEARCH_HOST: elasticsearch
+  ELASTICSEARCH_PORT: "9200"
+  ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+  ZIPKIN_HOST: http://zipkin:9411

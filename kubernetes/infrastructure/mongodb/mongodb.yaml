@@ -5,26 +5,15 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: converter-mongodb
+      app: mongodb
   template:
     metadata:
-      name: converter-mongodb
+      name: mongodb
       labels:
-        app: converter-mongodb
+        app: mongodb
     spec:
       containers:
         - name: converter-mongodb
           image: mongo:3.6
           ports:
             - containerPort: 27017
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: converter-mongodb
-spec:
-  selector:
-    app: converter-mongodb
-  ports:
-    - port: 27017
-      targetPort: 27017
