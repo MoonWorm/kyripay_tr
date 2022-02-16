@@ -22,7 +22,7 @@
 		<spring-cloud.version>Greenwich.SR1</spring-cloud.version>
 		<asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
 		<jooq.version>3.11.11</jooq.version>
-		<postgresql.driver.version>42.2.5</postgresql.driver.version>
+		<postgresql.driver.version>42.3.3</postgresql.driver.version>
 		<dozer.version>5.3.1</dozer.version>
 		<testcontainers.version>1.12.3</testcontainers.version>
 		<rider-core.version>1.7.2</rider-core.version>
