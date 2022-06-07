@@ -63,7 +63,7 @@ public class PaymentTemplateRepositoryTest {
     }
 
     @Test
-    @DataSet(value = {"datasets/insert_first_payment_template.xml", "datasets/insert_second_payment_template.xml"})
+    @DataSet(value = {"datasets/first_payment_template.xml", "datasets/second_payment_template.xml"})
     public void readAll_recordsExistInDB_shouldReturnAllRecords() {
         List<PaymentTemplate> payments = sut.readAll(USER_ID, 3, 0);
 
@@ -86,7 +86,7 @@ public class PaymentTemplateRepositoryTest {
     }
 
     @Test
-    @DataSet(value = {"datasets/insert_first_payment_template.xml", "datasets/insert_second_payment_template.xml", "datasets/clear_payment_templates.xml"})
+    @DataSet(value = {"datasets/first_payment_template.xml", "datasets/second_payment_template.xml", "datasets/clear_payment_templates.xml"})
     public void readById_recordsExistInDB_shouldReturnRecords() {
         assertFirstPaymentTemplate(sut.readById(USER_ID, FIRST_PAYMENT_TEMPLATE_SCRIPT_ID));
         assertSecondPaymentTemplate(sut.readById(USER_ID, SECOND_PAYMENT_TEMPLATE_SCRIPT_ID));
@@ -99,7 +99,7 @@ public class PaymentTemplateRepositoryTest {
     }
 
     @Test
-    @DataSet(value = {"datasets/insert_first_payment_template.xml", "datasets/clear_payment_templates.xml"})
+    @DataSet(value = {"datasets/first_payment_template.xml", "datasets/clear_payment_templates.xml"})
     public void update_recordsExistInDB_shouldReturnValidRecord() {
         PaymentTemplate paymentTemplateWithNewData = createPaymentTemplateWithNewData();
         PaymentTemplate paymentTemplateUpdated = sut.update(USER_ID, FIRST_PAYMENT_TEMPLATE_SCRIPT_ID, paymentTemplateWithNewData);
@@ -118,7 +118,7 @@ public class PaymentTemplateRepositoryTest {
     }
 
     @Test
-    @DataSet(value = {"datasets/insert_first_payment_template.xml", "datasets/insert_second_payment_template.xml", "datasets/clear_payment_templates.xml"})
+    @DataSet(value = {"datasets/first_payment_template.xml", "datasets/second_payment_template.xml", "datasets/clear_payment_templates.xml"})
     public void delete_recordsExistInDB_shouldDeleteAllRecords() {
         assertThat(sut.readAll(USER_ID, 3, 0)).isNotNull().size().isEqualTo(2);
         sut.delete(USER_ID, FIRST_PAYMENT_TEMPLATE_SCRIPT_ID);
@@ -128,7 +128,7 @@ public class PaymentTemplateRepositoryTest {
     }
 
     @Test
-    @DataSet(value = {"datasets/insert_second_payment_template.xml"})
+    @DataSet(value = {"datasets/second_payment_template.xml"})
     public void sequentScenarioOfCreateReadUpdateDeleteActions() {
         PaymentTemplate firstPaymentTemplateCreated = sut.create(USER_ID, createFirstPaymentTemplate());
 

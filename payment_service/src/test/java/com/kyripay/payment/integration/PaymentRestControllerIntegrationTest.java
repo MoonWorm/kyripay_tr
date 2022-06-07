@@ -64,26 +64,26 @@ public class PaymentRestControllerIntegrationTest {
         when(mapper.map(paymentCreated, PaymentResponse.class)).thenReturn(expectedResponse);
 
         ResultActions ra = mockMvc.perform(post("/api/v1/payments")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .header("userId", USER_ID)
-                .content("{\n" +
-                        "  \"paymentDetails\": {\n" +
-                        "    \"amount\": {\n" +
-                        "      \"amount\": 100,\n" +
-                        "      \"currency\": \"BYN\"\n" +
-                        "    },\n" +
-                        "    \"bankId\": 1,\n" +
-                        "    \"accountNumber\": \"IBAN123\",\n" +
-                        "    \"recipientInfo\": {\n" +
-                        "      \"firstName\": \"Vasia\",\n" +
-                        "      \"lastName\": \"Pupkin\",\n" +
-                        "      \"bankUrn\": \"0000/00222/0XXXX\",\n" +
-                        "      \"bankName\": \"Super Bank Inc.\",\n" +
-                        "      \"bankAddress\": \"Main str. 1-1\",\n" +
-                        "      \"accountNumber\": \"IBAN321\"\n" +
-                        "    }\n" +
-                        "  }\n" +
-                        "}"))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .header("userId", USER_ID)
+                        .content("{\n" +
+                                "  \"paymentDetails\": {\n" +
+                                "    \"amount\": {\n" +
+                                "      \"amount\": 100,\n" +
+                                "      \"currency\": \"BYN\"\n" +
+                                "    },\n" +
+                                "    \"bankId\": 1,\n" +
+                                "    \"accountNumber\": \"IBAN123\",\n" +
+                                "    \"recipientInfo\": {\n" +
+                                "      \"firstName\": \"Vasia\",\n" +
+                                "      \"lastName\": \"Pupkin\",\n" +
+                                "      \"bankUrn\": \"0000/00222/0XXXX\",\n" +
+                                "      \"bankName\": \"Super Bank Inc.\",\n" +
+                                "      \"bankAddress\": \"Main str. 1-1\",\n" +
+                                "      \"accountNumber\": \"IBAN321\"\n" +
+                                "    }\n" +
+                                "  }\n" +
+                                "}"))
                 .andExpect(status().isOk());
         assertPaymentResponse(ra, expectedResponse);
     }
@@ -91,24 +91,24 @@ public class PaymentRestControllerIntegrationTest {
     @Test
     public void create_sendInvalidRequest_shouldReturn400() throws Exception {
         mockMvc.perform(post("/api/v1/payments")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .header("userId", USER_ID)
-                .content("{\n" +
-                        "  \"paymentDetails\": {\n" +
-                        "    \"amount\": {\n" +
-                        "      \"amount\": null,\n" +
-                        "      \"currency\": \"\"\n" +
-                        "    },\n" +
-                        "    \"bankId\": null,\n" +
-                        "    \"accountNumber\": \"\\n \\t \",\n" +
-                        "    \"recipientInfo\": {\n" +
-                        "      \"firstName\": \"\",\n" +
-                        "      \"lastName\": null,\n" +
-                        "      \"bankName\": \"Super Bank Inc.\",\n" +
-                        "      \"accountNumber\": \" \"\n" +
-                        "    }\n" +
-                        "  }\n" +
-                        "}"))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .header("userId", USER_ID)
+                        .content("{\n" +
+                                "  \"paymentDetails\": {\n" +
+                                "    \"amount\": {\n" +
+                                "      \"amount\": null,\n" +
+                                "      \"currency\": \"\"\n" +
+                                "    },\n" +
+                                "    \"bankId\": null,\n" +
+                                "    \"accountNumber\": \"\\n \\t \",\n" +
+                                "    \"recipientInfo\": {\n" +
+                                "      \"firstName\": \"\",\n" +
+                                "      \"lastName\": null,\n" +
+                                "      \"bankName\": \"Super Bank Inc.\",\n" +
+                                "      \"accountNumber\": \" \"\n" +
+                                "    }\n" +
+                                "  }\n" +
+                                "}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -127,26 +127,26 @@ public class PaymentRestControllerIntegrationTest {
         when(paymentService.create(USER_ID, paymentToCreate)).thenThrow(e);
 
         mockMvc.perform(post("/api/v1/payments")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .header("userId", USER_ID)
-                .content("{\n" +
-                        "  \"paymentDetails\": {\n" +
-                        "    \"amount\": {\n" +
-                        "      \"amount\": 100,\n" +
-                        "      \"currency\": \"BYN\"\n" +
-                        "    },\n" +
-                        "    \"bankId\": 1,\n" +
-                        "    \"accountNumber\": \"IBAN123\",\n" +
-                        "    \"recipientInfo\": {\n" +
-                        "      \"firstName\": \"Vasia\",\n" +
-                        "      \"lastName\": \"Pupkin\",\n" +
-                        "      \"bankUrn\": \"0000/00222/0XXXX\",\n" +
-                        "      \"bankName\": \"Super Bank Inc.\",\n" +
-                        "      \"bankAddress\": \"Main str. 1-1\",\n" +
-                        "      \"accountNumber\": \"IBAN321\"\n" +
-                        "    }\n" +
-                        "  }\n" +
-                        "}"))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .header("userId", USER_ID)
+                        .content("{\n" +
+                                "  \"paymentDetails\": {\n" +
+                                "    \"amount\": {\n" +
+                                "      \"amount\": 100,\n" +
+                                "      \"currency\": \"BYN\"\n" +
+                                "    },\n" +
+                                "    \"bankId\": 1,\n" +
+                                "    \"accountNumber\": \"IBAN123\",\n" +
+                                "    \"recipientInfo\": {\n" +
+                                "      \"firstName\": \"Vasia\",\n" +
+                                "      \"lastName\": \"Pupkin\",\n" +
+                                "      \"bankUrn\": \"0000/00222/0XXXX\",\n" +
+                                "      \"bankName\": \"Super Bank Inc.\",\n" +
+                                "      \"bankAddress\": \"Main str. 1-1\",\n" +
+                                "      \"accountNumber\": \"IBAN321\"\n" +
+                                "    }\n" +
+                                "  }\n" +
+                                "}"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.status").value(expectedResponse.getStatus()))
@@ -175,10 +175,10 @@ public class PaymentRestControllerIntegrationTest {
         when(mapper.map(payment2, PaymentResponse.class)).thenReturn(expectedResponse2);
 
         ResultActions ra = mockMvc.perform(get("/api/v1/payments")
-                .param("limit", String.valueOf(limit))
-                .param("offset", String.valueOf(offset))
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .header("userId", USER_ID))
+                        .param("limit", String.valueOf(limit))
+                        .param("offset", String.valueOf(offset))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .header("userId", USER_ID))
                 .andExpect(status().isOk());
         assertPaymentResponse(ra, expectedResponse1, 0);
         assertPaymentResponse(ra, expectedResponse2, 1);
@@ -187,8 +187,8 @@ public class PaymentRestControllerIntegrationTest {
     @Test
     public void readAll_sendInvalidRequestWithoutMandatoryUserIdHeaderValue_shouldReturn400() throws Exception {
         mockMvc.perform(get("/api/v1/payments")
-                //.header("userId", USER_ID)
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                        //.header("userId", USER_ID)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
@@ -210,10 +210,10 @@ public class PaymentRestControllerIntegrationTest {
         when(mapper.map(payment, PaymentWithUserIdResponse.class)).thenReturn(expectedResponse);
 
         ResultActions ra = mockMvc.perform(get("/api/v1/payments/search/result")
-                .param("status", sc.getStatus().name())
-                .param("limit", String.valueOf(limit))
-                .param("offset", String.valueOf(offset))
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                        .param("status", sc.getStatus().name())
+                        .param("limit", String.valueOf(limit))
+                        .param("offset", String.valueOf(offset))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk());
         assertPaymentResponse(ra, expectedResponse, 0);
     }
@@ -221,9 +221,9 @@ public class PaymentRestControllerIntegrationTest {
     @Test
     public void search_sendInvalidRequestWithoutMandatoryRequestParam_shouldReturn400() throws Exception {
         mockMvc.perform(get("/api/v1/payments/search/result")
-                .param("limit", String.valueOf(2))
-                .param("offset", "abc")
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                        .param("limit", String.valueOf(2))
+                        .param("offset", "abc")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
@@ -240,8 +240,8 @@ public class PaymentRestControllerIntegrationTest {
         when(mapper.map(payment, PaymentResponse.class)).thenReturn(expectedResponse);
 
         ResultActions ra = mockMvc.perform(get("/api/v1/payments/" + paymentId)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .header("userId", USER_ID))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .header("userId", USER_ID))
                 .andExpect(status().isOk());
         assertPaymentResponse(ra, expectedResponse);
     }
@@ -249,8 +249,8 @@ public class PaymentRestControllerIntegrationTest {
     @Test
     public void readById_sendInvalidRequestWithoutMandatoryUserIdHeaderValue_shouldReturn400() throws Exception {
         mockMvc.perform(get("/api/v1/payments/1")
-                //.header("userId", USER_ID)
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                        //.header("userId", USER_ID)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
@@ -261,8 +261,8 @@ public class PaymentRestControllerIntegrationTest {
         when(paymentService.getStatus(USER_ID, paymentId)).thenReturn(status);
 
         mockMvc.perform(get("/api/v1/payments/" + paymentId + "/status")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .header("userId", USER_ID))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .header("userId", USER_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(status.name()));
     }
@@ -270,8 +270,8 @@ public class PaymentRestControllerIntegrationTest {
     @Test
     public void getPaymentStatus_sendInvalidRequestWithWrongPathVarType_shouldReturn400() throws Exception {
         mockMvc.perform(get("/api/v1/payments/abc/status")
-                .header("userId", USER_ID)
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                        .header("userId", USER_ID)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
@@ -283,9 +283,9 @@ public class PaymentRestControllerIntegrationTest {
         when(paymentService.updateStatus(USER_ID, paymentId, status)).thenReturn(status);
 
         mockMvc.perform(put("/api/v1/payments/" + paymentId + "/status")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .header("userId", USER_ID)
-                .content("{\"status\": \"PROCESSING\"}"))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .header("userId", USER_ID)
+                        .content("{\"status\": \"PROCESSING\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(status.name()));
     }
@@ -293,24 +293,24 @@ public class PaymentRestControllerIntegrationTest {
     @Test
     public void updateStatus_sendInvalidRequest_shouldReturn400() throws Exception {
         mockMvc.perform(post("/api/v1/payments")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .header("userId", USER_ID)
-                .content("{\n" +
-                        "  \"paymentDetails\": {\n" +
-                        "    \"amount\": {\n" +
-                        "      \"amount\": null,\n" +
-                        "      \"currency\": \"\"\n" +
-                        "    },\n" +
-                        "    \"bankId\": null,\n" +
-                        "    \"accountNumber\": \"\\n \\t \",\n" +
-                        "    \"recipientInfo\": {\n" +
-                        "      \"firstName\": \"\",\n" +
-                        "      \"lastName\": null,\n" +
-                        "      \"bankName\": \"Super Bank Inc.\",\n" +
-                        "      \"accountNumber\": \" \"\n" +
-                        "    }\n" +
-                        "  }\n" +
-                        "}"))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .header("userId", USER_ID)
+                        .content("{\n" +
+                                "  \"paymentDetails\": {\n" +
+                                "    \"amount\": {\n" +
+                                "      \"amount\": null,\n" +
+                                "      \"currency\": \"\"\n" +
+                                "    },\n" +
+                                "    \"bankId\": null,\n" +
+                                "    \"accountNumber\": \"\\n \\t \",\n" +
+                                "    \"recipientInfo\": {\n" +
+                                "      \"firstName\": \"\",\n" +
+                                "      \"lastName\": null,\n" +
+                                "      \"bankName\": \"Super Bank Inc.\",\n" +
+                                "      \"accountNumber\": \" \"\n" +
+                                "    }\n" +
+                                "  }\n" +
+                                "}"))
                 .andExpect(status().isBadRequest());
     }
 

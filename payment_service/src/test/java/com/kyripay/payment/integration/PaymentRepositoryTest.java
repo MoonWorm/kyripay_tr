@@ -1,6 +1,7 @@
 package com.kyripay.payment.integration;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.kyripay.payment.domain.Payment;
 import com.kyripay.payment.domain.PaymentRecipientInfo;
@@ -11,7 +12,6 @@ import com.kyripay.payment.domain.vo.Currency;
 import com.kyripay.payment.domain.vo.Status;
 import com.kyripay.payment.infrastructure.adapter.out.payment.JooqPaymentRepository;
 import com.kyripay.payment.infrastructure.config.DozerConfig;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(SpringExtension.class)
 @Testcontainers
@@ -53,18 +54,17 @@ public class PaymentRepositoryTest {
 
     @Test
     @DataSet(value = {"datasets/clear_payments.xml"})
+    @ExpectedDataSet(value = {"datasets/first_payment.xml"}, ignoreCols = "id")
     public void create_noRecordsInDB_shouldCreate() {
-        Payment createdPayment = sut.create(USER_ID, createFirstPayment());
-
-        assertFirstPayment(createdPayment);
+        sut.create(USER_ID, createFirstPayment());
     }
 
     @Test
     @DataSet(value = {"datasets/clear_payments.xml"})
     public void create_someDbErrorHappened_shouldThrowRepositoryException() {
-        Assertions.assertThrows(RepositoryException.class, () -> {
-            sut.create(USER_ID, createBrokenPayment());
-        });
+        assertThatThrownBy(() -> sut.create(USER_ID, createBrokenPayment()))
+                .isNotNull()
+                .isInstanceOf(RepositoryException.class);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class PaymentRepositoryTest {
     }
 
     @Test
-    @DataSet(value = {"datasets/insert_first_payment.xml", "datasets/insert_second_payment.xml", "datasets/clear_payments.xml"})
+    @DataSet(value = {"datasets/first_payment.xml", "datasets/second_payment.xml", "datasets/clear_payments.xml"})
     public void readAll_recordsExistInDB_shouldReturnAllRecords() {
         List<Payment> payments = sut.readAll(USER_ID, 3, 0);
 
@@ -100,7 +100,7 @@ public class PaymentRepositoryTest {
     }
 
     @Test
-    @DataSet(value = {"datasets/insert_first_payment.xml", "datasets/insert_second_payment.xml", "datasets/clear_payments.xml"})
+    @DataSet(value = {"datasets/first_payment.xml", "datasets/second_payment.xml", "datasets/clear_payments.xml"})
     public void search_recordsExistInDB_shouldReturnAllRecords() {
         SearchCriterias sc = new SearchCriterias();
         sc.setStatus(Status.COMPLETED);
@@ -121,7 +121,7 @@ public class PaymentRepositoryTest {
     }
 
     @Test
-    @DataSet(value = {"datasets/insert_first_payment.xml", "datasets/insert_second_payment.xml", "datasets/clear_payments.xml"})
+    @DataSet(value = {"datasets/first_payment.xml", "datasets/second_payment.xml", "datasets/clear_payments.xml"})
     public void readById_recordsExistInDB_shouldReturnRecords() {
         assertFirstPayment(sut.readById(USER_ID, FIRST_PAYMENT_SCRIPT_ID));
         assertSecondPayment(sut.readById(USER_ID, SECOND_PAYMENT_SCRIPT_ID));
@@ -134,7 +134,7 @@ public class PaymentRepositoryTest {
     }
 
     @Test
-    @DataSet(value = {"datasets/insert_first_payment.xml", "datasets/insert_second_payment.xml", "datasets/clear_payments.xml"})
+    @DataSet(value = {"datasets/first_payment.xml", "datasets/second_payment.xml", "datasets/clear_payments.xml"})
     public void getStatus_recordsExistInDB_shouldReturnValidStatuses() {
         assertThat(sut.getStatus(USER_ID, FIRST_PAYMENT_SCRIPT_ID)).isNotNull().isEqualTo(Status.CREATED);
         assertThat(sut.getStatus(USER_ID, SECOND_PAYMENT_SCRIPT_ID)).isNotNull().isEqualTo(Status.COMPLETED);
@@ -143,13 +143,13 @@ public class PaymentRepositoryTest {
     @Test
     @DataSet(value = {"datasets/clear_payments.xml"})
     public void updateStatus_noRecordsInDB_shouldThrownException() {
-        Assertions.assertThrows(RepositoryException.class, () -> {
-            sut.updateStatus(UUID.fromString("aaeeaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), -1L, Status.PROCESSING);
-        });
+        assertThatThrownBy(() -> sut.updateStatus(UUID.fromString("aaeeaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), -1L, Status.PROCESSING))
+                .isNotNull()
+                .isInstanceOf(RepositoryException.class);
     }
 
     @Test
-    @DataSet(value = {"datasets/insert_first_payment.xml", "datasets/clear_payments.xml"})
+    @DataSet(value = {"datasets/first_payment.xml", "datasets/clear_payments.xml"})
     public void updateStatus_recordsExistInDB_shouldReturnValidStatuses() {
         assertThat(sut.updateStatus(USER_ID, FIRST_PAYMENT_SCRIPT_ID, Status.CREATED))
                 .isNotNull()
@@ -160,7 +160,7 @@ public class PaymentRepositoryTest {
     }
 
     @Test
-    @DataSet(value = {"datasets/insert_second_payment.xml", "datasets/clear_payments.xml"})
+    @DataSet(value = {"datasets/second_payment.xml", "datasets/clear_payments.xml"})
     public void sequentScenarioOfCreateReadUpdateActions() {
         Payment firstPaymentCreated = sut.create(USER_ID, createFirstPayment());
 

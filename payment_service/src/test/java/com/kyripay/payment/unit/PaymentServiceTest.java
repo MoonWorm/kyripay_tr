@@ -12,12 +12,13 @@ import com.kyripay.payment.domain.port.out.traces.Traces;
 import com.kyripay.payment.domain.vo.Amount;
 import com.kyripay.payment.domain.vo.Currency;
 import com.kyripay.payment.domain.vo.Status;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,10 +26,11 @@ import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PaymentServiceTest {
 
     private static final UUID USER_ID = UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11");
@@ -58,21 +60,21 @@ public class PaymentServiceTest {
         // then
         assertThat(actualResult).isNotNull().isEqualTo(paymentCreated);
         Trace trace = traceCapture.getValue();
-        assertThat(trace).isNotNull().hasFieldOrPropertyWithValue("paymentId", paymentCreated.getId());
+        assertThat(trace).isNotNull().extracting(Trace::getPaymentId).isEqualTo(paymentCreated.getId());
         assertThat(trace.getHeaders()).isNotNull().containsEntry("userId", USER_ID.toString());
     }
 
-    @Test(expected = ServiceException.class)
+    @Test
     public void create_setupFailureScenario_checkExceptionIsThrown() {
-        // given
-        Payment paymentToCreate = createPayment1();
+        Throwable e = new NullPointerException();
+        assertThatThrownBy(() -> {
+            // given
+            Payment paymentToCreate = createPayment1();
+            when(repository.create(USER_ID, paymentToCreate)).thenThrow(e);
 
-        when(repository.create(USER_ID, paymentToCreate)).thenThrow(new NullPointerException());
-
-        // when
-        sut.create(USER_ID, paymentToCreate);
-
-        // then assert expected exception
+            // when
+            sut.create(USER_ID, paymentToCreate);
+        }).isNotNull().isInstanceOf(ServiceException.class).hasCause(e);
     }
 
     @Test
@@ -93,18 +95,19 @@ public class PaymentServiceTest {
         assertThat(actualResult.get(1)).isEqualTo(payment2);
     }
 
-    @Test(expected = ServiceException.class)
+    @Test
     public void readAll_setupFailureScenario_checkExceptionIsThrown() {
-        // given
-        int limit = 3;
-        int offset = 0;
+        Throwable e = new RepositoryException("");
+        assertThatThrownBy(() -> {
+            // given
+            int limit = 3;
+            int offset = 0;
 
-        when(repository.readAll(USER_ID, limit, offset)).thenThrow(new RepositoryException(""));
+            when(repository.readAll(USER_ID, limit, offset)).thenThrow(e);
 
-        // when
-        sut.readAll(USER_ID, limit, offset);
-
-        // then assert expected exception
+            // when
+            sut.readAll(USER_ID, limit, offset);
+        }).isNotNull().isInstanceOf(ServiceException.class).hasCause(e);
     }
 
     @Test
@@ -125,21 +128,22 @@ public class PaymentServiceTest {
         assertThat(actualResult.get(0)).isEqualTo(payment1);
     }
 
-    @Test(expected = ServiceException.class)
+    @Test
     public void search_setupFailureScenario_checkExceptionIsThrown() {
-        // given
-        int limit = 3;
-        int offset = 0;
+        Throwable e = new RepositoryException("");
+        assertThatThrownBy(() -> {
+            // given
+            int limit = 3;
+            int offset = 0;
 
-        SearchCriterias sc = new SearchCriterias();
-        sc.setStatus(Status.CREATED);
+            SearchCriterias sc = new SearchCriterias();
+            sc.setStatus(Status.CREATED);
 
-        when(repository.search(sc, limit, offset)).thenThrow(new RepositoryException(""));
+            when(repository.search(sc, limit, offset)).thenThrow(e);
 
-        // when
-        sut.search(sc, limit, offset);
-
-        // then assert expected exception
+            // when
+            sut.search(sc, limit, offset);
+        }).isNotNull().isInstanceOf(ServiceException.class).hasCause(e);
     }
 
     @Test
@@ -156,17 +160,18 @@ public class PaymentServiceTest {
         assertThat(actualResult).isNotNull().isEqualTo(payment);
     }
 
-    @Test(expected = ServiceException.class)
+    @Test
     public void readById_setupFailureScenario_checkExceptionIsThrown() {
-        // given
-        long paymentId = 1L;
+        Throwable e = new RepositoryException("");
+        assertThatThrownBy(() -> {
+            // given
+            long paymentId = 1L;
 
-        when(repository.readById(USER_ID, paymentId)).thenThrow(new RepositoryException(""));
+            when(repository.readById(USER_ID, paymentId)).thenThrow(e);
 
-        // when
-        sut.readById(USER_ID, paymentId);
-
-        // then assert expected exception
+            // when
+            sut.readById(USER_ID, paymentId);
+        }).isNotNull().isInstanceOf(ServiceException.class).hasCause(e);
     }
 
     @Test
@@ -183,17 +188,18 @@ public class PaymentServiceTest {
         assertThat(actualResult).isNotNull().isEqualTo(status);
     }
 
-    @Test(expected = ServiceException.class)
+    @Test
     public void getStatus_setupFailureScenario_checkExceptionIsThrown() {
-        // given
-        long paymentId = 1L;
+        Throwable e = new RepositoryException("");
+        assertThatThrownBy(() -> {
+            // given
+            long paymentId = 1L;
 
-        when(repository.getStatus(USER_ID, paymentId)).thenThrow(new RepositoryException(""));
+            when(repository.getStatus(USER_ID, paymentId)).thenThrow(e);
 
-        // when
-        sut.getStatus(USER_ID, paymentId);
-
-        // then assert expected exception
+            // when
+            sut.getStatus(USER_ID, paymentId);
+        }).isNotNull().isInstanceOf(ServiceException.class).hasCause(e);
     }
 
     @Test
@@ -210,18 +216,19 @@ public class PaymentServiceTest {
         assertThat(actualResult).isNotNull().isEqualTo(status);
     }
 
-    @Test(expected = ServiceException.class)
+    @Test
     public void updateStatus_setupFailureScenario_checkExceptionIsThrown() {
-        // given
-        long paymentId = 1L;
-        Status status = Status.PROCESSING;
+        Throwable e = new RepositoryException("");
+        assertThatThrownBy(() -> {
+            // given
+            long paymentId = 1L;
+            Status status = Status.PROCESSING;
 
-        when(repository.updateStatus(USER_ID, paymentId, status)).thenThrow(new RepositoryException(""));
+            when(repository.updateStatus(USER_ID, paymentId, status)).thenThrow(e);
 
-        // when
-        sut.updateStatus(USER_ID, paymentId, status);
-
-        // then assert expected exception
+            // when
+            sut.updateStatus(USER_ID, paymentId, status);
+        }).isNotNull().isInstanceOf(ServiceException.class).hasCause(e);
     }
 
     private Payment createPayment1() {
